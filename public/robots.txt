@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://wannyan-gohan.com/sitemap.xml
