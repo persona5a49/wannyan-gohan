@@ -49,6 +49,23 @@ const QUESTIONS = [
 let answers = {}
 let step = 0
 
+const WEIGHT_KEY = 'wannyan_weight_log'
+function loadWeights(){
+  try{ return JSON.parse(localStorage.getItem(WEIGHT_KEY) || '[]') }catch(e){ return [] }
+}
+function saveWeights(list){ localStorage.setItem(WEIGHT_KEY, JSON.stringify(list)) }
+function addWeightEntry(date, weight){
+  const list = loadWeights()
+  list.push({date, weight: Number(weight)})
+  list.sort((a,b)=> a.date.localeCompare(b.date))
+  saveWeights(list)
+}
+function removeWeightEntry(idx){
+  const list = loadWeights()
+  list.splice(idx,1)
+  saveWeights(list)
+}
+
 function rer(weight){ return 70 * Math.pow(Number(weight || 0), 0.75) }
 function derMultiplier(a){
   if(a.age==='13+') return 1.1
@@ -103,11 +120,12 @@ function calcResult(a){
 
 function render(){
   document.querySelector('#app').innerHTML = `
-    <header class="site-header"><div class="brand">わんにゃんごはんカルテ</div><a href="#diagnosis" class="mini-cta">無料でチェック</a></header>
+    <header class="site-header"><div class="brand">わんにゃんごはんカルテ</div><nav class="nav-links"><a href="#tracker">体重記録</a></nav><a href="#diagnosis" class="mini-cta">無料でチェック</a></header>
     <main>
       <section class="hero"><p class="eyebrow">健診結果もふまえる / シニア犬向け</p><h1>シニア犬フード診断</h1><p class="lead">7歳からのごはん選びを、年齢・体型・悩み・健康診断の気になる項目から整理。ごはん量、おやつ上限、候補フードまでまとめます。</p><div class="hero-actions"><a href="#diagnosis" class="primary">診断をはじめる</a><a href="#why" class="secondary">何がわかる？</a></div><div class="trust"><span>約1分</span><span>登録不要</span><span>医療判断ではなく食事整理</span></div></section>
       <section class="cards" id="why"><article><h2>ごはん量</h2><p>体重からRER/DERを計算し、1日の目安カロリーを表示。</p></article><article><h2>おやつ上限</h2><p>あげすぎ防止のため、1日カロリーの10%目安を表示。</p></article><article><h2>健診メモ</h2><p>BUN/Cre/ALT/脂質/尿検査など、食事変更前の相談ラインを整理。</p></article></section>
       <section class="diagnosis" id="diagnosis">${renderDiagnosis()}</section>
+      <section class="tracker" id="tracker">${renderTracker()}</section>
       <section class="article-list"><h2>公開時に置く記事</h2><ol><li>シニア犬に合うドッグフードの選び方</li><li>シニア犬の給餌量計算</li><li>シニア犬がごはんを食べない時の見直しポイント</li><li>シニア犬の体重管理とフード選び</li><li>療法食と一般食の違い</li></ol></section>
     </main>
     <footer><p>本サイトはペットフード選びの参考情報を提供するもので、診断・治療・療法食の指示ではありません。持病、症状、療法食利用中の場合は獣医師に相談してください。</p></footer>`
@@ -128,6 +146,20 @@ function renderDiagnosis(){
   }
   const q = QUESTIONS[step]
   return `<div class="question"><p class="progress">${step+1} / ${QUESTIONS.length}</p><h2>${q.label}</h2>${renderInput(q)}<div class="nav"><button class="secondary back" ${step===0?'disabled':''}>戻る</button><button class="primary next">${step===QUESTIONS.length-1?'結果を見る':'次へ'}</button></div></div>`
+}
+function renderTracker(){
+  const list = loadWeights()
+  const latest = list[list.length-1]
+  const prev = list[list.length-2]
+  let trend = ''
+  if(latest && prev){
+    const diff = Math.round((latest.weight - prev.weight)*10)/10
+    trend = diff > 0 ? `前回より+${diff}kg` : diff < 0 ? `前回より${diff}kg` : '前回から変化なし'
+  }
+  return `<p class="eyebrow">継続して見守る</p><h2>体重記録</h2><p class="helper">日付と体重を記録すると、増減の傾向を確認できます。データはこの端末内にのみ保存されます。</p>
+    <form class="weight-form"><input type="date" name="w-date" value="${new Date().toISOString().slice(0,10)}" required><input type="number" name="w-value" step="0.1" min="0" placeholder="例：5.2" required><span>kg</span><button type="submit" class="primary">記録する</button></form>
+    ${latest ? `<div class="metric"><strong>${latest.weight}kg</strong><span>${latest.date}時点${trend ? '・'+trend : ''}</span></div>` : ''}
+    ${list.length ? `<ul class="weight-list">${list.slice().reverse().map((e,i)=>`<li><span>${e.date}</span><span>${e.weight}kg</span><button type="button" class="text-link del-weight" data-idx="${list.length-1-i}">削除</button></li>`).join('')}</ul>` : '<p class="helper">まだ記録がありません。</p>'}`
 }
 function renderInput(q){
   if(q.type==='number') return `<label class="number"><input type="number" min="0" step="0.1" value="${answers[q.key]||''}" data-key="${q.key}" placeholder="${q.placeholder}"><span>${q.suffix}</span></label>`
@@ -166,5 +198,19 @@ function bindEvents(){
   document.querySelector('.next')?.addEventListener('click', ()=>{step++; render(); location.hash='diagnosis'})
   document.querySelector('.back')?.addEventListener('click', ()=>{if(step>0) step--; render()})
   document.querySelector('.reset')?.addEventListener('click', ()=>{answers={}; step=0; render()})
+  document.querySelector('.weight-form')?.addEventListener('submit', e=>{
+    e.preventDefault()
+    const date = e.target['w-date'].value
+    const weight = e.target['w-value'].value
+    if(!date || !weight || Number(weight) <= 0) return
+    addWeightEntry(date, weight)
+    render()
+    location.hash = 'tracker'
+  })
+  document.querySelectorAll('.del-weight').forEach(el=>el.addEventListener('click', e=>{
+    removeWeightEntry(Number(e.target.dataset.idx))
+    render()
+    location.hash = 'tracker'
+  }))
 }
 render()
