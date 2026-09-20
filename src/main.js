@@ -79,6 +79,13 @@ const labFields = [
 ]
 function labNum(key){ return Number((answers.labs || {})[key] || 0) }
 
+function trackEvent(name, params = {}){
+  if(typeof window !== 'undefined' && typeof window.gtag === 'function'){
+    window.gtag('event', name, params)
+  }
+}
+
+
 const ARTICLES = [
   {
     slug:'senior-dog-food-choice',
@@ -179,13 +186,13 @@ function calcResult(a){
 
 function render(){
   document.querySelector('#app').innerHTML = `
-    <header class="site-header"><div class="brand">わんにゃんごはんカルテ</div><nav class="nav-links"><a href="#tracker">体重記録</a></nav><a href="#diagnosis" class="mini-cta">無料でチェック</a></header>
+    <header class="site-header"><div class="brand">わんにゃんごはんカルテ</div><nav class="nav-links"><a href="#tracker">体重記録</a></nav><a href="#diagnosis" class="mini-cta js-diagnosis-start" data-location="header">無料でチェック</a></header>
     <main>
-      <section class="hero"><p class="eyebrow">健診結果もふまえる / シニア犬向け</p><h1>シニア犬フード診断</h1><p class="lead">7歳からのごはん選びを、年齢・体型・悩み・健康診断の気になる項目から整理。ごはん量、おやつ上限、候補フードまでまとめます。</p><div class="hero-actions"><a href="#diagnosis" class="primary">診断をはじめる</a><a href="#why" class="secondary">何がわかる？</a></div><div class="trust"><span>約1分</span><span>登録不要</span><span>医療判断ではなく食事整理</span></div></section>
+      <section class="hero"><p class="eyebrow">健診結果もふまえる / シニア犬向け</p><h1>シニア犬フード診断</h1><p class="lead">7歳からのごはん選びを、年齢・体型・悩み・健康診断の気になる項目から整理。ごはん量、おやつ上限、候補フードまでまとめます。</p><div class="hero-actions"><a href="#diagnosis" class="primary js-diagnosis-start" data-location="hero">診断をはじめる</a><a href="#why" class="secondary">何がわかる？</a></div><div class="trust"><span>約1分</span><span>登録不要</span><span>医療判断ではなく食事整理</span></div></section>
       <section class="cards" id="why"><article><h2>ごはん量</h2><p>体重からRER/DERを計算し、1日の目安カロリーを表示。</p></article><article><h2>おやつ上限</h2><p>あげすぎ防止のため、1日カロリーの10%目安を表示。</p></article><article><h2>健診メモ</h2><p>BUN/Cre/ALT/脂質/尿検査など、食事変更前の相談ラインを整理。</p></article></section>
       <section class="diagnosis" id="diagnosis">${renderDiagnosis()}</section>
       <section class="tracker" id="tracker">${renderTracker()}</section>
-      <section class="article-list" id="articles"><h2>シニア犬のごはん記事</h2><p class="helper">診断ツールだけでなく、食事量・体重管理・療法食の注意点を独自に整理した記事です。</p><div class="article-cards">${ARTICLES.map(a=>`<a class="article-card" href="/articles/${a.slug}/"><span>記事</span><strong>${a.title}</strong><small>${a.lead}</small></a>`).join('')}</div></section>
+      <section class="article-list" id="articles"><h2>シニア犬のごはん記事</h2><p class="helper">診断ツールだけでなく、食事量・体重管理・療法食の注意点を独自に整理した記事です。</p><div class="article-cards">${ARTICLES.map(a=>`<a class="article-card js-article-click" data-article="${a.slug}" href="/articles/${a.slug}/"><span>記事</span><strong>${a.title}</strong><small>${a.lead}</small></a>`).join('')}</div></section>
     </main>
     <footer><p>本サイトはペットフード選びの参考情報を提供するもので、診断・治療・療法食の指示ではありません。持病、症状、療法食利用中の場合は獣医師に相談してください。</p></footer>`
   bindEvents()
@@ -204,8 +211,8 @@ function renderDiagnosis(){
       <div class="karte-section"><h3>食事の優先順位</h3><ol>${priorities(r.type).map(x=>`<li>${x}</li>`).join('')}</ol></div>
       ${r.redFlags.length ? `<div class="alert"><h3>フード変更前に確認</h3><ul>${r.redFlags.map(x=>`<li>${x}</li>`).join('')}</ul></div>`:''}
       ${r.watch.length ? `<div class="note"><h3>健診メモ</h3><ul>${r.watch.map(x=>`<li>${x}</li>`).join('')}</ul></div>`:''}
-      <h3>候補フード</h3><div class="foods">${r.foods.map(f=>`<article class="food"><h4>${f.name}</h4><p>${f.maker} / ${f.kcal}kcal / 脂質${f.fat}% / 約${f.priceKg.toLocaleString()}円/kg</p><ul>${(f.reasons.length?f.reasons:['条件に比較的合いやすい']).map(x=>`<li>${x}</li>`).join('')}</ul><a class="text-link" href="${f.url}">商品リンク設定待ち</a></article>`).join('')}</div>
-      <div class="pdf-cta"><h3>詳細ごはんカルテPDF</h3><p>現在のフード量・おやつ量・健診結果メモ・主治医に相談するポイントを1枚に整理します。</p><button class="primary" type="button">初回モニター 980円で作成希望</button><small>※今は需要確認用。決済はまだ発生しません。</small></div>
+      <h3>候補フード</h3><div class="foods">${r.foods.map(f=>`<article class="food"><h4>${f.name}</h4><p>${f.maker} / ${f.kcal}kcal / 脂質${f.fat}% / 約${f.priceKg.toLocaleString()}円/kg</p><ul>${(f.reasons.length?f.reasons:['条件に比較的合いやすい']).map(x=>`<li>${x}</li>`).join('')}</ul><a class="text-link product-link" data-product="${f.name}" data-maker="${f.maker}" href="${f.url}" target="_blank" rel="sponsored noopener">${f.url === '#' ? '商品リンク準備中' : '商品を見る'}</a></article>`).join('')}</div>
+      <div class="pdf-cta"><h3>詳細ごはんカルテPDF</h3><p>現在のフード量・おやつ量・健診結果メモ・主治医に相談するポイントを1枚に整理します。</p><button class="primary pdf-interest" type="button">初回モニター 980円で作成希望</button><small>※今は需要確認用。決済はまだ発生しません。</small></div>
       <button class="secondary reset">もう一度診断</button></div>`
   }
   const q = QUESTIONS[step]
@@ -255,24 +262,50 @@ function resultLead(type){
   }[type]
 }
 function bindEvents(){
+  document.querySelectorAll('.js-diagnosis-start').forEach(el=>el.addEventListener('click', e=>{
+    trackEvent('diagnosis_start', {location: e.currentTarget.dataset.location || 'unknown'})
+  }))
+  document.querySelectorAll('.js-article-click').forEach(el=>el.addEventListener('click', e=>{
+    trackEvent('article_click', {article: e.currentTarget.dataset.article || 'unknown'})
+  }))
+  document.querySelectorAll('.product-link').forEach(el=>el.addEventListener('click', e=>{
+    const href = e.currentTarget.getAttribute('href') || '#'
+    trackEvent('product_click', {product: e.currentTarget.dataset.product || 'unknown', maker: e.currentTarget.dataset.maker || 'unknown', linked: href !== '#'} )
+    if(href === '#') e.preventDefault()
+  }))
+  document.querySelector('.pdf-interest')?.addEventListener('click', ()=>{
+    trackEvent('pdf_interest_click', {price: 980})
+    alert('ありがとうございます。現在は準備中です。正式受付を開始したら、このページで案内します。')
+  })
   document.querySelectorAll('input[type=radio]').forEach(el=>el.addEventListener('change', e=>{answers[e.target.name]=e.target.value}))
   document.querySelectorAll('input[type=checkbox]').forEach(el=>el.addEventListener('change', e=>{const k=e.target.name; answers[k]=answers[k]||[]; answers[k]=e.target.checked?[...new Set([...answers[k],e.target.value])]:answers[k].filter(x=>x!==e.target.value)}))
   document.querySelector('input[type=number][data-key]')?.addEventListener('input', e=>{answers[e.target.dataset.key]=e.target.value})
   document.querySelectorAll('input[data-lab]').forEach(el=>el.addEventListener('input', e=>{answers.labs=answers.labs||{}; answers.labs[e.target.dataset.lab]=e.target.value}))
-  document.querySelector('.next')?.addEventListener('click', ()=>{step++; render(); location.hash='diagnosis'})
+  document.querySelector('.next')?.addEventListener('click', ()=>{
+    if(step === 0) trackEvent('diagnosis_start', {location: 'question_next'})
+    const finishing = step === QUESTIONS.length - 1
+    step++
+    if(finishing){
+      const r = calcResult(answers)
+      trackEvent('diagnosis_complete', {result_type: r.type, has_checkup_flags: (answers.checkup || []).filter(x=>x !== 'none').length > 0})
+    }
+    render(); location.hash='diagnosis'
+  })
   document.querySelector('.back')?.addEventListener('click', ()=>{if(step>0) step--; render()})
-  document.querySelector('.reset')?.addEventListener('click', ()=>{answers={}; step=0; render()})
+  document.querySelector('.reset')?.addEventListener('click', ()=>{trackEvent('diagnosis_reset'); answers={}; step=0; render()})
   document.querySelector('.weight-form')?.addEventListener('submit', e=>{
     e.preventDefault()
     const date = e.target['w-date'].value
     const weight = e.target['w-value'].value
     if(!date || !weight || Number(weight) <= 0) return
     addWeightEntry(date, weight)
+    trackEvent('weight_record_save', {weight: Number(weight)})
     render()
     location.hash = 'tracker'
   })
   document.querySelectorAll('.del-weight').forEach(el=>el.addEventListener('click', e=>{
     removeWeightEntry(Number(e.target.dataset.idx))
+    trackEvent('weight_record_delete')
     render()
     location.hash = 'tracker'
   }))
