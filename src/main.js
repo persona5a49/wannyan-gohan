@@ -185,7 +185,7 @@ function render(){
       <section class="cards" id="why"><article><h2>ごはん量</h2><p>体重からRER/DERを計算し、1日の目安カロリーを表示。</p></article><article><h2>おやつ上限</h2><p>あげすぎ防止のため、1日カロリーの10%目安を表示。</p></article><article><h2>健診メモ</h2><p>BUN/Cre/ALT/脂質/尿検査など、食事変更前の相談ラインを整理。</p></article></section>
       <section class="diagnosis" id="diagnosis">${renderDiagnosis()}</section>
       <section class="tracker" id="tracker">${renderTracker()}</section>
-      <section class="article-list" id="articles"><h2>シニア犬のごはん記事</h2><p class="helper">診断ツールだけでなく、食事量・体重管理・療法食の注意点を独自に整理した記事です。</p><div class="article-cards">${ARTICLES.map(a=>`<a class="article-card" href="#article-${a.slug}"><span>記事</span><strong>${a.title}</strong><small>${a.lead}</small></a>`).join('')}</div></section><section class="articles-full">${ARTICLES.map(renderArticle).join('')}</section>
+      <section class="article-list" id="articles"><h2>シニア犬のごはん記事</h2><p class="helper">診断ツールだけでなく、食事量・体重管理・療法食の注意点を独自に整理した記事です。</p><div class="article-cards">${ARTICLES.map(a=>`<a class="article-card" href="/articles/${a.slug}/"><span>記事</span><strong>${a.title}</strong><small>${a.lead}</small></a>`).join('')}</div></section>
     </main>
     <footer><p>本サイトはペットフード選びの参考情報を提供するもので、診断・治療・療法食の指示ではありません。持病、症状、療法食利用中の場合は獣医師に相談してください。</p></footer>`
   bindEvents()
