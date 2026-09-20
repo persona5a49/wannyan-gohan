@@ -3,6 +3,8 @@
 .sample-wrap{margin:22px 0}.sample-frame{position:relative;border-radius:20px;overflow:hidden;box-shadow:0 18px 40px rgba(36,79,53,.18);border:1px solid #e8e2d5}.sample-frame img{display:block;width:100%;height:auto}.sample-badge{position:absolute;top:14px;right:14px;background:#20231f;color:#fff;font-size:.78rem;font-weight:800;padding:6px 14px;border-radius:999px;letter-spacing:.05em}.sample-caption{text-align:center;color:#62665b;font-size:.88rem;margin-top:10px}
 .compare{display:grid;grid-template-columns:1fr 1fr;gap:14px}.compare .col{border-radius:18px;padding:18px}.compare .free{background:#f4f0e6}.compare .paid{background:#edf5ee;border:2px solid #2f5d3a}.compare h3{margin:0 0 10px;font-size:1.02rem}.compare ul{margin:0;padding-left:18px}.compare li{margin:6px 0;font-size:.95rem}.compare .tag{display:inline-block;font-size:.72rem;font-weight:800;color:#2f5d3a;background:#dcecdf;border-radius:999px;padding:2px 10px;margin-bottom:8px}
 .who ul{display:grid;grid-template-columns:1fr 1fr;gap:6px 20px;padding-left:20px;margin:8px 0 0}
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 0}.badges span{background:#f4f0e6;color:#556052;font-size:.82rem;font-weight:700;padding:6px 12px;border-radius:999px}
+.faq details{border-bottom:1px solid #e8e2d5;padding:14px 0}.faq details:last-child{border-bottom:none}.faq summary{cursor:pointer;font-weight:800;list-style:none;display:flex;justify-content:space-between;gap:10px}.faq summary::-webkit-details-marker{display:none}.faq summary::after{content:'+';font-size:1.3rem;color:#2f5d3a;flex:none}.faq details[open] summary::after{content:'－'}.faq p{margin:10px 0 0;color:#3f463d}
 @media(max-width:640px){.header{align-items:flex-start;flex-direction:column}.wrap{padding:18px}.compare{grid-template-columns:1fr}.who ul{grid-template-columns:1fr}}
 </style></head><body><header class="header"><a class="brand" href="/">わんにゃんごはんカルテ</a><nav class="nav"><a href="/products/">商品一覧</a><a href="/articles/">記事</a><a href="/#diagnosis">無料診断</a></nav></header><main class="wrap"><article>
 
@@ -11,6 +13,7 @@
 <div class="sample-wrap"><div class="sample-frame"><span class="sample-badge">SAMPLE</span><img src="/pdf-karute/sample.png" alt="詳細ごはんカルテPDFのサンプルイメージ" loading="lazy"></div><p class="sample-caption">実際に届くPDFのイメージです（画像はサンプルデータです）</p></div>
 
 <div class="price"><strong>980円</strong><span>初回モニター価格（税込）</span></div>
+<div class="badges"><span>アプリのインストール不要</span><span>入力目安5分</span><span>ブラウザで受け取り</span></div>
 
 <section class="card compare">
   <div class="col free"><span class="tag">無料診断</span><h3>その場で画面に表示</h3><ul><li>目安カロリー・おやつ上限を計算</li><li>候補フードを表示</li><li>入力内容は保存されない</li></ul></div>
@@ -20,6 +23,13 @@
 <section class="card who"><h2>こんな方に</h2><ul><li>次の診察で食事の相談をしたい</li><li>健診結果と食事の関係を整理したい</li><li>家族や他の家族の犬の分も記録を残したい</li><li>口頭でうまく説明する自信がない</li></ul></section>
 
 <section class="card"><h2>カルテに整理する内容</h2><ul><li>現在のフード量</li><li>おやつ量</li><li>体重・体型</li><li>健康診断で気になる項目</li><li>主治医に相談するポイント</li><li>食事変更前の注意点</li></ul></section>
+
+<section class="card faq"><h2>よくある質問</h2>
+<details><summary>アプリのインストールは必要ですか？</summary><p>不要です。ブラウザで質問に回答いただくだけで、PDFを受け取れる形にする予定です。アプリを入れる手間はかかりません。</p></details>
+<details><summary>獣医師の診察の代わりになりますか？</summary><p>なりません。診断・治療の代わりではなく、診察前に状況を整理し、主治医に相談したい内容を伝えやすくするための資料です。持病・症状がある場合や健診で異常があった場合は、必ず主治医にご相談ください。</p></details>
+<details><summary>入力した内容はどう扱われますか？</summary><p>カルテ作成の目的以外には使用しません。正式受付開始にあわせて、プライバシーポリシーの詳細をこのページでご案内します。</p></details>
+<details><summary>返金や不明点の問い合わせはできますか？</summary><p>現在はモニター募集の準備段階です。正式な受付条件・お問い合わせ窓口は、受付開始までにこのページでご案内します。</p></details>
+</section>
 
 <section class="notice"><strong>ご利用前に必ずお読みください</strong><ul><li>本サービスは診断・治療・療法食の指示ではありません。</li><li>持病がある、症状がある、服薬中、療法食を利用中、健診で異常があった場合は、内容の実行前に必ず主治医（かかりつけ獣医師）にご相談ください。</li><li>ぐったりしている、嘔吐・下痢が続く、食欲がないなど、緊急性のある症状がある場合は、申込みより先に動物病院を受診してください。</li></ul></section>
 
