@@ -225,7 +225,7 @@ function renderDiagnosis(){
       <div class="karte-section"><h3>食事の優先順位</h3><ol>${priorities(r.type).map(x=>`<li>${x}</li>`).join('')}</ol></div>
       ${r.redFlags.length ? `<div class="alert"><h3>フード変更前に確認</h3><ul>${r.redFlags.map(x=>`<li>${x}</li>`).join('')}</ul></div>`:''}
       ${r.watch.length ? `<div class="note"><h3>健診メモ</h3><ul>${r.watch.map(x=>`<li>${x}</li>`).join('')}</ul></div>`:''}
-      <h3>候補フード</h3><div class="foods">${r.foods.map(f=>`<article class="food"><h4>${f.name}</h4><p>${f.maker} / ${f.kcal}kcal / 脂質${f.fat}% / 約${f.priceKg.toLocaleString()}円/kg</p><ul>${(f.reasons.length?f.reasons:['条件に比較的合いやすい']).map(x=>`<li>${x}</li>`).join('')}</ul><a class="text-link product-link" data-product="${f.name}" data-maker="${f.maker}" href="${productDetailUrl(f.name)}">${productDetailUrl(f.name) === '#' ? '商品詳細準備中' : '詳しく見る'}</a></article>`).join('')}</div>
+      <h3>候補フード</h3><div class="foods">${r.foods.map(f=>`<article class="food"><h4>${f.name}</h4><p>${f.maker} / ${f.kcal}kcal / 脂質${f.fat}% / 約${f.priceKg.toLocaleString()}円/kg</p><ul>${(f.reasons.length?f.reasons:['条件に比較的合いやすい']).map(x=>`<li>${x}</li>`).join('')}</ul><div class="food-actions">${f.url !== '#' ? `<a class="primary buy-link" data-product="${f.name}" data-maker="${f.maker}" href="${f.url}" target="_blank" rel="noopener sponsored">通販サイトで見る</a>` : ''}${productDetailUrl(f.name) !== '#' ? `<a class="text-link product-link" data-product="${f.name}" data-maker="${f.maker}" href="${productDetailUrl(f.name)}">くわしく見る</a>` : ''}</div></article>`).join('')}</div>
       <div class="pdf-cta"><h3>詳細ごはんカルテPDF</h3><p>現在のフード量・おやつ量・健診結果メモ・主治医に相談するポイントを1枚に整理します。</p><a class="primary pdf-interest" data-price="980" href="/pdf-karute/">初回モニター 980円で作成希望</a><small>※今は需要確認用。決済はまだ発生しません。</small></div>
       <button class="secondary reset">もう一度診断</button></div>`
   }
@@ -283,9 +283,10 @@ function bindEvents(){
     trackEvent('article_click', {article: e.currentTarget.dataset.article || 'unknown'})
   }))
   document.querySelectorAll('.product-link').forEach(el=>el.addEventListener('click', e=>{
-    const href = e.currentTarget.getAttribute('href') || '#'
-    trackEvent('product_click', {product: e.currentTarget.dataset.product || 'unknown', maker: e.currentTarget.dataset.maker || 'unknown', linked: href !== '#'} )
-    if(href === '#') e.preventDefault()
+    trackEvent('product_click', {product: e.currentTarget.dataset.product || 'unknown', maker: e.currentTarget.dataset.maker || 'unknown', linked: true, target: 'detail'})
+  }))
+  document.querySelectorAll('.buy-link').forEach(el=>el.addEventListener('click', e=>{
+    trackEvent('product_click', {product: e.currentTarget.dataset.product || 'unknown', maker: e.currentTarget.dataset.maker || 'unknown', linked: true, target: 'affiliate'})
   }))
   document.querySelector('.pdf-interest')?.addEventListener('click', e=>{
     trackEvent('pdf_interest_click', {price: Number(e.currentTarget.dataset.price) || 980})
