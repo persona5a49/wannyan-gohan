@@ -22,21 +22,30 @@
   .panel .row > div{flex:1}
   .chk{display:flex;align-items:center;gap:6px;font-size:12px;margin:4px 0}
   .chk input{width:auto}
+  .panel details{border:1px dashed #dcdcd2;border-radius:8px;margin:8px 0;padding:6px 10px}
+  .panel details summary{font-size:12px;font-weight:700;color:#244f35;cursor:pointer;padding:4px 0}
   .actions{position:sticky;bottom:0;background:#fff;padding:12px 0 0;margin-top:10px;border-top:1px solid #e0e0d8}
+  .actions .hint{margin:8px 0 0}
   button{cursor:pointer;font-family:inherit}
   .btn-print{width:100%;background:#244f35;color:#fff;border:0;border-radius:999px;padding:12px;font-size:14px;font-weight:800}
   .btn-reset{width:100%;background:none;border:1px solid #ccc;color:#555;border-radius:999px;padding:8px;font-size:12px;margin-top:8px}
   .preview-wrap{padding:24px;display:flex;justify-content:center;overflow-y:auto}
-  .sheet{width:794px;min-height:1123px;background:#fff;box-shadow:0 4px 24px rgba(0,0,0,.15);padding:0}
-  .head{background:#244f35;color:#fff;padding:34px 44px}
-  .head .brand{font-size:13px;font-weight:800;color:#cfe1d1;letter-spacing:1px}
-  .head .title{font-size:26px;font-weight:800;margin-top:6px}
-  .head .date{float:right;background:rgba(255,255,255,.15);border-radius:20px;padding:6px 16px;font-size:13px;font-weight:700}
-  .body{padding:30px 44px 50px}
+  .sheet{width:794px}
+  .pdf-page{background:#fff;min-height:1123px;position:relative;box-shadow:0 4px 24px rgba(0,0,0,.12);margin-bottom:24px;page-break-after:always;break-after:page}
+  .pdf-page:last-child{margin-bottom:0}
+  .pdf2-divider{text-align:center;font-size:11px;color:#8a9284;margin:0 0 24px;letter-spacing:2px}
+  .head{background:#244f35;color:#fff;padding:22px 44px 18px}
+  .head .brand{font-size:12px;font-weight:800;color:#cfe1d1;letter-spacing:1px}
+  .head .title{font-size:21px;font-weight:800;margin-top:5px}
+  .head .who{font-size:12px;color:#cfe1d1;margin-top:3px}
+  .head .date{float:right;background:rgba(255,255,255,.15);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:700}
+  .pg-tag{font-size:11px;color:#98a094;margin:0 0 10px}
+  .body{padding:26px 44px 46px}
   .profile{background:#fbfaf5;border:1px solid #e8e2d5;border-radius:14px;padding:16px 18px;margin-bottom:22px}
   .profile .lbl{font-size:12px;font-weight:800;color:#6b7d37}
   .profile .val{font-size:19px;font-weight:800;margin-top:4px}
   h2.sec{font-size:16px;font-weight:800;margin:22px 0 10px;display:flex;align-items:center;gap:8px}
+  h2.sec:first-of-type{margin-top:0}
   h2.sec .num{background:#244f35;color:#fff;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px}
   .box{border-radius:12px;padding:14px 16px;margin-bottom:4px}
   .box.green{background:#edf5ee}
@@ -48,12 +57,54 @@
   ul.plain{margin:6px 0 0;padding-left:18px;font-size:13px;line-height:1.7}
   p.small{font-size:12px;color:#667064;margin:4px 0 0}
   .disclaimer{margin-top:30px;font-size:11px;color:#98a094;border-top:1px solid #eee;padding-top:14px}
+  .good-list{list-style:none;margin:6px 0 0;padding:0}
+  .good-list li{padding:9px 12px;margin-bottom:7px;background:#edf5ee;border-radius:8px;font-size:13px;line-height:1.7}
+  .good-list li:before{content:"✓ ";color:#244f35;font-weight:800}
+  .priority-item{display:flex;gap:12px;margin-bottom:16px;align-items:flex-start}
+  .priority-num{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:#244f35;color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center}
+  .priority-body strong{display:block;font-size:12px;color:#6b7d37;margin-bottom:3px}
+  .priority-body p{margin:0;font-size:13px;line-height:1.8}
+  .criteria-item{border-bottom:1px solid #eee;padding:10px 2px}
+  .criteria-item:last-child{border-bottom:0}
+  .criteria-item .k{font-size:13px;font-weight:800;color:#244f35}
+  .criteria-item .v{font-size:12.5px;color:#3c453e;margin-top:3px;line-height:1.75}
+  .product-card{border:1px solid #e8e2d5;border-radius:12px;padding:14px 16px;margin-bottom:12px;background:#fbfaf5}
+  .product-card .tag{display:inline-block;background:#244f35;color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;margin-bottom:7px}
+  .product-card .pname{font-size:15px;font-weight:800}
+  .product-card .pstats{font-size:11.5px;color:#667064;margin:5px 0}
+  .product-card .preason{font-size:12.5px;line-height:1.75;margin-top:6px}
+  table.cmp{width:100%;border-collapse:collapse;font-size:10px;table-layout:fixed}
+  table.cmp th,table.cmp td{border:1px solid #e0e0d8;padding:5px 5px;text-align:left;vertical-align:top;word-break:break-word;overflow-wrap:break-word}
+  table.cmp th{background:#edf5ee;font-weight:800;font-size:9.5px}
+  table.cmp th:nth-child(1),table.cmp td:nth-child(1){width:11%}
+  table.cmp th:nth-child(2),table.cmp td:nth-child(2){width:6%}
+  table.cmp th:nth-child(3),table.cmp td:nth-child(3){width:11%}
+  table.cmp th:nth-child(4),table.cmp td:nth-child(4){width:6%}
+  table.cmp th:nth-child(5),table.cmp td:nth-child(5){width:8%}
+  table.cmp th:nth-child(6),table.cmp td:nth-child(6){width:9%}
+  table.cmp th:nth-child(7),table.cmp td:nth-child(7){width:8%}
+  table.cmp th:nth-child(8),table.cmp td:nth-child(8){width:8%}
+  table.cmp th:nth-child(9),table.cmp td:nth-child(9){width:8%}
+  table.cmp th:nth-child(10),table.cmp td:nth-child(10){width:25%}
+  table.watch{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+  table.watch th,table.watch td{border:1px solid #e0e0d8;padding:9px 8px;text-align:left}
+  table.watch th{background:#fbfaf5}
+  table.watch td.chk-cell{width:64px;text-align:center}
+  .vet-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;margin-bottom:16px}
+  .vet-grid .f{font-size:11px;color:#8a9284}
+  .vet-grid .v{font-size:13px;font-weight:700;margin-top:1px}
+  .vet-section{margin-bottom:14px}
+  .vet-section h3{font-size:12px;font-weight:800;color:#6b7d37;margin:0 0 6px}
   @media print{
     body{background:#fff}
     .panel{display:none}
     .app{display:block}
     .preview-wrap{padding:0}
-    .sheet{box-shadow:none;width:auto;min-height:0}
+    .sheet{width:auto}
+    .pdf-page{box-shadow:none;margin-bottom:0;min-height:0}
+    .pdf-page:last-child{page-break-after:auto;break-after:auto}
+    .pg-tag{display:none}
+    .pdf2-divider{display:none}
     @page{size:A4;margin:0}
   }
 </style>
@@ -63,7 +114,7 @@
 
   <div class="panel">
     <h1>詳細ごはんカルテPDF 作成ツール</h1>
-    <p class="hint">Googleフォームの回答内容をここに入力すると、右側にPDFプレビューが生成されます。「印刷してPDF保存」→送信先メールに添付してください（社内用・非公開ページ）。</p>
+    <p class="hint">Googleフォームの回答内容をここに入力すると、右側にPDF①（飼い主向け詳細カルテ・全10ページ）とPDF②（動物病院相談用サマリー・1ページ）のプレビューが生成されます。印刷ダイアログのページ範囲指定で2つのPDFとして別々に保存するか、まとめて1つのPDFとして保存してください（社内用・非公開ページ）。</p>
 
     <fieldset>
       <legend>基本情報</legend>
@@ -88,13 +139,20 @@
       <p class="hint" style="margin:0 0 8px">無料診断の結果画面のスクリーンショット、またはフォームの性格関連の回答から入力してください。</p>
       <label>タイプ名</label><input type="text" id="typeName" placeholder="例：静かな安心職人">
       <div class="row">
-        <div><label>社交性</label><select id="axisSocial"><option value="">未回答</option><option value="open">人・犬に積極的</option><option value="watch">様子を見てから近づく</option></select></div>
+        <div><label>社交性（人への距離感）</label><select id="axisSocial"><option value="">未回答</option><option value="open">人・犬に積極的</option><option value="watch">様子を見てから近づく</option></select></div>
         <div><label>慎重さ</label><select id="axisCaution"><option value="">未回答</option><option value="challenge">新しいことに強い</option><option value="safe">安心できる手順が必要</option></select></div>
       </div>
       <div class="row">
         <div><label>活動性</label><select id="axisActivity"><option value="">未回答</option><option value="active">活発・興奮しやすい</option><option value="calm">落ち着いている</option></select></div>
         <div><label>飼い主との距離感</label><select id="axisBond"><option value="">未回答</option><option value="close">そばにいたい</option><option value="indie">マイペース</option></select></div>
       </div>
+      <label>他の犬との距離感（任意・分かれば）</label>
+      <select id="axisDogDistance">
+        <option value="">未回答</option>
+        <option value="friendly">他の犬にも友好的</option>
+        <option value="watchful">様子を見てから近づく（対犬）</option>
+        <option value="avoidant">苦手・距離を置きたい</option>
+      </select>
       <label>食べ物への反応</label>
       <select id="foodDrive"><option value="normal">普通</option><option value="high">ごほうび・おやつに強く反応する</option><option value="low">食べムラがある／関心が薄い</option></select>
     </fieldset>
@@ -111,12 +169,35 @@
 
     <fieldset>
       <legend>③体重・体型・おやつ・サプリ</legend>
+      <label>体型スコア（BCS）の目安（任意）</label>
+      <select id="bcs">
+        <option value="">未回答</option>
+        <option value="thin">やせ気味</option>
+        <option value="ideal">適正</option>
+        <option value="heavy">やや肥満気味</option>
+      </select>
       <label>おやつの内容と量</label><textarea id="snackDetail"></textarea>
       <label>サプリメントの有無（内容も分かれば）</label><input type="text" id="supplement">
+      <label>給餌環境（任意・他のペットの有無、食事場所など）</label><input type="text" id="feedingEnv" placeholder="例：多頭飼い、早食い防止皿を使用">
     </fieldset>
 
     <fieldset>
-      <legend>④健診で気になる項目</legend>
+      <legend>④生活環境・運動・睡眠</legend>
+      <p class="hint" style="margin:0 0 8px">すべて任意項目です。分かる範囲でご入力ください。</p>
+      <label>散歩の頻度・時間の目安</label><input type="text" id="walkDetail" placeholder="例：1日2回・各20分">
+      <label>留守番時間の目安</label><input type="text" id="aloneTime" placeholder="例：平日6〜8時間">
+      <label>生活環境</label>
+      <select id="livingEnv">
+        <option value="">未回答</option>
+        <option value="indoor">室内メイン</option>
+        <option value="outdoor">屋外メイン</option>
+        <option value="mixed">室内外半々</option>
+      </select>
+      <label>睡眠・休息の様子（気になる点があれば）</label><input type="text" id="sleepNote">
+    </fieldset>
+
+    <fieldset>
+      <legend>⑤健診で気になる項目</legend>
       <div id="checkupItems">
         <label class="chk"><input type="checkbox" value="腎臓系（BUN・Creなど）">腎臓系（BUN・Creなど）</label>
         <label class="chk"><input type="checkbox" value="肝臓系（ALT・ALPなど）">肝臓系（ALT・ALPなど）</label>
@@ -132,78 +213,412 @@
         <div><label>療法食中</label><select id="onTherapeutic"><option>いいえ</option><option>はい</option></select></div>
       </div>
       <label>気になる症状（任意）</label><textarea id="symptoms"></textarea>
+      <label>飼い主様が今困っていること・相談したいこと（任意・自由記入）</label><textarea id="currentIssues"></textarea>
+    </fieldset>
+
+    <fieldset>
+      <legend>⑥候補フード（3〜5件・PDF①の候補ページ用）</legend>
+      <p class="hint" style="margin:0 0 8px">このコに合いそうなフードを3〜5件、それぞれ「向いている切り口」と「このコに合う理由」を添えて入力してください。ランキング形式にはしません。空欄の枠はカルテに表示されません。</p>
+      <details open>
+        <summary>候補① </summary>
+        <label>商品名</label><input type="text" id="p1Name">
+        <div class="row">
+          <div><label>向いている切り口（例：食べムラ重視ならこれ）</label><input type="text" id="p1Purpose"></div>
+          <div><label>対象ライフステージ</label><input type="text" id="p1Age" placeholder="例：シニア犬用"></div>
+        </div>
+        <div class="row">
+          <div><label>kcal/100g</label><input type="number" id="p1Kcal100" min="0"></div>
+          <div><label>粒サイズ</label><input type="text" id="p1Kibble" placeholder="例：小粒"></div>
+        </div>
+        <label>たんぱく／脂質／食物繊維の目安</label><input type="text" id="p1Macro" placeholder="例：28% / 15% / 3%">
+        <label>主原料・たんぱく源</label><input type="text" id="p1Protein" placeholder="例：チキン">
+        <div class="row">
+          <div><label>価格（参考）</label><input type="text" id="p1Price" placeholder="例：3,960円(2kg)"></div>
+          <div><label>1日あたりコスト目安</label><input type="text" id="p1DailyCost" placeholder="例：約190円/日"></div>
+        </div>
+        <label>このコに合う理由</label><textarea id="p1Reason"></textarea>
+      </details>
+      <details open>
+        <summary>候補②</summary>
+        <label>商品名</label><input type="text" id="p2Name">
+        <div class="row">
+          <div><label>向いている切り口</label><input type="text" id="p2Purpose"></div>
+          <div><label>対象ライフステージ</label><input type="text" id="p2Age"></div>
+        </div>
+        <div class="row">
+          <div><label>kcal/100g</label><input type="number" id="p2Kcal100" min="0"></div>
+          <div><label>粒サイズ</label><input type="text" id="p2Kibble"></div>
+        </div>
+        <label>たんぱく／脂質／食物繊維の目安</label><input type="text" id="p2Macro">
+        <label>主原料・たんぱく源</label><input type="text" id="p2Protein">
+        <div class="row">
+          <div><label>価格（参考）</label><input type="text" id="p2Price"></div>
+          <div><label>1日あたりコスト目安</label><input type="text" id="p2DailyCost"></div>
+        </div>
+        <label>このコに合う理由</label><textarea id="p2Reason"></textarea>
+      </details>
+      <details open>
+        <summary>候補③</summary>
+        <label>商品名</label><input type="text" id="p3Name">
+        <div class="row">
+          <div><label>向いている切り口</label><input type="text" id="p3Purpose"></div>
+          <div><label>対象ライフステージ</label><input type="text" id="p3Age"></div>
+        </div>
+        <div class="row">
+          <div><label>kcal/100g</label><input type="number" id="p3Kcal100" min="0"></div>
+          <div><label>粒サイズ</label><input type="text" id="p3Kibble"></div>
+        </div>
+        <label>たんぱく／脂質／食物繊維の目安</label><input type="text" id="p3Macro">
+        <label>主原料・たんぱく源</label><input type="text" id="p3Protein">
+        <div class="row">
+          <div><label>価格（参考）</label><input type="text" id="p3Price"></div>
+          <div><label>1日あたりコスト目安</label><input type="text" id="p3DailyCost"></div>
+        </div>
+        <label>このコに合う理由</label><textarea id="p3Reason"></textarea>
+      </details>
+      <details>
+        <summary>候補④（任意）</summary>
+        <label>商品名</label><input type="text" id="p4Name">
+        <div class="row">
+          <div><label>向いている切り口</label><input type="text" id="p4Purpose"></div>
+          <div><label>対象ライフステージ</label><input type="text" id="p4Age"></div>
+        </div>
+        <div class="row">
+          <div><label>kcal/100g</label><input type="number" id="p4Kcal100" min="0"></div>
+          <div><label>粒サイズ</label><input type="text" id="p4Kibble"></div>
+        </div>
+        <label>たんぱく／脂質／食物繊維の目安</label><input type="text" id="p4Macro">
+        <label>主原料・たんぱく源</label><input type="text" id="p4Protein">
+        <div class="row">
+          <div><label>価格（参考）</label><input type="text" id="p4Price"></div>
+          <div><label>1日あたりコスト目安</label><input type="text" id="p4DailyCost"></div>
+        </div>
+        <label>このコに合う理由</label><textarea id="p4Reason"></textarea>
+      </details>
+      <details>
+        <summary>候補⑤（任意）</summary>
+        <label>商品名</label><input type="text" id="p5Name">
+        <div class="row">
+          <div><label>向いている切り口</label><input type="text" id="p5Purpose"></div>
+          <div><label>対象ライフステージ</label><input type="text" id="p5Age"></div>
+        </div>
+        <div class="row">
+          <div><label>kcal/100g</label><input type="number" id="p5Kcal100" min="0"></div>
+          <div><label>粒サイズ</label><input type="text" id="p5Kibble"></div>
+        </div>
+        <label>たんぱく／脂質／食物繊維の目安</label><input type="text" id="p5Macro">
+        <label>主原料・たんぱく源</label><input type="text" id="p5Protein">
+        <div class="row">
+          <div><label>価格（参考）</label><input type="text" id="p5Price"></div>
+          <div><label>1日あたりコスト目安</label><input type="text" id="p5DailyCost"></div>
+        </div>
+        <label>このコに合う理由</label><textarea id="p5Reason"></textarea>
+      </details>
     </fieldset>
 
     <div class="actions">
       <button class="btn-print" onclick="window.print()">印刷してPDF保存</button>
       <button class="btn-reset" onclick="if(confirm('入力内容をすべてクリアしますか？'))location.reload()">入力内容をクリア</button>
+      <p class="hint" style="font-size:11px">印刷ダイアログの「ページ」欄で 1-10 を指定するとPDF①、11 を指定するとPDF②として個別に保存できます。</p>
     </div>
   </div>
 
   <div class="preview-wrap">
     <div class="sheet" id="sheet">
-      <div class="head">
-        <span class="date" id="pvDate">2026/01/01 作成</span>
-        <div class="brand">わんにゃんごはんカルテ</div>
-        <div class="title">詳細ごはんカルテ</div>
-      </div>
-      <div class="body">
-        <div class="profile">
-          <div class="lbl">対象のわんちゃん</div>
-          <div class="val" id="pvProfile">（左のフォームに入力してください）</div>
-        </div>
 
-        <h2 class="sec"><span class="num">1</span>うちの子タイプ診断の結果</h2>
-        <div class="box green">
-          <div class="val" id="pvTypeName" style="font-size:19px;font-weight:800">（左のフォームにタイプ名を入力してください）</div>
-          <p class="small" id="pvTypeAxes" style="margin-top:6px"></p>
-        </div>
+      <!-- ============ PDF① 飼い主向け詳細カルテ ============ -->
 
-        <h2 class="sec"><span class="num">2</span>現在のフード量とごはん量の目安</h2>
-        <div class="metrics">
-          <div class="box green metric"><strong id="pvFeedNow">-</strong><span id="pvFeedNowLabel">今あげている量（1日）</span></div>
-          <div class="box green metric"><strong id="pvDER">-</strong><span>計算上の目安（RER/DER）</span></div>
+      <!-- Page 1: 総合サマリー -->
+      <section class="pdf-page" id="page1">
+        <div class="head">
+          <span class="date pv-date">2026/01/01 作成</span>
+          <div class="brand">わんにゃんごはんカルテ　PDF①　飼い主向け詳細カルテ</div>
+          <div class="title">総合サマリー</div>
+          <div class="who pv-who"></div>
         </div>
-        <p class="small" id="pvFeedNote"></p>
+        <div class="body">
+          <p class="pg-tag">P.1 / 10　総合サマリー</p>
+          <div class="profile">
+            <div class="lbl">対象のわんちゃん</div>
+            <div class="val" id="pvProfile">（左のフォームに入力してください）</div>
+          </div>
 
-        <h2 class="sec"><span class="num">3</span>おやつ上限の目安</h2>
-        <div class="box amber"><span id="pvSnack">-</span>　※上記おやつ内容の実測が難しい場合は、パッケージ表示を目安にしてください</div>
+          <h2 class="sec"><span class="num">1</span>タイプ・現在の状態</h2>
+          <div class="box green">
+            <div class="val" id="ovTypeName" style="font-size:19px;font-weight:800">（左のフォームにタイプ名を入力してください）</div>
+            <p class="small" id="ovTypeAxes" style="margin-top:6px"></p>
+          </div>
 
-        <h2 class="sec"><span class="num">4</span>体重・体型・おやつ・サプリメモ</h2>
-        <div class="box beige">
-          <div id="pvBodyMemo"></div>
+          <div class="metrics" style="margin-top:14px">
+            <div class="box beige metric"><strong id="ovWeight">-</strong><span>現在の体重</span></div>
+            <div class="box beige metric"><strong id="ovDER">-</strong><span>1日の目安カロリー（RER/DER）</span></div>
+            <div class="box beige metric"><strong id="ovBcs">-</strong><span>体型スコア（BCS）の目安</span></div>
+            <div class="box beige metric"><strong id="ovFood">-</strong><span>現在のフード</span></div>
+          </div>
+
+          <h2 class="sec"><span class="num">2</span>総合アセスメント</h2>
+          <div class="box beige">
+            <p style="margin:0;font-size:13.5px;line-height:1.9" id="ovSummary"></p>
+          </div>
         </div>
+      </section>
 
-        <h2 class="sec"><span class="num">5</span>健康診断で気になる項目</h2>
-        <div class="box beige">
-          <ul class="plain" id="pvCheckup"><li>特になし</li></ul>
+      <!-- Page 2: 性格・行動分析 -->
+      <section class="pdf-page" id="page2">
+        <div class="head">
+          <span class="date pv-date">2026/01/01 作成</span>
+          <div class="brand">わんにゃんごはんカルテ　PDF①　飼い主向け詳細カルテ</div>
+          <div class="title">性格・行動分析</div>
+          <div class="who pv-who"></div>
         </div>
+        <div class="body">
+          <p class="pg-tag">P.2 / 10　性格・行動分析</p>
 
-        <h2 class="sec"><span class="num">6</span>性格・健診をふまえた相談ポイント</h2>
-        <div class="box beige">
-          <div id="pvVetPoints"></div>
-          <p class="small" id="pvRefs" style="margin-top:10px"></p>
-        </div>
+          <h2 class="sec"><span class="num">1</span>新しい環境への反応</h2>
+          <div class="box beige"><p style="margin:0;font-size:13px;line-height:1.8" id="peNewEnv"></p></div>
 
-        <h2 class="sec"><span class="num">7</span>食事を変更する前の注意点</h2>
-        <div class="box amber">
-          <ul class="plain">
-            <li>切替は7〜10日かけて少しずつ行い、体調変化があれば中止して受診してください</li>
-            <li>療法食中・服薬中の場合は、必ず事前に主治医へ確認してください</li>
-            <li>本カルテの内容は食事量の目安整理であり、診断・治療の指示ではありません</li>
-          </ul>
-        </div>
+          <h2 class="sec"><span class="num">2</span>人・他の犬との距離感</h2>
+          <div class="box beige">
+            <p style="margin:0 0 8px;font-size:13px;line-height:1.8" id="pePeople"></p>
+            <p style="margin:0;font-size:13px;line-height:1.8" id="peDog"></p>
+          </div>
 
-        <h2 class="sec"><span class="num">8</span>候補フードの見方</h2>
-        <div class="box beige">
-          <p style="margin:0;font-size:13px">カロリー・脂質・タンパク質・粒サイズを、現在のフードと比較しながら確認してください。候補は下記の「わんにゃんごはんカルテ」内の診断・商品ページでも確認できます。</p>
-          <p class="small">https://www.wannyan-gohan.com/#diagnosis</p>
-        </div>
+          <h2 class="sec"><span class="num">3</span>活動性・遊び・散歩</h2>
+          <div class="box beige">
+            <p style="margin:0 0 8px;font-size:13px;line-height:1.8" id="peActivity"></p>
+            <p style="margin:0 0 8px;font-size:13px;line-height:1.8" id="pePlay"></p>
+            <p style="margin:0;font-size:13px;line-height:1.8" id="peWalks"></p>
+          </div>
 
-        <div class="disclaimer">
-          本カルテは、ご入力いただいた内容をもとに食事量の目安を整理した参考資料であり、診断・治療・療法食の指示ではありません。持病がある、症状がある、服薬中、療法食を利用中、健診で異常があった場合は、内容の実行前に必ず主治医（かかりつけ獣医師）にご相談ください。ぐったりしている、嘔吐・下痢が続く、食欲がないなど、緊急性のある症状がある場合は、直ちに動物病院を受診してください。　© わんにゃんごはんカルテ
+          <h2 class="sec"><span class="num">4</span>安心材料・ストレス傾向</h2>
+          <div class="box amber">
+            <p style="margin:0 0 8px;font-size:13px;line-height:1.8" id="peSecurity"></p>
+            <p style="margin:0;font-size:13px;line-height:1.8" id="peStress"></p>
+          </div>
         </div>
-      </div>
+      </section>
+
+      <!-- Page 3: 生活スタイル分析 -->
+      <section class="pdf-page" id="page3">
+        <div class="head">
+          <span class="date pv-date">2026/01/01 作成</span>
+          <div class="brand">わんにゃんごはんカルテ　PDF①　飼い主向け詳細カルテ</div>
+          <div class="title">生活スタイル分析</div>
+          <div class="who pv-who"></div>
+        </div>
+        <div class="body">
+          <p class="pg-tag">P.3 / 10　生活スタイル分析</p>
+
+          <h2 class="sec"><span class="num">1</span>運動量</h2>
+          <div class="box beige"><p style="margin:0;font-size:13px;line-height:1.8" id="liExercise"></p></div>
+
+          <h2 class="sec"><span class="num">2</span>睡眠・休息</h2>
+          <div class="box beige"><p style="margin:0;font-size:13px;line-height:1.8" id="liSleep"></p></div>
+
+          <h2 class="sec"><span class="num">3</span>留守番・生活環境</h2>
+          <div class="box beige">
+            <p style="margin:0 0 8px;font-size:13px;line-height:1.8" id="liAlone"></p>
+            <p style="margin:0;font-size:13px;line-height:1.8" id="liEnv"></p>
+          </div>
+
+          <h2 class="sec"><span class="num">4</span>刺激レベルの好み</h2>
+          <div class="box beige"><p style="margin:0;font-size:13px;line-height:1.8" id="liStimulation"></p></div>
+        </div>
+      </section>
+
+      <!-- Page 4: 食事分析 -->
+      <section class="pdf-page" id="page4">
+        <div class="head">
+          <span class="date pv-date">2026/01/01 作成</span>
+          <div class="brand">わんにゃんごはんカルテ　PDF①　飼い主向け詳細カルテ</div>
+          <div class="title">食事分析</div>
+          <div class="who pv-who"></div>
+        </div>
+        <div class="body">
+          <p class="pg-tag">P.4 / 10　食事分析</p>
+
+          <h2 class="sec"><span class="num">1</span>現在のフード量とごはん量の目安</h2>
+          <div class="metrics">
+            <div class="box green metric"><strong id="pvFeedNow">-</strong><span id="pvFeedNowLabel">今あげている量（1日）</span></div>
+            <div class="box green metric"><strong id="pvDER">-</strong><span>計算上の目安（RER/DER）</span></div>
+          </div>
+          <p class="small" id="pvFeedNote"></p>
+
+          <h2 class="sec"><span class="num">2</span>おやつ上限の目安</h2>
+          <div class="box amber"><span id="pvSnack">-</span>　※上記おやつ内容の実測が難しい場合は、パッケージ表示を目安にしてください</div>
+          <p class="small" id="dietTreatDetail" style="margin-top:8px"></p>
+
+          <h2 class="sec"><span class="num">3</span>食欲・食べムラ</h2>
+          <div class="box beige"><p style="margin:0;font-size:13px;line-height:1.8" id="dietAppetite"></p></div>
+
+          <h2 class="sec"><span class="num">4</span>給餌環境・体重・体型</h2>
+          <div class="box beige">
+            <p style="margin:0 0 8px;font-size:13px;line-height:1.8" id="dietEnv"></p>
+            <p style="margin:0 0 8px;font-size:13px;line-height:1.8" id="dietBcs"></p>
+            <div id="pvBodyMemo"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Page 5: すでに良い状態のポイント -->
+      <section class="pdf-page" id="page5">
+        <div class="head">
+          <span class="date pv-date">2026/01/01 作成</span>
+          <div class="brand">わんにゃんごはんカルテ　PDF①　飼い主向け詳細カルテ</div>
+          <div class="title">すでに良い状態のポイント</div>
+          <div class="who pv-who"></div>
+        </div>
+        <div class="body">
+          <p class="pg-tag">P.5 / 10　すでに良い状態のポイント</p>
+          <p class="small" style="margin-bottom:10px">問題点だけでなく、今のままで大丈夫な部分もお伝えします。</p>
+          <ul class="good-list" id="goodList"></ul>
+        </div>
+      </section>
+
+      <!-- Page 6: 見直すと良いポイント -->
+      <section class="pdf-page" id="page6">
+        <div class="head">
+          <span class="date pv-date">2026/01/01 作成</span>
+          <div class="brand">わんにゃんごはんカルテ　PDF①　飼い主向け詳細カルテ</div>
+          <div class="title">見直すと良いポイント</div>
+          <div class="who pv-who"></div>
+        </div>
+        <div class="body">
+          <p class="pg-tag">P.6 / 10　見直すと良いポイント（優先度順）</p>
+          <div id="priList"></div>
+          <p class="small" id="pvRefs" style="margin-top:6px"></p>
+        </div>
+      </section>
+
+      <!-- Page 7: フード選びで大切にしたい条件 -->
+      <section class="pdf-page" id="page7">
+        <div class="head">
+          <span class="date pv-date">2026/01/01 作成</span>
+          <div class="brand">わんにゃんごはんカルテ　PDF①　飼い主向け詳細カルテ</div>
+          <div class="title">フード選びで大切にしたい条件</div>
+          <div class="who pv-who"></div>
+        </div>
+        <div class="body">
+          <p class="pg-tag">P.7 / 10　フード選びで大切にしたい条件</p>
+          <p class="small" style="margin-bottom:10px">具体的な商品名の前に、このコにとって重要な「見るべき条件」を整理します。</p>
+          <div id="critList"></div>
+        </div>
+      </section>
+
+      <!-- Page 8: 候補フード -->
+      <section class="pdf-page" id="page8">
+        <div class="head">
+          <span class="date pv-date">2026/01/01 作成</span>
+          <div class="brand">わんにゃんごはんカルテ　PDF①　飼い主向け詳細カルテ</div>
+          <div class="title">候補フード</div>
+          <div class="who pv-who"></div>
+        </div>
+        <div class="body">
+          <p class="pg-tag">P.8 / 10　候補フード（順位づけはしていません）</p>
+          <div id="prodCards"></div>
+        </div>
+      </section>
+
+      <!-- Page 9: 比較表 -->
+      <section class="pdf-page" id="page9">
+        <div class="head">
+          <span class="date pv-date">2026/01/01 作成</span>
+          <div class="brand">わんにゃんごはんカルテ　PDF①　飼い主向け詳細カルテ</div>
+          <div class="title">候補フード比較表</div>
+          <div class="who pv-who"></div>
+        </div>
+        <div class="body">
+          <p class="pg-tag">P.9 / 10　候補フード比較表</p>
+          <div style="overflow-x:auto">
+            <table class="cmp">
+              <thead>
+                <tr>
+                  <th>商品名</th><th style="white-space:nowrap">kcal<br>/100g</th><th>たんぱく/脂質/食物繊維</th><th>粒サイズ</th>
+                  <th>主原料</th><th>価格</th><th>1日コスト目安</th><th>給与量目安<br>（このコの場合）</th>
+                  <th>ライフステージ</th><th>このコに合う理由</th>
+                </tr>
+              </thead>
+              <tbody id="cmpBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Page 10: 3〜6ヶ月の見守りポイント -->
+      <section class="pdf-page" id="page10">
+        <div class="head">
+          <span class="date pv-date">2026/01/01 作成</span>
+          <div class="brand">わんにゃんごはんカルテ　PDF①　飼い主向け詳細カルテ</div>
+          <div class="title">今後3〜6ヶ月の見守りポイント</div>
+          <div class="who pv-who"></div>
+        </div>
+        <div class="body">
+          <p class="pg-tag">P.10 / 10　今後3〜6ヶ月の見守りポイント</p>
+          <table class="watch">
+            <thead><tr><th>項目</th><th>今回の状態（基準）</th><th class="chk-cell">1ヶ月後</th><th class="chk-cell">3ヶ月後</th><th class="chk-cell">6ヶ月後</th></tr></thead>
+            <tbody id="watchBody"></tbody>
+          </table>
+          <div class="box amber" style="margin-top:16px">
+            <div class="small" style="font-weight:800;margin-bottom:4px">特に注意して見ていただきたい点</div>
+            <ul class="plain" id="watchNotes"></ul>
+          </div>
+
+          <div class="box amber" style="margin-top:16px">
+            <ul class="plain">
+              <li>切替は7〜10日かけて少しずつ行い、体調変化があれば中止して受診してください</li>
+              <li>療法食中・服薬中の場合は、必ず事前に主治医へ確認してください</li>
+              <li>本カルテの内容は食事量の目安整理であり、診断・治療の指示ではありません</li>
+            </ul>
+          </div>
+
+          <div class="disclaimer">
+            本カルテは、ご入力いただいた内容をもとに食事量の目安を整理した参考資料であり、診断・治療・療法食の指示ではありません。持病がある、症状がある、服薬中、療法食を利用中、健診で異常があった場合は、内容の実行前に必ず主治医（かかりつけ獣医師）にご相談ください。ぐったりしている、嘔吐・下痢が続く、食欲がないなど、緊急性のある症状がある場合は、直ちに動物病院を受診してください。　© わんにゃんごはんカルテ
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ PDF② 動物病院相談用サマリー ============ -->
+
+      <p class="pdf2-divider">▼ ここから PDF②　動物病院相談用サマリー（1ページ）▼</p>
+
+      <section class="pdf-page" id="page11">
+        <div class="head">
+          <span class="date pv-date">2026/01/01 作成</span>
+          <div class="brand">わんにゃんごはんカルテ　PDF②　動物病院相談用サマリー</div>
+          <div class="title">診察にそのままお持ちください</div>
+          <div class="who pv-who"></div>
+        </div>
+        <div class="body" style="padding:22px 40px 30px">
+          <div class="vet-grid" id="vetBasic"></div>
+
+          <div class="vet-section">
+            <h3>現在のフード・給与量</h3>
+            <div class="box beige" id="vetFood" style="font-size:12.5px;line-height:1.8;padding:10px 14px"></div>
+          </div>
+
+          <div class="vet-section">
+            <h3>健診で気になる項目</h3>
+            <div class="box beige" id="vetCheckup" style="font-size:12.5px;line-height:1.8;padding:10px 14px"></div>
+          </div>
+
+          <div class="vet-section">
+            <h3>気になる症状・現在困っていること</h3>
+            <div class="box beige" id="vetSymptoms" style="font-size:12.5px;line-height:1.8;padding:10px 14px"></div>
+          </div>
+
+          <div class="vet-section">
+            <h3>動物病院で相談したいこと</h3>
+            <div class="box amber" style="padding:10px 14px">
+              <ul class="plain" id="vetQuestions"></ul>
+            </div>
+          </div>
+
+          <div class="disclaimer" style="margin-top:16px">
+            本サマリーは、飼い主様の入力内容を整理した参考資料であり、診断・治療の指示ではありません。療法食・投薬内容の変更は、必ず主治医の判断のもとで行ってください。　© わんにゃんごはんカルテ
+          </div>
+        </div>
+      </section>
+
     </div>
   </div>
 
@@ -232,6 +647,14 @@ function fmtDate(iso){
   return `${y}/${m}/${d}`;
 }
 
+const AXIS_LABEL = {
+  open:'人や犬に積極的', watch:'様子を見てから近づく',
+  challenge:'新しいことに強い', safe:'安心できる手順が必要',
+  active:'活発・興奮しやすい', calm:'落ち着いている',
+  close:'そばにいたい', indie:'マイペース',
+  friendly:'他の犬にも友好的', watchful:'様子を見てから近づく（対犬）', avoidant:'他の犬とは距離を置きたい'
+};
+
 function render(){
   const dogName = $('dogName').value || '（未入力）';
   const breed = $('breed').value;
@@ -239,8 +662,10 @@ function render(){
   const sex = $('sex').value;
   const neuter = $('neuter').value;
   const weight = $('weight').value;
+  const bcs = $('bcs').value;
+  const bcsLabel = {thin:'やせ気味', ideal:'適正', heavy:'やや肥満気味'}[bcs] || '';
 
-  $('pvDate').textContent = fmtDate($('createdDate').value) + ' 作成';
+  document.querySelectorAll('.pv-date').forEach(el => el.textContent = fmtDate($('createdDate').value) + ' 作成');
 
   const profileParts = [dogName];
   if (age) profileParts.push(age + '歳');
@@ -248,28 +673,31 @@ function render(){
   if (sex) profileParts.push(sex);
   if (neuter) profileParts.push('避妊・去勢：' + neuter);
   if (breed) profileParts.push(breed);
-  $('pvProfile').textContent = profileParts.join('　・　');
+  const profileText = profileParts.join('　・　');
+  $('pvProfile').textContent = profileText;
+  document.querySelectorAll('.pv-who').forEach(el => el.textContent = '対象：' + profileText);
 
-  // Section 1
+  // 食事量の基本計算（既存ロジックを維持）
   const feedGram = $('feedGram').value;
   const feedTimes = $('feedTimes').value;
   const foodKcal100 = Number($('foodKcal100').value || 0);
   let feedNowText = '-';
+  let actualKcal = 0;
   if (feedGram || feedTimes) {
     feedNowText = (feedGram ? feedGram + 'g' : '') + (feedTimes ? `／1日${feedTimes}回` : '');
     if (foodKcal100 && feedGram) {
-      const kcal = Math.round(foodKcal100 * Number(feedGram) / 100);
-      feedNowText += `（約${kcal}kcal）`;
+      actualKcal = foodKcal100 * Number(feedGram) / 100;
+      feedNowText += `（約${Math.round(actualKcal)}kcal）`;
     }
   }
-  // Type section
+
   const typeName = $('typeName').value;
   const axisSocial = $('axisSocial').value, axisCaution = $('axisCaution').value, axisActivity = $('axisActivity').value, axisBond = $('axisBond').value;
+  const axisDogDistance = $('axisDogDistance').value;
   const foodDrive = $('foodDrive').value;
-  const AXIS_LABEL = {open:'人や犬に積極的',watch:'様子を見てから近づく',challenge:'新しいことに強い',safe:'安心できる手順が必要',active:'活発・興奮しやすい',calm:'落ち着いている',close:'そばにいたい',indie:'マイペース'};
-  $('pvTypeName').textContent = typeName ? typeName : '（左のフォームにタイプ名を入力してください）';
-  const axisLabels = [axisSocial,axisCaution,axisActivity,axisBond].filter(Boolean).map(a=>AXIS_LABEL[a]);
-  $('pvTypeAxes').textContent = axisLabels.length ? axisLabels.join('・') : '無料診断の結果（社交性・慎重さ・活動性・距離感）を入力すると、下の「相談ポイント」に性格傾向を反映します。';
+  const walkDetail = $('walkDetail').value, aloneTime = $('aloneTime').value, livingEnv = $('livingEnv').value, sleepNote = $('sleepNote').value;
+  const feedingEnv = $('feedingEnv').value;
+  const currentIssues = $('currentIssues').value;
 
   $('pvFeedNow').textContent = feedNowText;
   $('pvFeedNowLabel').textContent = '今あげている量（1日）' + ($('foodName').value ? '：' + $('foodName').value : '');
@@ -283,11 +711,8 @@ function render(){
     $('pvDER').textContent = '-';
   }
   $('pvFeedNote').textContent = w > 0 ? '体重・年齢・避妊去勢・体型から算出した目安です。実際の増減は2〜4週ごとの体重記録を見ながら調整してください。' : '体重を入力すると目安カロリーを自動計算します。';
-
-  // Section 2
   $('pvSnack').innerHTML = der > 0 ? `1日 <strong>約${Math.round(der*0.1)}kcal</strong> まで（目安必要カロリーの10%）` : '体重入力後に自動計算されます';
 
-  // Section 3
   const bodyLines = [];
   bodyLines.push(`現在の体重：${weight ? weight + 'kg' : '未入力'}`);
   if ($('targetBody').value) bodyLines.push(`目標体重・気になる体型：${$('targetBody').value}`);
@@ -295,29 +720,157 @@ function render(){
   bodyLines.push(`サプリメント：${$('supplement').value || 'なし'}`);
   $('pvBodyMemo').innerHTML = bodyLines.map(l => `<div>${l}</div>`).join('');
 
-  // Section 4
   const checked = Array.from(document.querySelectorAll('#checkupItems input:checked')).map(c => c.value);
   const labValues = $('labValues').value;
-  const checkupLis = [];
-  checked.forEach(c => checkupLis.push(`<li>${c}</li>`));
-  if (labValues) checkupLis.push(`<li>健診数値メモ：${labValues}</li>`);
-  $('pvCheckup').innerHTML = checkupLis.length ? checkupLis.join('') : '<li>特になし</li>';
+  const symptoms = $('symptoms').value;
+  const onMeds = $('onMeds').value, onTherapeutic = $('onTherapeutic').value;
+  const hasFlag = k => checked.some(c => c.includes(k));
 
-  // Section 6 (personality x health synthesized insight engine)
-  const insights = buildInsights({
-    age: $('age').value, weight, body: $('targetBody').value,
-    checked, labValues, onMeds: $('onMeds').value, onTherapeutic: $('onTherapeutic').value,
-    symptoms: $('symptoms').value, axisSocial, axisCaution, axisActivity, axisBond, foodDrive
-  });
-  $('pvVetPoints').innerHTML = insights.points.map(p => `<div style="margin:0 0 12px;line-height:1.8">${p}</div>`).join('');
+  const ctx = {
+    dogName, age, weight, w, der, actualKcal, body: $('targetBody').value, bcs, bcsLabel,
+    checked, labValues, onMeds, onTherapeutic, symptoms, feedGram, feedTimes,
+    axisSocial, axisCaution, axisActivity, axisBond, axisDogDistance, foodDrive,
+    walkDetail, aloneTime, livingEnv, sleepNote, feedingEnv, currentIssues,
+    typeName, hasFlag
+  };
+
+  // ---- Page 1: 総合サマリー ----
+  $('ovTypeName').textContent = typeName ? typeName : '（左のフォームにタイプ名を入力してください）';
+  const axisLabels = [axisSocial,axisCaution,axisActivity,axisBond,axisDogDistance].filter(Boolean).map(a=>AXIS_LABEL[a]);
+  $('ovTypeAxes').textContent = axisLabels.length ? axisLabels.join('・') : '無料診断の結果（社交性・慎重さ・活動性・距離感）を入力すると、性格傾向を反映します。';
+  $('ovWeight').textContent = weight ? weight + 'kg' : '-';
+  $('ovDER').textContent = der > 0 ? `約${Math.round(der)}kcal` : '-';
+  $('ovBcs').textContent = bcsLabel || '-';
+  $('ovFood').textContent = $('foodName').value || '-';
+  $('ovSummary').textContent = buildOverview(ctx);
+
+  // ---- Page 2: 性格・行動分析 ----
+  const per = personalityNarrative(ctx);
+  $('peNewEnv').textContent = per.newEnv;
+  $('pePeople').textContent = per.peopleDistance;
+  $('peDog').textContent = per.dogDistance;
+  $('peActivity').textContent = per.activity;
+  $('pePlay').textContent = per.play;
+  $('peWalks').textContent = per.walks;
+  $('peSecurity').textContent = per.security;
+  $('peStress').textContent = per.stress;
+
+  // ---- Page 3: 生活スタイル分析 ----
+  const life = lifestyleNarrative(ctx);
+  $('liExercise').textContent = life.exercise;
+  $('liSleep').textContent = life.sleep;
+  $('liAlone').textContent = life.alone;
+  $('liEnv').textContent = life.env;
+  $('liStimulation').textContent = life.stimulation;
+
+  // ---- Page 4: 食事分析 ----
+  const diet = dietNarrative(ctx);
+  const snackNote = [];
+  if ($('snackDetail').value) snackNote.push(`おやつ内容：${$('snackDetail').value}`);
+  if ($('supplement').value) snackNote.push(`サプリメント：${$('supplement').value}`);
+  $('dietTreatDetail').textContent = snackNote.join('　／　');
+  $('dietAppetite').textContent = diet.appetite;
+  $('dietEnv').textContent = diet.env;
+  $('dietBcs').textContent = diet.bcs;
+
+  // ---- Page 5: すでに良い状態のポイント ----
+  const good = buildGoodPoints(ctx);
+  $('goodList').innerHTML = good.map(g => `<li>${g}</li>`).join('');
+
+  // ---- Page 6: 見直すと良いポイント（buildInsightsを拡張して利用） ----
+  const insights = buildInsights(ctx);
+  $('priList').innerHTML = insights.points.map((p,i) => `
+    <div class="priority-item">
+      <div class="priority-num">${i+1}</div>
+      <div class="priority-body"><strong>優先度 ${i+1}</strong><p>${p}</p></div>
+    </div>`).join('');
   $('pvRefs').textContent = insights.refs.length ? '参考：' + insights.refs.join('／') : '';
+
+  // ---- Page 7: フード選びで大切にしたい条件 ----
+  const criteria = buildFoodCriteria(ctx);
+  $('critList').innerHTML = criteria.map(([k,v]) => `<div class="criteria-item"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
+
+  // ---- Page 8 & 9: 候補フード・比較表 ----
+  const products = collectProducts(ctx);
+  if (products.length) {
+    $('prodCards').innerHTML = products.map(p => `
+      <div class="product-card">
+        ${p.purpose ? `<span class="tag">${p.purpose}</span>` : ''}
+        <div class="pname">${p.name}</div>
+        <div class="pstats">${[p.kcal100 ? p.kcal100+'kcal/100g' : '', p.kibble, p.protein, p.ageStage].filter(Boolean).join('　／　')}</div>
+        <div class="preason">${p.reason || 'このコに合う理由を左のフォームから入力してください。'}</div>
+      </div>`).join('');
+    $('cmpBody').innerHTML = products.map(p => `
+      <tr>
+        <td>${p.name}</td>
+        <td>${p.kcal100 || '-'}</td>
+        <td>${p.macro || '-'}</td>
+        <td>${p.kibble || '-'}</td>
+        <td>${p.protein || '-'}</td>
+        <td>${p.price || '-'}</td>
+        <td>${p.dailyCost || '-'}</td>
+        <td>${p.feedAmount ? '約' + p.feedAmount + 'g/日' : '-'}</td>
+        <td>${p.ageStage || '-'}</td>
+        <td>${p.reason || '-'}</td>
+      </tr>`).join('');
+  } else {
+    $('prodCards').innerHTML = '<p class="small">左のフォームで候補フードを入力すると、ここに表示されます。</p>';
+    $('cmpBody').innerHTML = '<tr><td colspan="10" style="text-align:center;color:#98a094">候補フード未入力</td></tr>';
+  }
+
+  // ---- Page 10: 見守りポイント ----
+  const watchRows = [
+    ['体重', weight ? weight + 'kg' : '-'],
+    ['体型（BCS）', bcsLabel || '-'],
+    ['食欲', foodDrive === 'low' ? '食べムラあり' : foodDrive === 'high' ? '良好（反応強め）' : '普通'],
+    ['便の状態', '-'],
+    ['被毛のつや', '-'],
+    ['活動量・元気さ', axisActivity === 'active' ? '活発' : axisActivity === 'calm' ? '落ち着いている' : '-'],
+    ['飲水量', '-'],
+    ['尿の様子（回数・色）', '-'],
+    ['行動の変化', '-']
+  ];
+  $('watchBody').innerHTML = watchRows.map(([k,v]) => `<tr><td>${k}</td><td>${v}</td><td class="chk-cell">□</td><td class="chk-cell">□</td><td class="chk-cell">□</td></tr>`).join('');
+  $('watchNotes').innerHTML = buildWatchNotes(ctx).map(n => `<li>${n}</li>`).join('');
+
+  // ---- Page 11: 動物病院相談用サマリー（PDF②） ----
+  const vetBasicItems = [
+    ['名前', dogName], ['犬種', breed || '-'], ['年齢', age ? age + '歳' : '-'],
+    ['性別／避妊去勢', [sex, neuter].filter(Boolean).join('／') || '-'],
+    ['体重', weight ? weight + 'kg' : '-'], ['体型スコア（BCS）', bcsLabel || '-']
+  ];
+  $('vetBasic').innerHTML = vetBasicItems.map(([f,v]) => `<div><div class="f">${f}</div><div class="v">${v}</div></div>`).join('');
+
+  const vetFoodLines = [];
+  vetFoodLines.push(`現在のフード：${$('foodName').value || '未記入'}`);
+  vetFoodLines.push(`給与量：${feedNowText}`);
+  if ($('snackDetail').value) vetFoodLines.push(`おやつ：${$('snackDetail').value}`);
+  if ($('supplement').value) vetFoodLines.push(`サプリメント：${$('supplement').value}`);
+  vetFoodLines.push(`療法食：${onTherapeutic}　／　服薬：${onMeds}`);
+  $('vetFood').innerHTML = vetFoodLines.map(l => `<div>${l}</div>`).join('');
+
+  const vetCheckupLines = [];
+  checked.forEach(c => vetCheckupLines.push(c));
+  if (labValues) vetCheckupLines.push(`健診数値メモ：${labValues}`);
+  $('vetCheckup').innerHTML = vetCheckupLines.length ? vetCheckupLines.map(l=>`<div>${l}</div>`).join('') : '<div>特になし</div>';
+
+  const vetSymLines = [];
+  if (symptoms) vetSymLines.push(`気になる症状：${symptoms}`);
+  if (currentIssues) vetSymLines.push(`飼い主様が困っていること：${currentIssues}`);
+  $('vetSymptoms').innerHTML = vetSymLines.length ? vetSymLines.map(l=>`<div>${l}</div>`).join('') : '<div>特になし</div>';
+
+  $('vetQuestions').innerHTML = buildVetQuestions(ctx).map(q => `<li>${q}</li>`).join('');
+
+  // 旧セクション残置（後方互換のための算出のみ・非表示要素なし）
 }
 
 // Cross-references personality axes + health flags + demographics into synthesized
 // talking points, instead of mechanically echoing checked items back.
+// NOTE: 既存ブランチ A〜E はそのまま維持。F〜I を新規追加（末尾の残余チェック項目ループの手前に挿入）。
 function buildInsights(ctx){
   const { age, weight, body, checked, onMeds, onTherapeutic, symptoms,
-          axisSocial, axisCaution, axisActivity, axisBond, foodDrive } = ctx;
+          axisSocial, axisCaution, axisActivity, axisBond, foodDrive,
+          axisDogDistance, livingEnv, bcs, currentIssues } = ctx;
   const pts = [];
   const refs = new Set();
   const bodyTxt = (body || '').trim();
@@ -370,6 +923,30 @@ function buildInsights(ctx){
     refs.add('WSAVA Global Nutrition Guidelines');
   }
 
+  // F. 生活環境（室内メイン）× 活動性が高い（新規追加）
+  if (livingEnv === 'indoor' && axisActivity === 'active') {
+    pts.push('主に室内で過ごす活発なタイプです。運動量が不足すると、食べムラやおやつへの執着として表れることがあるため、室内でも知育トイや引っ張りっこなど、頭と体を使う遊びを1日の中に組み込むと満足感につながりやすくなります。');
+  }
+
+  // G. 他の犬との距離感が「苦手・避けたい」（新規追加）
+  const dogStress = /吠え|唸|怖が|びく/.test(symTxt);
+  if (axisDogDistance === 'avoidant' && dogStress) {
+    pts.push('他の犬との距離を取りたがるタイプです。ドッグランや混雑した時間帯の散歩がストレスになり、食欲や便に影響することがあるため、他の犬と距離を取れるコース・時間帯を選ぶと安定しやすくなります。');
+  } else if (axisDogDistance === 'avoidant') {
+    pts.push('他の犬との接触は苦手・避けたい傾向があるタイプです。無理に慣れさせようとせず、距離を保てる環境を選んであげることが、日々のストレスを減らすことにつながります。');
+  }
+
+  // H. 体型スコア（BCS）がやや肥満気味（新規追加・自由記述に依存しない体型判定）
+  if (bcs === 'heavy') {
+    pts.push('体型スコア（BCS）がやや肥満気味とのことです。体重の増減は数値だけでなく、実際に触って肋骨の触れ方を定期的に確認しながら、極端な減量ではなく緩やかな見直しを心がけてください。');
+  }
+
+  // I. 飼い主様からの自由記述の困りごと（新規追加・symptomsとは別入力）
+  const issuesTxt = (currentIssues || '').trim();
+  if (issuesTxt && issuesTxt !== symTxt) {
+    pts.push(`飼い主様から寄せられた気になる点：${issuesTxt}。次回の診察時に、具体的なタイミングや頻度もあわせてお伝えいただくとスムーズです。`);
+  }
+
   // 残りのチェック項目は簡潔な確認事項として補足
   checked.forEach(c => {
     const key = c.replace(/（.*?）/, '');
@@ -385,6 +962,314 @@ function buildInsights(ctx){
   if (!pts.length) pts.push('現時点で特に気になる項目はありませんが、体重・食欲・便の変化があれば診察時にお伝えください。');
 
   return { points: pts, refs: Array.from(refs) };
+}
+
+// ページ1：性格タイプ × 健康/生活状態を統合した300〜500字程度の総合アセスメント
+function buildOverview(ctx){
+  const { dogName, typeName, der, actualKcal, checked, bcsLabel, axisCaution, axisActivity, axisBond, foodDrive, weight } = ctx;
+  const name = dogName && dogName !== '（未入力）' ? dogName : 'このコ';
+  const parts = [];
+
+  parts.push(typeName ? `${name}は「${typeName}」タイプで、` : `${name}は、`);
+
+  const traits = [];
+  if (axisCaution === 'safe') traits.push('新しいことには時間をかけて慣れていく慎重さ');
+  if (axisCaution === 'challenge') traits.push('初めてのことにも物怖じせず向き合える好奇心');
+  if (axisActivity === 'active') traits.push('活発でエネルギッシュな一面');
+  if (axisActivity === 'calm') traits.push('落ち着いてマイペースな一面');
+  if (axisBond === 'close') traits.push('飼い主様のそばにいることを好む甘えん坊な一面');
+  if (axisBond === 'indie') traits.push('自分の時間も大切にするマイペースな一面');
+  parts.push(traits.length ? `${traits.join('と')}を持つコです。` : '性格タイプの詳細は、今後の診断結果とあわせて反映していきます。');
+
+  if (weight) {
+    let stateTxt = `現在の体重は${weight}kgで、`;
+    stateTxt += bcsLabel ? `体型スコア（BCS）の目安は${bcsLabel}です。` : '体型については今後の記録とあわせて確認していきます。';
+    parts.push(stateTxt);
+  }
+
+  if (der > 0 && actualKcal > 0) {
+    const ratio = actualKcal / der;
+    if (ratio >= 0.85 && ratio <= 1.15) {
+      parts.push(`現在の給与カロリーは、体重・年齢から算出した目安（約${Math.round(der)}kcal/日）にほぼ沿っており、大きな見直しの必要はなさそうです。`);
+    } else if (ratio > 1.15) {
+      parts.push(`現在の給与カロリーは目安（約${Math.round(der)}kcal/日）よりやや多い可能性があり、おやつも含めた1日の総カロリーを一度見直すとよいでしょう。`);
+    } else {
+      parts.push(`現在の給与カロリーは目安（約${Math.round(der)}kcal/日）よりやや少ない可能性があります。体重の減少がないか、あわせて確認してください。`);
+    }
+  }
+
+  if (checked.length) {
+    parts.push(`健診では${checked.slice(0,3).map(c=>c.replace(/（.*?）/,'')).join('・')}について気になる点が挙げられています。数値の推移は主治医と一緒に確認しながら、食事面でできる工夫をこのカルテでまとめました。`);
+  } else {
+    parts.push('健診では現在のところ大きな指摘はありません。今の状態を維持しながら、日々の変化を見守っていきましょう。');
+  }
+
+  if (foodDrive === 'high') {
+    parts.push('食への反応が強いタイプでもあるため、おやつの管理を意識しながら、無理のない範囲でフード選びを進めていきましょう。');
+  } else if (foodDrive === 'low') {
+    parts.push('食べムラが出やすいタイプでもあるため、食べやすさや香りも意識しながら、無理のない範囲でフード選びを進めていきましょう。');
+  }
+
+  let text = parts.join('');
+  if (text.length < 300) {
+    text += 'このカルテでは、性格タイプと健康状態の両方を踏まえて、日々の食事や生活で意識したいポイントを整理しています。次のページから順番にご確認ください。';
+  }
+  return text;
+}
+
+// ページ2：性格・行動分析（既存の軸フィールド＋任意の対犬距離感フィールドを利用）
+function personalityNarrative(ctx){
+  const { axisSocial, axisCaution, axisActivity, axisBond, axisDogDistance, walkDetail, aloneTime, livingEnv } = ctx;
+  const out = {};
+
+  if (axisCaution === 'safe') {
+    out.newEnv = '初めての場所や物には時間をかけて慣れていくタイプです。無理に近づけようとせず、少し離れた場所から様子を見せてあげると、自分のペースで確認して安心できます。';
+  } else if (axisCaution === 'challenge') {
+    out.newEnv = '初めての場所や物にも物怖じせず飛び込んでいけるタイプです。好奇心の強さが良い刺激になる一方、安全確認は飼い主様側でしっかり行ってあげると安心です。';
+  } else {
+    out.newEnv = '新しい環境への反応についての回答が未入力です。左のフォームから入力すると、より具体的なアドバイスをお伝えできます。';
+  }
+
+  if (axisSocial === 'open' && axisBond === 'close') {
+    out.peopleDistance = '人が好きで、飼い主様のそばにいることに安心を感じるタイプです。来客時も友好的に接することができる一方、構われすぎると気持ちが高ぶりやすい面もあるかもしれません。';
+  } else if (axisSocial === 'open' && axisBond === 'indie') {
+    out.peopleDistance = '人との距離は近く友好的ですが、常にべったりというよりは自分の時間も大切にするタイプです。誰にでも愛想よく接しつつ、ひとりで過ごす時間もきちんと確保してあげましょう。';
+  } else if (axisSocial === 'watch' && axisBond === 'close') {
+    out.peopleDistance = '知らない人には慎重ですが、飼い主様への信頼は厚く、そばにいることで安心するタイプです。初対面の人とは、飼い主様を介して少しずつ距離を縮めるとスムーズです。';
+  } else if (axisSocial === 'watch') {
+    out.peopleDistance = '知らない人に対しては様子を見てから近づく、慎重な距離感を持つタイプです。無理に触れ合わせず、相手から動かないでもらう形にすると落ち着いて対応できます。';
+  } else {
+    out.peopleDistance = '人との距離感についての回答が未入力です。';
+  }
+
+  if (axisDogDistance === 'friendly') {
+    out.dogDistance = '他の犬に対しても友好的で、ドッグランや散歩中のすれ違いも比較的落ち着いて対応できるタイプです。';
+  } else if (axisDogDistance === 'watchful') {
+    out.dogDistance = '他の犬に対しては様子を見てから近づくタイプです。初対面の犬とはリードを長めに持ちすぎず、双方が落ち着いて挨拶できる距離感を保ってあげてください。';
+  } else if (axisDogDistance === 'avoidant') {
+    out.dogDistance = '他の犬との接触は苦手・避けたい傾向があるタイプです。ドッグランや混雑した時間帯の散歩は避け、他の犬と距離を取れるコースや時間帯を選ぶとストレスを抑えられます。';
+  } else {
+    out.dogDistance = '他の犬との距離感については未回答です（左のフォームから追加で入力できます）。';
+  }
+
+  if (axisActivity === 'active') {
+    out.activity = '活動性が高く、興奮しやすい傾向があります。エネルギーを発散できる時間を確保しつつ、興奮しすぎた時にはクールダウンできる合図を作っておくと切り替えがスムーズです。';
+  } else if (axisActivity === 'calm') {
+    out.activity = '落ち着いた活動性で、自分のペースでゆったり過ごすことを好むタイプです。運動量が少なめになりがちなため、意識的に体を動かす機会を作ってあげましょう。';
+  } else {
+    out.activity = '活動性についての回答は未入力です。';
+  }
+
+  if (axisActivity === 'active' && axisBond === 'close') {
+    out.play = '飼い主様と一緒に体を動かす遊び（引っ張りっこ・ボール遊びなど）で強い満足感を得やすいタイプです。';
+  } else if (axisActivity === 'active') {
+    out.play = 'ひとり遊びでも十分にエネルギーを発散できるタイプですが、時々は一緒に遊ぶ時間を作ると気持ちが安定しやすくなります。';
+  } else if (axisActivity === 'calm') {
+    out.play = '激しい遊びよりも、におい探しや知育トイなど、頭を使うゆったりとした遊びのほうが向いている可能性があります。';
+  } else {
+    out.play = '遊びの好みについては、今後の様子を見ながら確認していくとよいでしょう。';
+  }
+
+  const walkTxt = (walkDetail || '').trim();
+  if (walkTxt) {
+    out.walks = `現在の散歩は「${walkTxt}」とのことです。` + (axisCaution === 'safe'
+      ? 'いつもと違うコースを試す際は、慣れたコースを1〜2回挟みながら少しずつ広げると負担が少なくなります。'
+      : axisActivity === 'active'
+        ? '活発なタイプのため、コースに変化をつけると気持ちの発散にもつながります。'
+        : '無理のない範囲で、体調に合わせて続けてください。');
+  } else {
+    out.walks = '散歩の頻度・時間を入力すると、このコに合った運動量の目安をより具体的にお伝えできます。';
+  }
+
+  if (axisBond === 'close' && axisCaution === 'safe') {
+    out.security = '飼い主様がそばにいること、そしていつもと同じ手順で物事が進むことが、大きな安心材料になるタイプです。環境を変える際は、せめて「飼い主様がそばにいる」という条件だけは変えないようにすると安定しやすくなります。';
+  } else if (axisBond === 'close') {
+    out.security = '飼い主様の存在そのものが安心材料になるタイプです。姿が見える・声が聞こえるだけでも落ち着けることがあります。';
+  } else if (axisCaution === 'safe') {
+    out.security = 'いつもと同じ手順・同じ場所・同じ順番など、「予測できること」が安心材料になるタイプです。';
+  } else if (axisBond === 'indie') {
+    out.security = '過度に構われるより、自分のペースを保てる環境が安心材料になるタイプです。';
+  } else {
+    out.security = '何が安心材料になっているか、今後の様子を見ながら確認していくとよいでしょう。';
+  }
+
+  const stressParts = [];
+  if (axisCaution === 'safe') stressParts.push('環境の急な変化');
+  if (axisDogDistance === 'avoidant') stressParts.push('他の犬との近い距離');
+  if (livingEnv === 'outdoor' && axisCaution === 'safe') stressParts.push('天候や周囲の物音の変化');
+  if (aloneTime && /([1-9]|1[0-9])\s*時間/.test(aloneTime) && axisBond === 'close') stressParts.push('長時間の留守番');
+  out.stress = stressParts.length
+    ? `${stressParts.join('・')}が、ストレスのきっかけになりやすい可能性があります。これらが重なるタイミングで食欲や便に変化がないか、注意して見てあげてください。`
+    : '現時点で特定のストレス要因は把握できていません。食欲・便・元気さの変化があれば、その前後の状況もあわせてメモしておくと、きっかけを見つけやすくなります。';
+
+  return out;
+}
+
+// ページ3：生活スタイル分析
+function lifestyleNarrative(ctx){
+  const { axisActivity, axisCaution, walkDetail, sleepNote, aloneTime, livingEnv, age } = ctx;
+  const out = {};
+
+  if (walkDetail && walkDetail.trim()) {
+    out.exercise = `現在の運動量の目安：${walkDetail.trim()}。` + (axisActivity === 'active'
+      ? '活動性が高いタイプのため、この運動量で発散しきれていないと感じる場合は、時間はそのままに内容（コース・遊び）に変化をつけると効果的です。'
+      : axisActivity === 'calm'
+        ? '落ち着いたタイプですが、運動不足は体重管理にも影響するため、この量を下回らないよう意識してください。'
+        : '体調や季節に合わせて、無理のない範囲で続けてください。');
+  } else {
+    out.exercise = '散歩の頻度・時間を入力すると、このコの活動性タイプに合わせた運動量の目安をお伝えできます。';
+  }
+
+  if (sleepNote && sleepNote.trim()) {
+    out.sleep = `睡眠・休息について：${sleepNote.trim()}。気になる変化があれば診察時にお伝えください。`;
+  } else {
+    out.sleep = Number(age || 0) >= 10
+      ? 'シニア期は睡眠時間が増える傾向があります。眠る時間が急に増えた／減った場合は、他の症状とあわせて確認してください。'
+      : '睡眠・休息の様子で気になる点があれば、左のフォームから追加で入力できます。';
+  }
+
+  if (aloneTime && aloneTime.trim()) {
+    out.alone = `留守番時間の目安：${aloneTime.trim()}。` + (axisCaution === 'safe'
+      ? '慎重なタイプは留守番中にストレスを感じやすいことがあるため、出かける前後の合図をいつも同じにすると安心しやすくなります。'
+      : '留守番中も安心して過ごせるよう、食事や水を切らさないようにしてください。');
+  } else {
+    out.alone = '留守番時間の目安を入力すると、より具体的なアドバイスが可能です。';
+  }
+
+  const envLabel = { indoor: '室内メイン', outdoor: '屋外メイン', mixed: '室内外半々' }[livingEnv] || '';
+  out.env = envLabel
+    ? `生活環境：${envLabel}。` + (livingEnv === 'outdoor' ? '気温の変化が食欲や飲水量に影響することがあるため、季節の変わり目は特に注意して見てあげてください。' : '')
+    : '生活環境（室内・屋外の割合）を入力すると、季節による注意点も具体的にお伝えできます。';
+
+  if (axisActivity === 'active' && axisCaution === 'challenge') {
+    out.stimulation = '新しい刺激を求める気持ちが強いタイプです。単調な毎日よりも、コースや遊びに変化がある方が満たされやすい傾向があります。';
+  } else if (axisActivity === 'calm' && axisCaution === 'safe') {
+    out.stimulation = '穏やかな刺激で満足しやすいタイプです。大きな変化よりも、いつもの環境の中での小さな楽しみ（おやつ探しなど）が合っている可能性があります。';
+  } else {
+    out.stimulation = '好む刺激の強さは、日々の反応を見ながら少しずつ把握していくとよいでしょう。';
+  }
+
+  return out;
+}
+
+// ページ4：食事分析
+function dietNarrative(ctx){
+  const { foodDrive, symptoms, feedingEnv, bcsLabel } = ctx;
+  const symTxt = (symptoms || '').trim();
+  const out = {};
+
+  if (foodDrive === 'low' || /ムラ|食べない/.test(symTxt)) {
+    out.appetite = '食べムラがある、または食への関心が薄い傾向があります。器を長時間出しっぱなしにせず、15〜20分で下げる、活動の前後で与えるタイミングを変えてみるなど、食事に意識を向けやすい工夫が助けになることがあります。';
+  } else if (foodDrive === 'high') {
+    out.appetite = '食への反応が強く、食べムラの心配は少ないタイプです。反対に早食いになりやすい場合は、食器の形状（すべり止め・小分けタイプなど）を工夫すると安心です。';
+  } else {
+    out.appetite = '食欲・食べムラの傾向について、日々の様子を記録しておくと変化に気づきやすくなります。';
+  }
+
+  if (feedingEnv && feedingEnv.trim()) {
+    out.env = `給餌環境：${feedingEnv.trim()}。他のペットや家族の出入りが食べるペースに影響していないか、気になる場合は場所や時間を工夫してみてください。`;
+  } else {
+    out.env = '給餌環境（他のペットの有無、食事場所など）を入力すると、より具体的な工夫をお伝えできます。';
+  }
+
+  out.bcs = bcsLabel ? `体型スコア（BCS）の目安：${bcsLabel}。` : '体型スコア（BCS）を入力すると、体重の目安とあわせて記載します。';
+
+  return out;
+}
+
+// ページ5：すでに良い状態のポイント
+function buildGoodPoints(ctx){
+  const { bcs, checked, der, actualKcal, feedTimes, symptoms, onMeds, onTherapeutic, foodDrive } = ctx;
+  const symTxt = (symptoms || '').trim();
+  const out = [];
+
+  if (bcs === 'ideal') out.push('体型スコア（BCS）は適正範囲とのことです。今の給与量・運動量のバランスがうまく取れている証拠なので、この状態を維持していきましょう。');
+  if (!checked.length) out.push('健診で気になる項目のチェックはありませんでした。今のところ大きな指摘はない状態です。');
+  if (der > 0 && actualKcal > 0) {
+    const ratio = actualKcal / der;
+    if (ratio >= 0.85 && ratio <= 1.15) out.push(`現在の給与カロリー（約${Math.round(actualKcal)}kcal）は、体重・年齢から算出した目安（約${Math.round(der)}kcal）にほぼ沿っています。大きな見直しの必要はなさそうです。`);
+  }
+  if (Number(feedTimes || 0) >= 2) out.push('1日の食事を複数回に分けて与えられています。血糖値の急な変動を抑えやすく、消化への負担も少ない、望ましい与え方です。');
+  if (!symTxt) out.push('現在、特に気になる症状の報告はありません。');
+  if (onMeds !== 'はい' && onTherapeutic !== 'はい') out.push('現在、服薬・療法食の対応はなく、食事面で特別な制約はない状態です。');
+  if (foodDrive !== 'low') out.push('食への関心・反応は良好で、食事の楽しみを感じられているようです。');
+  if (!out.length) out.push('今回の入力からは、体重の記録を続けながら現状を維持していただければ大丈夫です。');
+
+  return out.slice(0,6);
+}
+
+// ページ7：フード選びで大切にしたい条件（商品名の前に「見るべき条件」を提示）
+function buildFoodCriteria(ctx){
+  const { body, bcs, foodDrive, axisCaution, symptoms, hasFlag, age, feedingEnv } = ctx;
+  const bodyTxt = (body || '').trim();
+  const symTxt = (symptoms || '').trim();
+  const heavyish = /肥満|ぽっちゃり|obese|増加/i.test(bodyTxt);
+  const cautious = axisCaution === 'safe';
+  const giSymptom = /軟便|下痢|嘔吐|お腹|吐/.test(symTxt);
+  const out = [];
+
+  if (heavyish || bcs === 'heavy') out.push(['カロリー・脂質（体型管理）', 'kcal/100gと脂質量を、現在のフードと比べて確認しましょう。おやつ込みの総カロリーで判断することが大切です。']);
+  if (foodDrive === 'low' || giSymptom) out.push(['粒サイズ・香り・食感（食べやすさ）', '小粒・香りの強さ・ふやかしやすさなど、食べムラのある子でも口にしやすい工夫があるかを見ます。']);
+  if (cautious || giSymptom) out.push(['消化のよさ・切り替えやすさ', '食物繊維の量や脂質バランス、便の状態が安定しやすい設計かを確認します。切り替え時は必ず7〜10日以上かけてください。']);
+  if (hasFlag('腎臓系') || hasFlag('肝臓系') || hasFlag('中性脂肪') || hasFlag('血糖')) out.push(['原材料・栄養バランス', '特定の栄養素を大きく制限・強化した設計になっていないか確認し、療法食が必要かどうかも含めて主治医に相談してください。']);
+  if (Number(age || 0) >= 7) out.push(['ライフステージ適性', 'シニア期・中高齢期向けに設計されているか、年齢に応じたカロリー・栄養設計になっているかを確認します。']);
+  if (feedingEnv && feedingEnv.trim()) out.push(['与えやすさ・保存のしやすさ', '給餌環境（他のペットの有無など）に合わせて、小分けパックの有無や保存性も検討ポイントになります。']);
+  if (!out.length) out.push(['総合バランス', 'カロリー・たんぱく質・脂質・食物繊維のバランス、粒サイズ、ライフステージ適性を総合的に見て選びましょう。']);
+
+  return out.slice(0,6);
+}
+
+// ページ8・9：候補フードの収集（最大5件・入力された分だけ表示）
+function collectProducts(ctx){
+  const { der } = ctx;
+  const out = [];
+  for (let i = 1; i <= 5; i++) {
+    const name = ($(`p${i}Name`).value || '').trim();
+    if (!name) continue;
+    const kcal100 = Number($(`p${i}Kcal100`).value || 0);
+    const feedAmount = (der > 0 && kcal100 > 0) ? Math.round(der / kcal100 * 100) : null;
+    out.push({
+      name,
+      purpose: ($(`p${i}Purpose`).value || '').trim(),
+      kcal100: kcal100 || '',
+      macro: ($(`p${i}Macro`).value || '').trim(),
+      kibble: ($(`p${i}Kibble`).value || '').trim(),
+      protein: ($(`p${i}Protein`).value || '').trim(),
+      price: ($(`p${i}Price`).value || '').trim(),
+      dailyCost: ($(`p${i}DailyCost`).value || '').trim(),
+      ageStage: ($(`p${i}Age`).value || '').trim(),
+      reason: ($(`p${i}Reason`).value || '').trim(),
+      feedAmount
+    });
+  }
+  return out;
+}
+
+// ページ10：3〜6ヶ月の見守りポイント（健診フラグに応じて注意事項を補足）
+function buildWatchNotes(ctx){
+  const { hasFlag, foodDrive } = ctx;
+  const notes = [];
+  if (hasFlag('腎臓系') || hasFlag('尿検査')) notes.push('腎臓・尿の項目が気になるため、飲水量とおしっこの回数・色は特に注意して記録してください。');
+  if (hasFlag('中性脂肪') || hasFlag('血糖') || hasFlag('体重減少')) notes.push('体重・体型の変化を、できれば同じ時間帯・同じ条件で月1回測って記録してください。');
+  if (foodDrive === 'low') notes.push('食べムラがあるタイプのため、「完食したか／どのくらい残したか」も記録しておくと変化に気づきやすくなります。');
+  if (!notes.length) notes.push('特別な注意点は現時点でありませんが、体重・食欲・便の変化は日々の記録を習慣にしておくと安心です。');
+  return notes;
+}
+
+// ページ11：動物病院で相談したいこと（健診・症状フラグから該当する質問のみ抽出）
+function buildVetQuestions(ctx){
+  const { weight, der, onMeds, onTherapeutic, checked, labValues, foodDrive, symptoms, hasFlag } = ctx;
+  const symTxt = (symptoms || '').trim();
+  const items = [];
+  if (weight) items.push(`現在の体重（${weight}kg）とBCSは適正か。目安${der > 0 ? Math.round(der) : ''}kcal/日の給与量から見直す必要はあるか。`);
+  if (onTherapeutic === 'はい' || onMeds === 'はい') items.push('療法食・服薬中でも、現在の給与量やおやつの扱いを変えてよいか。');
+  if (checked.length || labValues) items.push('健診値の変化が食事・おやつ・体重変化と関連する可能性があるか。追加検査や再検査が必要か。');
+  if (foodDrive === 'low' || /ムラ|食べない|嘔吐|吐/.test(symTxt)) items.push('食べムラや嘔吐が、消化器や内科的な要因と関係していないか。');
+  if (hasFlag('腎臓系')) items.push('腎臓の数値の推移を踏まえ、療法食への切り替えを検討すべき段階か。');
+  if (hasFlag('尿検査')) items.push('尿の状態（回数・色・量）で注意して見るべき変化はあるか。');
+  if (hasFlag('肝臓系')) items.push('肝臓の数値の推移と、現在の脂質・おやつ量の関連はあるか。');
+  if (!items.length) items.push('現在の食事量・体重の推移について、このまま継続してよいか。');
+  return items.slice(0,6);
 }
 
 document.querySelectorAll('.panel input, .panel select, .panel textarea').forEach(el => {
