@@ -80,7 +80,7 @@ const BREED_NOTES = {
 const QUESTIONS = [
   {key:'dogName', label:'まず、うちの子の名前を教えてください（任意）', type:'text', placeholder:'例：こむぎ'},
   {key:'breedGroup', label:'体格や犬種の雰囲気で近いものは？', type:'choice', options:[['toy','超小型・小型犬'],['companion','愛玩・家庭犬'],['retriever','レトリーバー系'],['herding','牧羊・作業犬系'],['terrier','テリア系'],['hound','猟犬・サイトハウンド系'],['spitz','柴・スピッツ系'],['brachy','短頭種'],['large','大型・超大型犬'],['mix','ミックス・不明']]},
-  {key:'age', label:'年齢はどのくらいですか？', type:'choice', options:[['under7','7歳未満'],['7-9','7〜9歳'],['10-12','10〜12歳'],['13+','13歳以上']]},
+  {key:'age', label:'年齢はどのくらいですか？', type:'choice', options:[['under1','1歳未満（子犬期）'],['1-6','1〜6歳（成犬）'],['7-9','7〜9歳（中高齢）'],['10-12','10〜12歳（シニア）'],['13+','13歳以上（ハイシニア）']]},
   {key:'weight', label:'今の体重を入れてください', type:'number', suffix:'kg', placeholder:'例：5.2'},
   {key:'body', label:'上から見た体型・触った感じに近いのは？', type:'choice', options:[['thin','肋骨が目立つ・やせ気味'],['normal','くびれがあり、ちょうどよい'],['chubby','少し丸くなってきた'],['obese','明らかにぽっちゃり']]},
   {key:'neuter', label:'避妊・去勢はしていますか？', type:'choice', options:[['yes','済み'],['no','未'],['unknown','わからない']]},
@@ -130,6 +130,7 @@ function removeWeightEntry(idx){
 
 function rer(weight){ return 70 * Math.pow(Number(weight || 0), 0.75) }
 function derMultiplier(a){
+  if(a.age==='under1') return 2.0
   if(a.age==='13+') return 1.1
   if(a.body==='obese') return 1.0
   if(a.neuter==='yes') return 1.4
@@ -557,7 +558,7 @@ function displayTags(tags, breedGroup){
 
 function lifeStage(a){
   if(a.age==='under1') return '子犬期'
-  if(a.age==='under7') return '成犬期'
+  if(a.age==='1-6') return '成犬期'
   if(a.age==='7-9') return '中高齢期'
   if(a.age==='10-12') return 'シニア期'
   return 'ハイシニア期'
