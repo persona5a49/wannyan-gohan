@@ -362,7 +362,7 @@ function render(){
       <section class="article-list" id="articles"><h2>シニア犬のごはん記事</h2><p class="helper">診察室でよく出る悩みを、できるだけ普通の言葉でまとめました。記事末に参考文献も載せています。</p><div class="article-cards">${ARTICLES.map(a=>`<a class="article-card js-article-click" data-article="${a.slug}" href="/articles/${a.slug}/"><span>記事</span><strong>${a.title}</strong><small>${a.lead}</small></a>`).join('')}</div><p><a class="secondary" href="/type-guides/">タイプ別ごはんガイドを見る</a></p></section>
       <section class="article-list" id="compare"><h2>シニア犬フード比較</h2><p class="helper">検索されやすい切り口で、候補フードのカロリー・脂質・注意点を比較します。</p><div class="article-cards"><a class="article-card" href="/products/compare/senior-dog-low-fat/"><span>比較</span><strong>低脂肪ドッグフード比較</strong><small>脂質や体重管理が気になるシニア犬向け。</small></a><a class="article-card" href="/products/compare/senior-dog-small-kibble/"><span>比較</span><strong>小粒ドッグフード比較</strong><small>口・歯・食べやすさが気になる小型シニア犬向け。</small></a><a class="article-card" href="/products/compare/senior-dog-weight-control/"><span>比較</span><strong>体重管理ドッグフード比較</strong><small>太りやすくなったシニア犬の食事整理に。</small></a></div></section>
     </main>
-    <footer><p>本サイトはペットフード選びの参考情報を提供するもので、診断・治療・療法食の指示ではありません。持病、症状、療法食利用中の場合は獣医師に相談してください。<br><a href="/legal/tokushoho/">特定商取引法に基づく表記</a></p></footer>`
+    <footer><p>本サイトはペットフード選びの参考情報を提供するもので、診断・治療・療法食の指示ではありません。持病、症状、療法食利用中の場合は獣医師に相談してください。<br><a href="/legal/tokushoho/">特定商取引法に基づく表記</a>　<a href="/legal/privacy/">プライバシーポリシー</a></p></footer>`
   bindEvents()
 }
 
