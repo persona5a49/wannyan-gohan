@@ -45,17 +45,48 @@ const PRODUCT_SLUGS = {
 }
 function productDetailUrl(name){ return PRODUCT_SLUGS[name] ? `/products/${PRODUCT_SLUGS[name]}/` : '#' }
 
+const THERAPEUTIC_FOODS = [
+  {name:'腎臓サポート系療法食', maker:'療法食カテゴリ', tags:['kidney','therapeutic'], note:'BUN/Cre/尿検査などを見て、主治医の指示で使う候補です。自己判断で始めないでください。'},
+  {name:'消化器サポート・低脂肪系療法食', maker:'療法食カテゴリ', tags:['stomach','lipid','therapeutic'], note:'下痢・嘔吐・膵炎リスク・脂質異常などで検討されることがあります。診断と処方方針の確認が必要です。'},
+  {name:'肝臓サポート系療法食', maker:'療法食カテゴリ', tags:['liver','therapeutic'], note:'肝酵素上昇の理由によって適否が変わります。検査結果と症状を合わせて主治医に確認してください。'},
+  {name:'糖コントロール系療法食', maker:'療法食カテゴリ', tags:['glucose','therapeutic'], note:'血糖・尿糖・体重変化を合わせて判断します。投薬中は特に自己判断で変更しないでください。'},
+  {name:'尿ケア・下部尿路系療法食', maker:'療法食カテゴリ', tags:['urine','therapeutic'], note:'尿石の種類や尿pHによって合う食事が違います。尿検査結果なしで選ばないでください。'}
+]
+function therapeuticCandidates(a){
+  const c=a.checkup||[]; const out=[]
+  THERAPEUTIC_FOODS.forEach(f=>{
+    if(f.tags.some(t=>c.includes(t)) || (f.tags.includes('kidney') && (labNum('cre')>=1.4 || labNum('bun')>=30)) || (f.tags.includes('liver') && (labNum('alt')>=120 || labNum('alp')>=350)) || (f.tags.includes('lipid') && (labNum('tg')>=150 || labNum('tcho')>=300)) || (f.tags.includes('glucose') && labNum('glu')>=130) || (f.tags.includes('urine') && ((labNum('usg')>0 && labNum('usg')<1.025) || labNum('upc')>=0.5))) out.push(f)
+  })
+  return out.slice(0,3)
+}
+
 const QUESTIONS = [
-  {key:'age', label:'年齢', type:'choice', options:[['7-9','7〜9歳'],['10-12','10〜12歳'],['13+','13歳以上'],['under7','7歳未満']]},
+  {key:'dogName', label:'お名前（任意）', type:'text', placeholder:'例：こむぎ'},
+  {key:'age', label:'年齢', type:'choice', options:[['under7','7歳未満'],['7-9','7〜9歳'],['10-12','10〜12歳'],['13+','13歳以上']]},
   {key:'weight', label:'体重', type:'number', suffix:'kg', placeholder:'例：5.2'},
   {key:'body', label:'体型', type:'choice', options:[['thin','やせ気味'],['normal','ちょうどよい'],['chubby','ふっくら'],['obese','ぽっちゃり']]},
   {key:'neuter', label:'避妊・去勢', type:'choice', options:[['yes','済み'],['no','未'],['unknown','わからない']]},
-  {key:'activity', label:'活動量', type:'choice', options:[['low','少ない'],['normal','普通'],['high','多い']]},
-  {key:'appetite', label:'食いつき', type:'choice', options:[['good','よく食べる'],['uneven','ムラがある'],['poor','あまり食べない']]},
-  {key:'concerns', label:'気になる悩み', type:'multi', options:[['weight','体重管理'],['appetite','食いつき'],['stomach','お腹・便'],['coat','皮膚・毛艶'],['joint','関節'],['mouth','口・歯'],['senior','シニア全般']]},
-  {key:'checkup', label:'健康診断で気になる項目', type:'multi', options:[['none','特になし'],['kidney','腎臓系'],['liver','肝臓系'],['lipid','中性脂肪/コレステロール'],['glucose','血糖'],['urine','尿検査'],['weightloss','体重減少'],['meds','服薬/療法食あり']]},
-  {key:'labs', label:'健診数値メモ（わかる範囲で任意）', type:'labs'},
-  {key:'preference', label:'こだわり', type:'multi', options:[['small','小粒'],['japan','国産'],['grainfree','グレインフリー'],['cost','価格重視'],['ingredient','原材料重視'],['easy','続けやすさ重視']]}
+  {key:'human', label:'初対面の人に会った時、いちばん近い様子は？', type:'choice', options:[['open2','自分から近づく'],['open1','少し様子を見て近づく'],['watch1','飼い主のそばで見る'],['watch2','隠れる・強く警戒する']]},
+  {key:'dogs', label:'散歩中に他の犬と会った時、いちばん近い様子は？', type:'choice', options:[['open2','遊びたがる'],['open1','相手を見て挨拶する'],['watch1','距離を取りながら見る'],['watch2','避ける・吠える・固まる']]},
+  {key:'place', label:'初めての場所に行った時、いちばん近い様子は？', type:'choice', options:[['challenge2','自分から探索する'],['challenge1','周りを見ながら進む'],['safe1','飼い主の近くで確認する'],['safe2','動けない・帰りたがる']]},
+  {key:'foodNew', label:'新しいフードを出した時、いちばん近い様子は？', type:'choice', options:[['challenge2','すぐ試す'],['challenge1','匂いを確認して食べる'],['safe1','少し警戒する'],['safe2','食べない・お腹が変わりやすい']]},
+  {key:'activity', label:'ふだんの動き方で、いちばん近いものは？', type:'choice', options:[['active2','かなりよく動く'],['active1','散歩や遊びが好き'],['calm1','普通〜少し控えめ'],['calm2','寝る時間が増えた・かなり少ない']]},
+  {key:'excite', label:'楽しい時や来客時の様子で、いちばん近いものは？', type:'choice', options:[['active2','なかなか落ち着かない'],['active1','少しすると落ち着く'],['calm1','比較的落ち着いている'],['calm2','あまり反応しない・静か']]},
+  {key:'bond', label:'家の中での距離感で、いちばん近いものは？', type:'choice', options:[['close2','いつも近くにいたい'],['close1','呼ぶとすぐ来る・よく見る'],['indie1','近くにいるが自分の時間も大事'],['indie2','かなりマイペース']]},
+  {key:'alone', label:'留守番や家族が離れる時、いちばん近い様子は？', type:'choice', options:[['close2','不安そう・鳴くことがある'],['close1','最初だけ気にする'],['indie1','だいたい落ち着いている'],['indie2','あまり気にしない']]},
+  {key:'appetite', label:'ごはんの食べ方で、いちばん近いものは？', type:'choice', options:[['good','よく食べる'],['uneven','ムラがある'],['picky','おやつ・トッピングなら食べる'],['poor','あまり食べない・残す']]},
+  {key:'treats', label:'おやつへの反応で、いちばん近いものは？', type:'choice', options:[['normal','普通'],['high','とても反応する'],['family','家族からもよくもらう'],['training','ごほうびがあると集中しやすい']]},
+  {key:'stomach', label:'フードを替えた時のお腹の様子で、いちばん近いものは？', type:'choice', options:[['stable','便は安定している'],['soft','たまにゆるくなる'],['sensitive','替えると下痢・嘔吐が出やすい'],['unknown','よく分からない']]},
+  {key:'stool', label:'便の状態で、いちばん近いものは？', type:'choice', options:[['normal','形があり安定'],['soft','柔らかい日がある'],['diarrhea','下痢になりやすい'],['constipation','硬い・出にくい']]},
+  {key:'vomit', label:'吐く・えずく頻度で、いちばん近いものは？', type:'choice', options:[['rare','ほとんどない'],['sometimes','たまにある'],['often','月に何度もある'],['acute','最近急に増えた']]},
+  {key:'waterUrine', label:'水を飲む量やおしっこの変化で、いちばん近いものは？', type:'choice', options:[['normal','大きな変化なし'],['more','増えた気がする'],['muchmore','明らかに増えた'],['unknown','よく分からない']]},
+  {key:'mouthState', label:'口・歯の様子で、いちばん近いものは？', type:'choice', options:[['none','特になし'],['smell','口臭がある'],['chew','硬いものを避ける'],['pain','痛そう・出血・歯石が多い']]},
+  {key:'currentFood', label:'今の主食で、いちばん近いものは？', type:'choice', options:[['dry','ドライ中心'],['wet','ウェット/手作り多め'],['mixed','ドライ＋トッピング'],['therapeutic','療法食を使用中']]},
+  {key:'treatAmount', label:'おやつの量で、いちばん近いものは？', type:'choice', options:[['low','ほとんどあげない'],['moderate','少しあげる'],['high','主食に比べて多いと思う'],['unknown','家族があげる分まで含めると多いか分からない']]},
+  {key:'concerns', label:'気になること', type:'multi', options:[['weight','体重管理'],['appetite','食べムラ'],['stomach','お腹・便'],['coat','皮膚・毛艶'],['joint','関節'],['mouth','口・歯'],['behavior','しつけ・行動'],['senior','シニア全般']]},
+  {key:'checkup', label:'健診・治療で気になること', type:'multi', options:[['none','特になし'],['kidney','腎臓系'],['liver','肝臓系'],['lipid','中性脂肪/コレステロール'],['glucose','血糖'],['urine','尿検査'],['weightloss','体重減少'],['meds','服薬/療法食あり']]},
+  {key:'labs', label:'健診数値メモ（任意）', type:'labs'},
+  {key:'preference', label:'ごはん選びで重視したいこと', type:'multi', options:[['small','小粒'],['japan','国産'],['grainfree','グレインフリー'],['cost','価格重視'],['ingredient','原材料重視'],['easy','続けやすさ重視']]}
 ]
 
 let answers = {}
@@ -216,16 +247,49 @@ const ARTICLES = [
   }
 ]
 
-const RESULT_PROFILES = {
-  'まずは相談推奨タイプ': { code:'CHECK', name:'主治医相談ファースト型', animal:'慎重なカルテ犬', catch:'フードを替える前に、検査値や服薬状況を一度そろえたいタイプです。', traits:['健診項目や服薬の影響を受けやすい','療法食・サプリ・おやつの自己判断は避けたい','主治医に相談する材料を作ると進めやすい'] },
-  '体重管理タイプ': { code:'CAL', name:'カロリー見直し型', animal:'まじめな計量犬', catch:'ごはん本体より、おやつと総カロリーの見直しで変わりやすいタイプです。', traits:['体型と体重推移を優先して見る','kcal/100gと脂質を確認したい','2〜4週間ごとの記録が役に立つ'] },
-  '食いつき重視タイプ': { code:'APP', name:'食いつき観察型', animal:'気分屋グルメ犬', catch:'味だけでなく、口・歯・香り・粒サイズまで見たいタイプです。', traits:['食欲ムラの理由を分けて考えたい','急な切り替えより少しずつ試したい','食べない日が続く時は体調確認が先'] },
-  'お腹ケアタイプ': { code:'GUT', name:'お腹ゆっくり型', animal:'繊細なおなか犬', catch:'便の状態を見ながら、急な変更を避けたいタイプです。', traits:['切り替えは7〜10日以上かけたい','脂質やおやつ量も確認したい','便の記録がフード選びのヒントになる'] },
-  '皮膚・被毛ケアタイプ': { code:'SKIN', name:'皮膚・毛づや観察型', animal:'つやつやケア犬', catch:'主原料や脂肪酸を見つつ、数週間単位で変化を見たいタイプです。', traits:['すぐに結果を求めすぎない','かゆみ・脱毛が強い時は受診優先','主原料と続けやすさも大事'] },
-  '関節ケアタイプ': { code:'JOINT', name:'足腰サポート型', animal:'ゆっくり散歩犬', catch:'関節ケア成分だけでなく、体重管理も一緒に考えたいタイプです。', traits:['体重が足腰の負担に直結しやすい','サプリは補助として見る','床や散歩量もセットで整えたい'] },
-  'シニア総合ケアタイプ': { code:'BAL', name:'バランス見守り型', animal:'安定シニア犬', catch:'大きな偏りは少なめ。半年〜1年ごとの見直しで整えたいタイプです。', traits:['年齢・粒サイズ・続けやすさを見る','おやつ量を決めると安定しやすい','健診や体重変化で定期的に見直す'] }
+const TYPE_NAMES = {
+  openchallengeactiveclose:'全力ハッピー隊長', openchallengeactiveindie:'ひとり探検アスリート', openchallengecalmclose:'にこにこ平和大使', openchallengecalmindie:'ゆるっと社交名人',
+  opensafeactiveclose:'どきどき甘えんぼランナー', opensafeactiveindie:'慎重派の冒険家', opensafecalmclose:'やさしい空気読みさん', opensafecalmindie:'おっとり観察家',
+  watchchallengeactiveclose:'飼い主専属アクティブさん', watchchallengeactiveindie:'マイワールド探検家', watchchallengecalmclose:'静かな相棒タイプ', watchchallengecalmindie:'職人気質のこだわりさん',
+  watchsafeactiveclose:'一生懸命な甘えんぼさん', watchsafeactiveindie:'そろりそろり探検隊', watchsafecalmclose:'安心確認の寄り添いさん', watchsafecalmindie:'静かな安心職人'
 }
-function profileFor(type){ return RESULT_PROFILES[type] || RESULT_PROFILES['シニア総合ケアタイプ'] }
+const AXIS_COPY = {
+  open:'人や犬、新しい場所に関心を向けやすい', watch:'外の刺激は少し距離を取って確認したい', challenge:'新しいことを試す力がある', safe:'安心できる手順があると動きやすい', active:'遊び・散歩・反応の熱量が高め', calm:'落ち着いた環境で安定しやすい', close:'飼い主とのつながりが安心材料', indie:'自分のペースや居場所を大切にする'
+}
+function scoreAxes(a){
+  const sc={open:0,watch:0,challenge:0,safe:0,active:0,calm:0,close:0,indie:0}
+  Object.values(a).forEach(v=>{ if(typeof v!=='string') return; ['open','watch','challenge','safe','active','calm','close','indie'].forEach(k=>{ if(v.startsWith(k)) sc[k]+=Number(v.slice(-1))||1 }) })
+  return sc
+}
+function typeFor(a){ const sc=scoreAxes(a); const axes=[sc.open>=sc.watch?'open':'watch',sc.challenge>=sc.safe?'challenge':'safe',sc.active>=sc.calm?'active':'calm',sc.close>=sc.indie?'close':'indie']; return {name:TYPE_NAMES[axes.join('')]||'安心確認の寄り添いさん', axes} }
+function profileFor(result){
+  const axes = result.axes || ['watch','safe','calm','close']
+  const lead = axes.map(x=>AXIS_COPY[x]).join('、') + 'タイプです。性格の良し悪しではなく、暮らし方・ごはんの変え方を考えるための整理です。'
+  const likely = axes.map(x=>AXIS_COPY[x])
+  const care = []
+  care.push(axes.includes('safe')?'変更は一つずつ、短い成功体験を積む':'新しい体験は安全を確保しながら楽しませる')
+  care.push(axes.includes('active')?'興奮する前に休憩と落ち着く合図を入れる':'静かな休憩場所といつもの流れを大切にする')
+  care.push(axes.includes('close')?'飼い主の声かけ・ごほうびを使って安心させる':'無理に構いすぎず、自分で選べる距離を残す')
+  const food = []
+  food.push(axes.includes('safe')?'フード変更は7〜10日以上かけてゆっくり':'新しいフードも少量から反応を見る')
+  food.push(axes.includes('active')?'おやつをごほうびに使う日は主食から差し引く':'活動量低下に合わせてカロリーを見直す')
+  food.push('体重・便・食欲・健診結果をセットで見る')
+  return {name:result.name, axes, lead, likely, care, food}
+}
+function subTags(a, redFlags=[], watch=[]){
+  const tags=[]; const concerns=a.concerns||[]; const c=a.checkup||[]
+  if(a.treats==='high'||a.treats==='family'||a.treats==='training') tags.push('ごほうび反応強め')
+  if(a.appetite==='uneven'||a.appetite==='picky'||concerns.includes('appetite')) tags.push('食べムラあり')
+  if(a.stomach==='soft'||a.stomach==='sensitive'||a.stool==='soft'||a.stool==='diarrhea'||concerns.includes('stomach')) tags.push('お腹そっと派')
+  if(a.body==='chubby'||a.body==='obese'||concerns.includes('weight')) tags.push('体重管理')
+  if(a.body==='thin'||a.appetite==='poor'||c.includes('weightloss')) tags.push('食細め注意')
+  if(concerns.includes('mouth')||['smell','chew','pain'].includes(a.mouthState)) tags.push('口・歯チェック')
+  if(concerns.includes('joint')) tags.push('関節配慮')
+  if(concerns.includes('coat')) tags.push('皮膚・毛づや配慮')
+  if(a.treatAmount==='high'||a.treatAmount==='unknown') tags.push('おやつ量確認')
+  if(redFlags.length || watch.length || c.some(x=>x!=='none') || a.currentFood==='therapeutic') tags.push('健診相談あり')
+  return [...new Set(tags)].slice(0,6)
+}
 
 function calcResult(a){
   const redFlags = []
@@ -238,48 +302,44 @@ function calcResult(a){
   if(c.includes('urine') || (labNum('usg') > 0 && labNum('usg') < 1.025) || labNum('upc') >= 0.5) watch.push('尿検査に気になる点がある場合は、飲水量・尿量・腎臓系の確認とセットで考える必要があります。')
   if(c.includes('lipid') || labNum('tg') >= 150 || labNum('tcho') >= 300) watch.push('脂質系が気になる場合は、まず脂質量・おやつ・体型管理を優先して見直します。')
   if(c.includes('glucose') || labNum('glu') >= 130) watch.push('血糖が気になる場合は、食事変更だけで判断せず、再検査や尿糖の確認も含めて相談してください。')
-
-  let type = 'シニア総合ケアタイプ'
-  const concerns = a.concerns || []
-  if(redFlags.length) type = 'まずは相談推奨タイプ'
-  else if(a.body==='obese' || a.body==='chubby' || concerns.includes('weight') || c.includes('lipid') || labNum('tg') >= 150) type = '体重管理タイプ'
-  else if(concerns.includes('appetite') || a.appetite!=='good') type = '食いつき重視タイプ'
-  else if(concerns.includes('stomach')) type = 'お腹ケアタイプ'
-  else if(concerns.includes('coat')) type = '皮膚・被毛ケアタイプ'
-  else if(concerns.includes('joint')) type = '関節ケアタイプ'
-
+  if(a.currentFood==='therapeutic') redFlags.push('現在療法食を使っている場合、一般食や別の療法食への変更は主治医確認が必要です。')
+  if(a.vomit==='acute' || a.vomit==='often') redFlags.push('吐く回数が多い・急に増えた場合は、フード選びより先に受診相談を優先してください。')
+  if(a.waterUrine==='muchmore') redFlags.push('飲水量や尿量が明らかに増えた場合は、腎臓・内分泌・尿検査を含めた確認が必要です。')
+  if(a.mouthState==='pain') watch.push('口の痛み・出血・歯石が目立つ場合、食べムラの原因がフードではなく口腔内にあることがあります。')
+  const typeResult = typeFor(a)
+  const profile = profileFor(typeResult)
+  const tags = subTags(a, redFlags, watch)
+  const therapyFoods = therapeuticCandidates(a)
   const scored = FOODS.map(f=>{
     let s=0; const reasons=[]
-    if(f.tags.includes('senior')) {s+=3; reasons.push('シニア期向け')}
-    if(type==='体重管理タイプ' && (f.kcal<355 || f.tags.includes('lowfat') || f.tags.includes('weight'))) {s+=4; reasons.push('カロリー/脂質を見直しやすい')}
-    if(type==='食いつき重視タイプ' && (f.tags.includes('palatable') || f.tags.includes('wet') || f.tags.includes('fresh'))) {s+=4; reasons.push('食いつき配慮')}
-    if(type==='お腹ケアタイプ' && f.tags.includes('stomach')) {s+=4; reasons.push('お腹・便に配慮')}
-    if(type==='皮膚・被毛ケアタイプ' && f.tags.includes('coat')) {s+=3; reasons.push('皮膚・毛艶ケアを意識')}
+    if(f.tags.includes('senior')) {s+=2; reasons.push('シニア期向け')}
+    if(tags.includes('体重管理') && (f.kcal<355 || f.tags.includes('lowfat') || f.tags.includes('weight'))) {s+=5; reasons.push('カロリー/脂質を見直しやすい')}
+    if(tags.includes('食べムラあり') && (f.tags.includes('palatable') || f.tags.includes('wet') || f.tags.includes('fresh'))) {s+=5; reasons.push('食いつき配慮')}
+    if(tags.includes('お腹そっと派') && (f.tags.includes('stomach') || f.tags.includes('lowfat'))) {s+=4; reasons.push('お腹・便に配慮')}
+    if(tags.includes('皮膚・毛づや配慮') && f.tags.includes('coat')) {s+=3; reasons.push('皮膚・毛艶ケアを意識')}
+    if(tags.includes('食細め注意') && (f.tags.includes('palatable') || f.tags.includes('fresh') || f.tags.includes('wet'))) {s+=3; reasons.push('食べやすさを意識')}
     if((a.preference||[]).includes('small') && f.tags.includes('small')) {s+=2; reasons.push('小粒寄り')}
     if((a.preference||[]).includes('cost') && f.priceKg<1600) {s+=3; reasons.push('続けやすい価格帯')}
     if((a.preference||[]).includes('japan') && f.tags.includes('japan')) {s+=2; reasons.push('国産系')}
-    if((a.preference||[]).includes('grainfree') && f.tags.includes('grainfree')) {s+=2; reasons.push('グレインフリー系')}
     return {...f, score:s, reasons: reasons.slice(0,3)}
   }).sort((a,b)=>b.score-a.score).slice(0,3)
-
   const kcal = rer(a.weight) * derMultiplier(a)
-  const snack = kcal * 0.1
-  return {type, redFlags, watch, foods:scored, kcal, snack}
+  return {type:typeResult.name, profile, tags, redFlags, watch, foods:scored, therapyFoods, kcal, snack:kcal*0.1, hasWeight:Number(a.weight)>0}
 }
 
 function render(){
   document.querySelector('#app').innerHTML = `
-    <header class="site-header"><div class="brand">わんにゃんごはんカルテ</div><nav class="nav-links"><a href="/products/">商品一覧</a><a href="/products/compare/">比較</a><a href="#articles">記事</a><a href="#tracker">体重記録</a><a href="/pdf-karute/">詳細ごはんカルテPDF</a></nav><a href="#diagnosis" class="mini-cta js-diagnosis-start" data-location="header">無料でチェック</a></header>
+    <header class="site-header"><div class="brand">わんにゃんごはんカルテ</div><nav class="nav-links"><a href="/products/">商品一覧</a><a href="/products/compare/">比較</a><a href="#articles">記事</a><a href="/type-guides/">タイプ別ガイド</a><a href="#tracker">体重記録</a><a href="/pdf-karute/">詳細ごはんカルテPDF</a></nav><a href="#diagnosis" class="mini-cta js-diagnosis-start" data-location="header">無料でチェック</a></header>
     <div style="background:#f4f0e6;color:#62665b;font-size:.78rem;text-align:center;padding:6px 12px;font-weight:700;letter-spacing:.02em">PR｜本サイトはアフィリエイト広告を利用しています</div>
     <main>
-      <section class="hero"><div class="hero-copy"><p class="eyebrow">うちの子のごはんを相談したい場所</p><h1>7歳を過ぎたら、ごはん選びは少しだけ慎重に。</h1><p class="lead">体重、体型、食いつき、健診で気になった項目から、今のごはんを一緒に整理します。結果はMBTIのような「ごはんタイプ」で表示。候補フードだけでなく、主治医に相談したいポイントまでまとめます。</p><div class="hero-actions"><a href="#diagnosis" class="primary js-diagnosis-start" data-location="hero">うちの子のタイプを見る</a><a href="/pdf-karute/" class="secondary">PDFカルテを見る</a></div><div class="trust"><span>約1分</span><span>登録不要</span><span>医療判断ではなく相談前の整理</span></div></div><aside class="hero-karute"><span class="karte-label">KARTE SAMPLE</span><strong>CAL</strong><p>カロリー見直し型</p><small>おやつ・脂質・体重推移を一緒に確認</small></aside></section>
-      <section class="cards" id="why"><article><span>01</span><h2>ごはんタイプ</h2><p>CHECK/CAL/APP/GUTなど、結果を覚えやすいタイプ名で表示します。</p></article><article><span>02</span><h2>ごはん量とおやつ</h2><p>体重から目安カロリーと、おやつの上限をざっくり計算します。</p></article><article><span>03</span><h2>健診メモ</h2><p>腎臓・肝臓・脂質・尿検査など、食事変更前に相談したい項目を整理します。</p></article></section>
+      <section class="hero"><div class="hero-copy"><p class="eyebrow">うちの子の性格・食べ方・健診結果を、ひとつのカルテに</p><h1>うちの子らしさから、ごはんと暮らしを整える。</h1><p class="lead">犬の行動評価で使われる考え方を参考に、社交性・慎重さ・活動性・飼い主との距離感を家庭向けに整理。研究用尺度そのものではなく、暮らしと食事相談のためのセルフチェックです。</p><div class="hero-actions"><a href="#diagnosis" class="primary js-diagnosis-start" data-location="hero">うちの子のタイプを見る</a><a href="/pdf-karute/" class="secondary">PDFカルテを見る</a></div><div class="trust"><span>約3分</span><span>登録不要</span><span>医療判断ではなく相談前の整理</span></div></div><aside class="hero-karute"><span class="karte-label">KARTE SAMPLE</span><strong>16</strong><p>うちの子タイプ診断</p><small>行動・食べ方・健診メモを一緒に整理</small></aside></section>
+      <section class="cards" id="why"><article><span>01</span><h2>16タイプ診断</h2><p>性格・行動の傾向を、覚えやすい「うちの子タイプ」で表示します。</p></article><article><span>02</span><h2>ごはん量とおやつ</h2><p>体重から目安カロリーと、おやつの上限をざっくり計算します。</p></article><article><span>03</span><h2>根拠と健診メモ</h2><p>研究用尺度とは区別したセルフチェックとして、腎臓・肝臓・尿検査など相談項目も整理します。</p></article></section>
       <section class="diagnosis" id="diagnosis">${renderDiagnosis()}</section>
       <section class="tracker" id="tracker">${renderTracker()}</section>
-      <section class="article-list" id="articles"><h2>シニア犬のごはん記事</h2><p class="helper">診察室でよく出る悩みを、できるだけ普通の言葉でまとめました。記事末に参考文献も載せています。</p><div class="article-cards">${ARTICLES.map(a=>`<a class="article-card js-article-click" data-article="${a.slug}" href="/articles/${a.slug}/"><span>記事</span><strong>${a.title}</strong><small>${a.lead}</small></a>`).join('')}</div></section>
+      <section class="article-list" id="articles"><h2>シニア犬のごはん記事</h2><p class="helper">診察室でよく出る悩みを、できるだけ普通の言葉でまとめました。記事末に参考文献も載せています。</p><div class="article-cards">${ARTICLES.map(a=>`<a class="article-card js-article-click" data-article="${a.slug}" href="/articles/${a.slug}/"><span>記事</span><strong>${a.title}</strong><small>${a.lead}</small></a>`).join('')}</div><p><a class="secondary" href="/type-guides/">タイプ別ごはんガイドを見る</a></p></section>
       <section class="article-list" id="compare"><h2>シニア犬フード比較</h2><p class="helper">検索されやすい切り口で、候補フードのカロリー・脂質・注意点を比較します。</p><div class="article-cards"><a class="article-card" href="/products/compare/senior-dog-low-fat/"><span>比較</span><strong>低脂肪ドッグフード比較</strong><small>脂質や体重管理が気になるシニア犬向け。</small></a><a class="article-card" href="/products/compare/senior-dog-small-kibble/"><span>比較</span><strong>小粒ドッグフード比較</strong><small>口・歯・食べやすさが気になる小型シニア犬向け。</small></a><a class="article-card" href="/products/compare/senior-dog-weight-control/"><span>比較</span><strong>体重管理ドッグフード比較</strong><small>太りやすくなったシニア犬の食事整理に。</small></a></div></section>
     </main>
-    <footer><p>本サイトはペットフード選びの参考情報を提供するもので、診断・治療・療法食の指示ではありません。持病、症状、療法食利用中の場合は獣医師に相談してください。</p></footer>`
+    <footer><p>本サイトはペットフード選びの参考情報を提供するもので、診断・治療・療法食の指示ではありません。持病、症状、療法食利用中の場合は獣医師に相談してください。<br><a href="/legal/tokushoho/">特定商取引法に基づく表記</a></p></footer>`
   bindEvents()
 }
 
@@ -291,14 +351,18 @@ function renderArticle(article){
 function renderDiagnosis(){
   if(step >= QUESTIONS.length){
     const r = calcResult(answers)
-    const p = profileFor(r.type)
-    return `<div class="result karte"><p class="eyebrow">うちの子ごはんカルテ</p><div class="type-card"><div><span class="type-code">${p.code}</span><h2>${p.name}</h2><p>${p.catch}</p></div><div class="type-animal">${p.animal}</div></div><p class="result-lead">${resultLead(r.type)}</p><div class="trait-list">${p.traits.map(x=>`<span>${x}</span>`).join('')}</div>
-      <div class="result-grid"><div class="metric"><strong>${Math.round(r.kcal || 0)} kcal/日</strong><span>目安必要カロリー</span></div><div class="metric"><strong>${Math.round(r.snack || 0)} kcal/日まで</strong><span>おやつ上限の目安</span></div></div>
-      <div class="karte-section"><h3>食事の優先順位</h3><ol>${priorities(r.type).map(x=>`<li>${x}</li>`).join('')}</ol></div>
-      ${r.redFlags.length ? `<div class="alert"><h3>フード変更前に確認</h3><ul>${r.redFlags.map(x=>`<li>${x}</li>`).join('')}</ul></div>`:''}
+    const name = answers.dogName ? `${answers.dogName}ちゃん` : 'うちの子'
+    return `<div class="result karte"><p class="eyebrow">うちの子ごはん・暮らしカルテ</p><div class="type-card"><div><span class="type-code">16タイプ診断</span><h2>${name}は「${r.type}」</h2><p>${r.profile.lead}</p></div><div class="type-animal">${r.tags.length ? r.tags[0] : '暮らしタイプ'}</div></div><div class="trait-list">${r.tags.map(x=>`<span>${x}</span>`).join('')}</div>
+      ${r.hasWeight ? `<div class="result-grid"><div class="metric"><strong>${Math.round(r.kcal)} kcal/日</strong><span>目安必要カロリー</span></div><div class="metric"><strong>${Math.round(r.snack)} kcal/日まで</strong><span>おやつ上限の目安</span></div></div>` : `<div class="note"><h3>カロリー計算</h3><p>体重を入力すると、目安カロリーとおやつ上限を表示できます。今回はタイプ判定と注意点のみ表示します。</p></div>`}
+      <div class="karte-section"><h3>この子にありそうなこと</h3><ul>${r.profile.likely.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+      <div class="karte-section"><h3>接し方のコツ</h3><ul>${r.profile.care.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+      <div class="karte-section"><h3>ごはんの見直し方</h3><ul>${r.profile.food.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+      ${r.redFlags.length ? `<div class="alert"><h3>フード変更前に主治医へ確認</h3><ul>${r.redFlags.map(x=>`<li>${x}</li>`).join('')}</ul></div>`:''}
       ${r.watch.length ? `<div class="note"><h3>健診メモ</h3><ul>${r.watch.map(x=>`<li>${x}</li>`).join('')}</ul></div>`:''}
-      <h3>候補フード</h3><div class="foods">${r.foods.map(f=>`<article class="food"><h4>${f.name}</h4><p>${f.maker} / ${f.kcal}kcal / 脂質${f.fat}% / 約${f.priceKg.toLocaleString()}円/kg</p><ul>${(f.reasons.length?f.reasons:['条件に比較的合いやすい']).map(x=>`<li>${x}</li>`).join('')}</ul><div class="food-actions">${f.url !== '#' ? `<a class="primary buy-link" data-product="${f.name}" data-maker="${f.maker}" href="${f.url}" target="_blank" rel="noopener sponsored">通販サイトで見る</a>` : ''}${productDetailUrl(f.name) !== '#' ? `<a class="text-link product-link" data-product="${f.name}" data-maker="${f.maker}" href="${productDetailUrl(f.name)}">くわしく見る</a>` : ''}</div></article>`).join('')}</div>
-      <div class="pdf-cta"><h3>詳細ごはんカルテPDF</h3><p>無料診断より一歩くわしく、今のフード・おやつ・体重・健診表を「相談用の1枚」にまとめます。</p><a class="primary pdf-interest" data-price="980" href="/pdf-karute/">初回モニター 980円で作成希望</a><small>※今は需要確認用。決済はまだ発生しません。</small></div>
+      <div class="note"><h3>この診断について</h3><p>犬の行動評価で使われる考え方を参考に、家庭で観察しやすい質問へ置き換えたセルフチェックです。C-BARQそのものではなく、医学的診断・行動診断でもありません。</p><a class="text-link" href="/about-diagnosis/">参考にしている考え方を見る</a></div>
+      ${r.therapyFoods.length ? `<div class="alert therapy"><h3>療法食を相談するなら</h3><p>血液検査・尿検査・服薬状況がある場合に、PDFカルテ側で整理して主治医に確認しやすくする候補です。無料診断では購入推奨ではなく「相談候補」として表示します。</p><div class="foods therapy-foods">${r.therapyFoods.map(f=>`<article class="food"><h4>${f.name}</h4><p>${f.maker}</p><ul><li>${f.note}</li></ul></article>`).join('')}</div></div>`:''}
+      <h3>タイプに合わせた候補フード</h3><p class="helper">商品提案はサブです。健診異常・服薬・療法食がある場合は購入前に主治医へ確認してください。</p><div class="foods">${r.foods.map(f=>`<article class="food"><h4>${f.name}</h4><p>${f.maker} / ${f.kcal}kcal / 脂質${f.fat}% / 約${f.priceKg.toLocaleString()}円/kg</p><ul>${(f.reasons.length?f.reasons:['条件に比較的合いやすい']).map(x=>`<li>${x}</li>`).join('')}</ul><div class="food-actions">${f.url !== '#' ? `<a class="primary buy-link" data-product="${f.name}" data-maker="${f.maker}" href="${f.url}" target="_blank" rel="noopener sponsored">通販サイトで見る</a>` : ''}${productDetailUrl(f.name) !== '#' ? `<a class="text-link product-link" data-product="${f.name}" data-maker="${f.maker}" href="${productDetailUrl(f.name)}">くわしく見る</a>` : ''}</div></article>`).join('')}</div>
+      <div class="pdf-cta"><h3>健診ごはんカルテPDF</h3><p>タイプ診断に加えて、健診表・現在のフード・おやつ量・体重変化を「主治医に相談しやすい1枚」にまとめます。</p><a class="primary pdf-interest" data-price="980" href="/pdf-karute/">980円でカルテを申し込む</a><small>決済後に入力フォームへ進み、2〜3営業日以内にPDFをお届けします。</small></div>
       <button class="secondary reset">もう一度診断</button></div>`
   }
   const q = QUESTIONS[step]
@@ -319,33 +383,18 @@ function renderTracker(){
     ${list.length ? `<ul class="weight-list">${list.slice().reverse().map((e,i)=>`<li><span>${e.date}</span><span>${e.weight}kg</span><button type="button" class="text-link del-weight" data-idx="${list.length-1-i}">削除</button></li>`).join('')}</ul>` : '<p class="helper">まだ記録がありません。</p>'}`
 }
 function renderInput(q){
+  if(q.type==='text') return `<label class="number text-input"><input type="text" value="${answers[q.key]||''}" data-key="${q.key}" placeholder="${q.placeholder||''}"></label>`
   if(q.type==='number') return `<label class="number"><input type="number" min="0" step="0.1" value="${answers[q.key]||''}" data-key="${q.key}" placeholder="${q.placeholder}"><span>${q.suffix}</span></label>`
   if(q.type==='labs') return `<p class="helper">空欄でも進めます。健康診断用紙がある場合だけ入力してください。</p><div class="lab-grid">${labFields.map(([k,l,u])=>`<label><span>${l}</span><input type="number" step="0.001" data-lab="${k}" value="${(answers.labs||{})[k]||''}" placeholder="${u}"></label>`).join('')}</div>`
   const multi = q.type==='multi'
   return `<div class="options">${q.options.map(([v,l])=>`<label class="option"><input type="${multi?'checkbox':'radio'}" name="${q.key}" value="${v}" ${isChecked(q.key,v,multi)?'checked':''}>${l}</label>`).join('')}</div>`
 }
 function isChecked(k,v,multi){ return multi ? (answers[k]||[]).includes(v) : answers[k]===v }
-function priorities(type){
-  return {
-    'まずは相談推奨タイプ':['療法食・服薬・検査値の確認を優先','フード変更は主治医確認後に行う','おやつ・サプリ追加は一旦慎重にする'],
-    '体重管理タイプ':['kcal/100gと脂質を確認','おやつを1日カロリーの10%以内にする','2〜4週単位で体重変化を見る'],
-    '食いつき重視タイプ':['粒サイズ・香り・食感を優先','急な変更ではなく7〜10日かけて切り替える','食欲低下が続く場合は受診'],
-    'お腹ケアタイプ':['急な切替を避ける','便の状態を記録する','高脂質・おやつ過多を避ける'],
-    '皮膚・被毛ケアタイプ':['主原料と脂肪酸を確認','最低4〜8週は継続して様子を見る','強い痒みや脱毛は受診'],
-    '関節ケアタイプ':['体重管理を最優先','関節ケア成分は補助として見る','滑りにくい環境も一緒に整える'],
-    'シニア総合ケアタイプ':['シニア対応・粒サイズ・続けやすさを確認','半年〜1年ごとに体重と健診で見直す','おやつ量を決めておく']
-  }[type]
-}
-function resultLead(type){
-  return {
-    'まずは相談推奨タイプ':'健診結果や服薬状況によっては、フード変更より先に主治医への確認が安全です。食事相談前の整理として使ってください。',
-    '体重管理タイプ':'体型・活動量・健診項目から、カロリーと脂質の見直しが優先になりそうです。',
-    '食いつき重視タイプ':'食欲ムラがあるため、粒サイズ・香り・切替方法を含めて選ぶのがよさそうです。',
-    'お腹ケアタイプ':'便の状態を見ながら、急な切替を避けて消化に配慮した選び方が向きます。',
-    '皮膚・被毛ケアタイプ':'毛艶や皮膚が気になる場合は、脂肪酸や主原料、継続しやすさを確認しましょう。',
-    '関節ケアタイプ':'体重管理と関節ケア成分の両方を見ながら、無理なく続けられる候補を選びます。',
-    'シニア総合ケアタイプ':'大きな偏りは少なめです。年齢に合わせてカロリー・粒サイズ・継続性を確認しましょう。'
-  }[type]
+function canProceed(q){
+  if(q.type==='text' || q.type==='labs') return true
+  if(q.type==='number') return q.key!=='weight' || Number(answers[q.key])>0
+  if(q.type==='multi') return true
+  return Boolean(answers[q.key])
 }
 function bindEvents(){
   document.querySelectorAll('.js-diagnosis-start').forEach(el=>el.addEventListener('click', e=>{
@@ -365,15 +414,17 @@ function bindEvents(){
   })
   document.querySelectorAll('input[type=radio]').forEach(el=>el.addEventListener('change', e=>{answers[e.target.name]=e.target.value}))
   document.querySelectorAll('input[type=checkbox]').forEach(el=>el.addEventListener('change', e=>{const k=e.target.name; answers[k]=answers[k]||[]; answers[k]=e.target.checked?[...new Set([...answers[k],e.target.value])]:answers[k].filter(x=>x!==e.target.value)}))
-  document.querySelector('input[type=number][data-key]')?.addEventListener('input', e=>{answers[e.target.dataset.key]=e.target.value})
+  document.querySelectorAll('input[data-key]').forEach(el=>el.addEventListener('input', e=>{answers[e.target.dataset.key]=e.target.value}))
   document.querySelectorAll('input[data-lab]').forEach(el=>el.addEventListener('input', e=>{answers.labs=answers.labs||{}; answers.labs[e.target.dataset.lab]=e.target.value}))
   document.querySelector('.next')?.addEventListener('click', ()=>{
     if(step === 0) trackEvent('diagnosis_start', {location: 'question_next'})
+    const q = QUESTIONS[step]
+    if(!canProceed(q)){ alert(q.key==='weight' ? '体重を入力してください。カロリーとおやつ上限の計算に使います。' : '近いものを選んでください。'); return }
     const finishing = step === QUESTIONS.length - 1
     step++
     if(finishing){
       const r = calcResult(answers)
-      trackEvent('diagnosis_complete', {result_type: r.type, has_checkup_flags: (answers.checkup || []).filter(x=>x !== 'none').length > 0})
+      trackEvent('diagnosis_complete', {result_type: r.type, sub_tags: r.tags.join(','), has_checkup_flags: (answers.checkup || []).filter(x=>x !== 'none').length > 0})
     }
     render(); location.hash='diagnosis'
   })
