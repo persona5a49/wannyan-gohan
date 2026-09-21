@@ -1,36 +1,36 @@
 import './style.css'
 
 const FOODS = [
-  {name:'ニュートロ シュプレモ シニア犬用', maker:'Nutro', kcal:350, protein:26, fat:13, priceKg:1900, tags:['senior','coat','balanced','small'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b41c22.08fe12c0.57b41c23.755a6e9f/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fnyanzaq%2F4562358781827%2F&link_type=hybrid_url&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJoeWJyaWRfdXJsIiwic2l6ZSI6IjI0MHgyNDAiLCJuYW0iOjEsIm5hbXAiOiJyaWdodCIsImNvbSI6MSwiY29tcCI6ImRvd24iLCJwcmljZSI6MSwiYm9yIjoxLCJjb2wiOjEsImJidG4iOjEsInByb2QiOjAsImFtcCI6ZmFsc2V9'},
-  {name:'ヒルズ サイエンス・ダイエット シニア 小型犬用', maker:'Hill’s', kcal:365, protein:19, fat:14, priceKg:1300, tags:['senior','small','cost','balanced'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b41d3d.0196a071.57b41d3e.22d83eeb/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fsweet-pet%2F118579662%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'},
-  {name:'ロイヤルカナン ミニ エイジング12+', maker:'Royal Canin', kcal:383, protein:24, fat:14, priceKg:1700, tags:['senior','small','palatable'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b41e37.7d60f1c7.57b41e38.dcb0788f/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2F1096dog%2Fw-120005-00-00%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'},
+  {name:'ニュートロ シュプレモ シニア犬用', maker:'Nutro', kcal:350, protein:26, fat:13, priceKg:1900, tags:['senior','coat','balanced','small'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b41c22.08fe12c0.57b41c23.755a6e9f/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fnyanzaq%2F4562358781827%2F&link_type=hybrid_url&ut=eyJwYW...c2V9'},
+  {name:'ヒルズ サイエンス・ダイエット シニア 小型犬用', maker:'Hill’s', kcal:365, protein:19, fat:14, priceKg:1300, tags:['senior','small','cost','balanced'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b41d3d.0196a071.57b41d3e.22d83eeb/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fsweet-pet%2F118579662%2F&link_type=picttext&ut=eyJwYW...NlfQ%3D%3D'},
+  {name:'ロイヤルカナン ミニ エイジング12+', maker:'Royal Canin', kcal:383, protein:24, fat:14, priceKg:1700, tags:['senior','small','palatable'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b41e37.7d60f1c7.57b41e38.dcb0788f/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2F1096dog%2Fw-120005-00-00%2F&link_type=picttext&ut=eyJwYW...NlfQ%3D%3D'},
   {name:'アカナ シニアドッグ', maker:'ACANA', kcal:332, protein:33, fat:14, priceKg:2300, tags:['senior','protein','weight'], url:'https://px.a8.net/svt/ejp?a8mat=4BCFNK+3I7X0Y+5FPU+5YJRM'},
-  {name:'ピュリナ ワン 7歳以上 ほぐし粒入り', maker:'Purina', kcal:360, protein:27, fat:13, priceKg:900, tags:['senior','cost','palatable'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b41f4a.7a14458b.57b41f4b.35feaa3c/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fbadasai%2F4902201206563%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'},
-  {name:'このこのごはん', maker:'オモヤ', kcal:343, protein:20.9, fat:8.2, priceKg:3800, tags:['small','lowfat','japan','coat'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b796b2.783134fe.57b796b9.ae291207/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fkonokototomoni%2Fkonoko-01%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'},
+  {name:'ピュリナ ワン 7歳以上 ほぐし粒入り', maker:'Purina', kcal:360, protein:27, fat:13, priceKg:900, tags:['senior','cost','palatable'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b41f4a.7a14458b.57b41f4b.35feaa3c/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fbadasai%2F4902201206563%2F&link_type=picttext&ut=eyJwYW...NlfQ%3D%3D'},
+  {name:'このこのごはん', maker:'オモヤ', kcal:343, protein:20.9, fat:8.2, priceKg:3800, tags:['small','lowfat','japan','coat'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b796b2.783134fe.57b796b9.ae291207/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fkonokototomoni%2Fkonoko-01%2F&link_type=picttext&ut=eyJwYW...NlfQ%3D%3D'},
   {name:'モグワン ドッグフード', maker:'レティシアン', kcal:361, protein:27, fat:10, priceKg:2600, tags:['balanced','palatable','coat'], url:'https://px.a8.net/svt/ejp?a8mat=4BCFNK+2SMA0I+3J8+1HKDAR&a8ejpredirect=https%3A%2F%2Fwww.mogwandogfood.co.jp%2F7700%2F'},
-  {name:'犬猫生活 ドッグフード シニア', maker:'犬猫生活', kcal:347, protein:24, fat:10, priceKg:3200, tags:['senior','japan','lowfat'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b797c2.9582bd06.57b797c3.18668413/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Finuneko-seikatsu%2Fdog_sr_chi_sma%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'},
-  {name:'セレクトバランス エイジングケア チキン', maker:'Select Balance', kcal:350, protein:20, fat:10, priceKg:1500, tags:['senior','lowfat','cost','small'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b41f84.bf4f5b64.57b41f85.19f72c13/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fvetschoice%2F4541851006200%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'},
-  {name:'プロマネージ 7歳からの室内犬用', maker:'PROMANAGE', kcal:355, protein:24, fat:12, priceKg:1000, tags:['senior','cost','small'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b41c22.08fe12c0.57b41c23.755a6e9f/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fnyanzaq%2F81211%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'},
-  {name:'アイムス 7歳以上 健康サポート', maker:'IAMS', kcal:365, protein:24, fat:11, priceKg:850, tags:['senior','cost'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b5a5f6.8d9dfb7c.57b5a5f7.4393bfe4/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fthinkrich%2Fsk09926%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'},
-  {name:'ユーカヌバ シニア 小型犬用', maker:'Eukanuba', kcal:376, protein:27, fat:15, priceKg:1500, tags:['senior','small','palatable'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b41e37.7d60f1c7.57b41e38.dcb0788f/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2F1096dog%2Fw-162060-00-00%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'},
-  {name:'ナウフレッシュ スモールブリード シニア', maker:'NOW FRESH', kcal:341, protein:24, fat:12, priceKg:3100, tags:['senior','small','grainfree','weight'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b79ceb.e7a018b7.57b79cec.f9af103e/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fdogparadise%2F4573160559030%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'},
+  {name:'犬猫生活 ドッグフード シニア', maker:'犬猫生活', kcal:347, protein:24, fat:10, priceKg:3200, tags:['senior','japan','lowfat'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b797c2.9582bd06.57b797c3.18668413/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Finuneko-seikatsu%2Fdog_sr_chi_sma%2F&link_type=picttext&ut=eyJwYW...NlfQ%3D%3D'},
+  {name:'セレクトバランス エイジングケア チキン', maker:'Select Balance', kcal:350, protein:20, fat:10, priceKg:1500, tags:['senior','lowfat','cost','small'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b41f84.bf4f5b64.57b41f85.19f72c13/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fvetschoice%2F4541851006200%2F&link_type=picttext&ut=eyJwYW...NlfQ%3D%3D'},
+  {name:'プロマネージ 7歳からの室内犬用', maker:'PROMANAGE', kcal:355, protein:24, fat:12, priceKg:1000, tags:['senior','cost','small'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b41c22.08fe12c0.57b41c23.755a6e9f/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fnyanzaq%2F81211%2F&link_type=picttext&ut=eyJwYW...NlfQ%3D%3D'},
+  {name:'アイムス 7歳以上 健康サポート', maker:'IAMS', kcal:365, protein:24, fat:11, priceKg:850, tags:['senior','cost'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b5a5f6.8d9dfb7c.57b5a5f7.4393bfe4/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fthinkrich%2Fsk09926%2F&link_type=picttext&ut=eyJwYW...NlfQ%3D%3D'},
+  {name:'ユーカヌバ シニア 小型犬用', maker:'Eukanuba', kcal:376, protein:27, fat:15, priceKg:1500, tags:['senior','small','palatable'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b41e37.7d60f1c7.57b41e38.dcb0788f/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2F1096dog%2Fw-162060-00-00%2F&link_type=picttext&ut=eyJwYW...NlfQ%3D%3D'},
+  {name:'ナウフレッシュ スモールブリード シニア', maker:'NOW FRESH', kcal:341, protein:24, fat:12, priceKg:3100, tags:['senior','small','grainfree','weight'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b79ceb.e7a018b7.57b79cec.f9af103e/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fdogparadise%2F4573160559030%2F&link_type=picttext&ut=eyJwYW...NlfQ%3D%3D'},
   {name:'オリジン シニア', maker:'ORIJEN', kcal:371, protein:38, fat:15, priceKg:3200, tags:['senior','protein','ingredient'], url:'https://px.a8.net/svt/ejp?a8mat=4BCFNK+3I7X0Y+5FPU+5YRHE'},
-  {name:'ソルビダ グレインフリー チキン 室内飼育7歳以上', maker:'SOLVIDA', kcal:350, protein:23, fat:10, priceKg:2600, tags:['senior','grainfree','lowfat','coat'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b41f84.bf4f5b64.57b41f85.19f72c13/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fvetschoice%2F4562312014527%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'},
-  {name:'アーテミス アガリクス I/S 小粒', maker:'Artemis', kcal:358, protein:24, fat:14, priceKg:2100, tags:['small','stomach','palatable'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b79ceb.e7a018b7.57b79cec.f9af103e/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fdogparadise%2F8133690054908%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'},
-  {name:'ナチュロル', maker:'楽しい製薬', kcal:400, protein:23, fat:10, priceKg:3600, tags:['japan','palatable','ingredient'], url:'#'},
+  {name:'ソルビダ グレインフリー チキン 室内飼育7歳以上', maker:'SOLVIDA', kcal:350, protein:23, fat:10, priceKg:2600, tags:['senior','grainfree','lowfat','coat'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b41f84.bf4f5b64.57b41f85.19f72c13/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fvetschoice%2F4562312014527%2F&link_type=picttext&ut=eyJwYW...NlfQ%3D%3D'},
+  {name:'アーテミス アガリクス I/S 小粒', maker:'Artemis', kcal:358, protein:24, fat:14, priceKg:2100, tags:['small','stomach','palatable'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b79ceb.e7a018b7.57b79cec.f9af103e/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fdogparadise%2F8133690054908%2F&link_type=picttext&ut=eyJwYW...NlfQ%3D%3D'},
+  {name:'ナチュロル', maker:'楽しい製薬', kcal:400, protein:23, fat:10, priceKg:3600, tags:['japan','palatable','ingredient'], url:'https://reason-why.jp/naturol/se/'},
   {name:'馬肉自然づくり', maker:'健康いぬ生活', kcal:399, protein:27, fat:11, priceKg:3300, tags:['japan','palatable','ingredient'], url:'https://px.a8.net/svt/ejp?a8mat=4BCFNK+2PN3ZM+3E6W+TR13N&a8ejpredirect=http%3A%2F%2Fkenko-dog.com%2Flp%2Fbanikushizendukuri-teiki%2F'},
-  {name:'Yum Yum Yum! シニア&ライト チキン', maker:'GREEN DOG', kcal:320, protein:20, fat:8.5, priceKg:4200, tags:['senior','japan','lowfat','weight','small'], url:'#'},
+  {name:'Yum Yum Yum! シニア&ライト チキン', maker:'GREEN DOG', kcal:320, protein:20, fat:8.5, priceKg:4200, tags:['senior','japan','lowfat','weight','small'], url:'https://hb.afl.rakuten.co.jp/ichiba/57bd8fda.8dbe604e.57bd8fdb.677d0384/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fpetoukokupremium%2F6554%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'},
   {name:'ミシュワン シニア犬用', maker:'ミシュワン', kcal:332, protein:21.5, fat:9.5, priceKg:3800, tags:['senior','japan','small','lowfat'], url:'https://px.a8.net/svt/ejp?a8mat=4BCFNK+3257OY+4PA6+C2O5E'},
   {name:'Dr.ケアワン', maker:'アニマルライフ研究所', kcal:347, protein:22.5, fat:7.5, priceKg:3900, tags:['japan','lowfat','coat','small'], url:'https://px.a8.net/svt/ejp?a8mat=4BCFNK+3C9KZ6+3RW8+BX3J6'},
-  {name:'ペトコトフーズ チキン', maker:'PETOKOTO', kcal:150, protein:13, fat:5.4, priceKg:5200, tags:['fresh','palatable','stomach'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b799d3.42c5d4fb.57b799d4.8e599777/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fpetokotofoods%2F5345%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'},
-  {name:'ブッチ ブラック・レーベル', maker:'Butch', kcal:116, protein:10.5, fat:8, priceKg:2600, tags:['wet','palatable','senior'], url:'#'},
+  {name:'ペトコトフーズ チキン', maker:'PETOKOTO', kcal:150, protein:13, fat:5.4, priceKg:5200, tags:['fresh','palatable','stomach'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b799d3.42c5d4fb.57b799d4.8e599777/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fpetokotofoods%2F5345%2F&link_type=picttext&ut=eyJwYW...NlfQ%3D%3D'},
+  {name:'ブッチ ブラック・レーベル', maker:'Butch', kcal:116, protein:10.5, fat:8, priceKg:2600, tags:['wet','palatable','senior'], url:'https://butch-japan.co.jp/products/blacklabel800'},
   {name:'カナガン ドッグフード チキン', maker:'レティシアン', kcal:376, protein:29, fat:15, priceKg:2600, tags:['grainfree','palatable','protein'], url:'https://px.a8.net/svt/ejp?a8mat=4BCFNK+2Q8JLE+3J8+NSP1V&a8ejpredirect=https%3A%2F%2Fwww.canagandogfood.co.jp%2F3503%2F'},
   {name:'ネルソンズ ドッグフード', maker:'レティシアン', kcal:365, protein:28, fat:12, priceKg:2200, tags:['medium','ingredient','palatable'], url:'https://px.a8.net/svt/ejp?a8mat=4BCFNK+2P1ODU+3J8+15NP77&a8ejpredirect=http%3A%2F%2Fwww.nelsonsdogfood.jp%2F7500%2F'},
-  {name:'POCHI ザ・ドッグフード エイジングケア', maker:'POCHI', kcal:315, protein:30, fat:10, priceKg:2400, tags:['senior','weight','lowfat','protein'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b79b5b.a0865e7c.57b79b5c.9f959709/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fpochi-tokyo%2Fpod0101080-1000g%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'},
+  {name:'POCHI ザ・ドッグフード エイジングケア', maker:'POCHI', kcal:315, protein:30, fat:10, priceKg:2400, tags:['senior','weight','lowfat','protein'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b79b5b.a0865e7c.57b79b5c.9f959709/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fpochi-tokyo%2Fpod0101080-1000g%2F&link_type=picttext&ut=eyJwYW...NlfQ%3D%3D'},
   {name:'ペロリコ ドッグフード ライト', maker:'レティシアン', kcal:326, protein:22.5, fat:8, priceKg:2600, tags:['weight','lowfat','senior'], url:'https://px.a8.net/svt/ejp?a8mat=4BCFNK+34IY42+3J8+4GQLWI&a8ejpredirect=https%3A%2F%2Fwww.perolicodogfood.com%2Flight%2FPDL20000'},
-  {name:'ロイヤルカナン ミニ ライトウェイトケア', maker:'Royal Canin', kcal:319, protein:30, fat:11, priceKg:1700, tags:['weight','small','lowfat'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b5a3b9.ecf57661.57b5a3ba.8d1f18b9/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fdog-penet%2Ff11225%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'},
-  {name:'ヒルズ サイエンス・ダイエット 減量サポート 小型犬用', maker:'Hill’s', kcal:313, protein:24, fat:9, priceKg:1500, tags:['weight','small','lowfat','cost'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b41d3d.0196a071.57b41d3e.22d83eeb/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fsweet-pet%2Fset0096s%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'},
-  {name:'VetSolution 犬用 胃腸サポート', maker:'Monge', kcal:383, protein:24, fat:15, priceKg:2400, tags:['stomach','senior'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b84b87.2ec97563.57b84b88.333718c7/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fvetslabo%2Fdr000114%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'}
+  {name:'ロイヤルカナン ミニ ライトウェイトケア', maker:'Royal Canin', kcal:319, protein:30, fat:11, priceKg:1700, tags:['weight','small','lowfat'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b5a3b9.ecf57661.57b5a3ba.8d1f18b9/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fdog-penet%2Ff11225%2F&link_type=picttext&ut=eyJwYW...NlfQ%3D%3D'},
+  {name:'ヒルズ サイエンス・ダイエット 減量サポート 小型犬用', maker:'Hill’s', kcal:313, protein:24, fat:9, priceKg:1500, tags:['weight','small','lowfat','cost'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b41d3d.0196a071.57b41d3e.22d83eeb/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fsweet-pet%2Fset0096s%2F&link_type=picttext&ut=eyJwYW...NlfQ%3D%3D'},
+  {name:'VetSolution 犬用 胃腸サポート', maker:'Monge', kcal:383, protein:24, fat:15, priceKg:2400, tags:['stomach','senior'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b84b87.2ec97563.57b84b88.333718c7/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fvetslabo%2Fdr000114%2F&link_type=picttext&ut=eyJwYW...NlfQ%3D%3D'}
 ]
 
 const PRODUCT_SLUGS = {
@@ -100,61 +100,132 @@ function trackEvent(name, params = {}){
 
 const ARTICLES = [
   {
-    slug:'senior-dog-food-choice',
-    title:'シニア犬に合うドッグフードの選び方',
-    lead:'7歳を過ぎた犬のフード選びは、年齢だけでなく体型・活動量・健診結果・食いつきを一緒に見ることが大切です。',
-    sections:[
-      ['まず年齢だけで決めない','シニア用と書かれたフードでも、カロリー・脂質・タンパク質・粒サイズは商品ごとに違います。7歳になったから必ず切り替えるのではなく、体型、便、食いつき、体重変化を見ながら判断します。'],
-      ['見るべき表示','最低限見るのは、kcal/100g、粗脂肪、粗タンパク質、対象年齢、粒サイズです。体重管理が必要なら低カロリー・低脂肪、痩せてきた子なら食欲や病気の確認が先になります。'],
-      ['健診結果がある場合','BUN・Cre、ALT・ALP、TG・T-Cho、尿検査に気になる点がある場合は、自己判断で療法食風の選び方をしないでください。食事変更前に主治医へ確認する方が安全です。'],
-      ['このサイトでできること','シニア犬フード診断では、体重・体型・悩み・健診項目を入力して、食事量、おやつ上限、候補フードを整理できます。']
+    "slug": "senior-dog-food-choice",
+    "title": "7歳を過ぎた犬のフード、何を変えればいい？",
+    "lead": "シニア用に替えるかどうかは、年齢だけでは決めません。体重の増減、筋肉の落ち方、便、食欲、健診結果を見て、まず「今の子に何が起きているか」を整理します。",
+    "sections": [
+      [
+        "年齢だけで替えると、外すことがあります",
+        "7歳を過ぎると「そろそろシニア用ですか？」と聞かれることが増えます。ただ、同じ7歳でも、よく歩く子、太りやすくなった子、痩せてきた子では見る場所が違います。シニア用という名前より、今の体型と体重変化を先に見ます。"
+      ],
+      [
+        "まず見るのはカロリーと脂質です",
+        "袋の表で最初に確認したいのは、kcal/100g、粗脂肪、粗タンパク質、粒の大きさです。太りやすい子は低カロリー・低脂肪寄り、食が細くなった子は食べやすさや病気の確認を優先します。"
+      ],
+      [
+        "健診で指摘がある子は、フード変更の前に一呼吸置く",
+        "BUN、Cre、SDMA、ALT、ALP、TG、T-Cho、尿検査で気になる項目がある場合、ネットの情報だけで「腎臓に良さそう」「肝臓に良さそう」と選ぶのは危険です。療法食が必要な状態か、一般食で様子を見てよい状態かは、検査値と症状を合わせて判断します。"
+      ],
+      [
+        "このサイトでは「相談前の整理」をします",
+        "わんにゃんごはんカルテでは、年齢、体型、悩み、健診項目から、ごはん量・おやつ上限・見直しポイントをまとめます。治療方針を決める場所ではなく、主治医に相談しやすくするための下書きです。"
+      ]
     ]
   },
   {
-    slug:'senior-dog-feeding-calculator',
-    title:'シニア犬の給餌量計算｜体重別のごはん量目安',
-    lead:'シニア犬のごはん量は、袋の給与量だけでなく、体重・体型・避妊去勢・活動量・おやつ量を合わせて見直します。',
-    sections:[
-      ['基本はカロリーで考える','まずRER（安静時エネルギー要求量）を計算し、年齢や体型に合わせてDER（1日必要カロリー）に調整します。袋の給与量は便利ですが、全ての子にぴったり合うわけではありません。'],
-      ['おやつは10%以内を目安に','おやつが多いと、主食を減らしても体重管理が難しくなります。1日必要カロリーの10%以内を目安にして、残りを主食で調整します。'],
-      ['体重記録とセットで見る','2〜4週間ごとに体重を記録し、増減の傾向を確認します。急に痩せる、食欲が落ちる、多飲多尿がある場合は食事量調整だけで済ませないでください。'],
-      ['診断ツールの使い方','体重と体型を入れると、1日の必要カロリーとおやつ上限を表示します。体重記録機能もあわせて使えます。']
+    "slug": "senior-dog-feeding-calculator",
+    "title": "シニア犬のごはん量がわからない時の計算方法",
+    "lead": "袋の給与量は便利ですが、その子の体型やおやつ量までは見てくれません。まずカロリーで考え、2〜4週間の体重変化で微調整します。",
+    "sections": [
+      [
+        "袋の量が合わないことは普通にあります",
+        "フード袋の給与量は出発点として便利です。ただ、避妊去勢、活動量、筋肉量、おやつの量で必要カロリーは変わります。袋通りにあげて太る子もいれば、足りない子もいます。"
+      ],
+      [
+        "RERからざっくり計算する",
+        "まず安静時エネルギー要求量（RER）を計算し、年齢や体型に合わせて1日の目安カロリーに調整します。正確な答えを一発で出すというより、体重記録で合わせ込むためのスタート地点です。"
+      ],
+      [
+        "おやつは「別枠」にしない",
+        "体重管理でよくある落とし穴は、おやつを計算に入れないことです。目安として、おやつは1日のカロリーの10%以内に収め、残りを主食で考えます。小型犬では数粒のおやつでも差が出ます。"
+      ],
+      [
+        "急に痩せる時は計算で片づけない",
+        "食欲が落ちた、急に痩せた、水をよく飲む、尿が増えた、嘔吐や下痢がある。こういう時はフード量の調整より受診が先です。シニア期の体重変化は病気のサインになることがあります。"
+      ]
     ]
   },
   {
-    slug:'senior-dog-not-eating',
-    title:'シニア犬がごはんを食べない時の見直しポイント',
-    lead:'シニア犬の食欲低下は、好みの問題だけでなく、歯・口、消化器、腎臓、痛み、薬の影響などが隠れることがあります。',
-    sections:[
-      ['急な食欲低下は受診優先','昨日まで食べていたのに急に食べない、元気がない、嘔吐・下痢がある、体重が減っている場合は、フード変更より先に動物病院へ相談してください。'],
-      ['家庭で見直せること','粒の大きさ、硬さ、香り、温度、食器の高さ、切り替え速度を確認します。シニア期は口や歯の違和感でドライフードを嫌がることもあります。'],
-      ['切り替えはゆっくり','急な切り替えは下痢や嘔吐につながることがあります。基本は7〜10日かけて少しずつ混ぜる方法が安全です。'],
-      ['診断で整理できること','食いつき重視タイプでは、食欲ムラ、粒サイズ、ウェット・フレッシュ系候補、注意サインを整理します。']
+    "slug": "senior-dog-not-eating",
+    "title": "老犬がごはんを食べない。フードを変える前に見ること",
+    "lead": "食べない理由は「飽きた」だけではありません。口の痛み、吐き気、腎臓や肝臓、痛み、薬の影響でも食欲は落ちます。",
+    "sections": [
+      [
+        "急に食べないなら、まず体調を見ます",
+        "昨日まで普通に食べていた子が急に食べない。元気がない、吐く、下痢をする、体重が落ちる。こういう時は、フードを探すより先に病院へ相談した方が安全です。"
+      ],
+      [
+        "口と歯はかなり大事です",
+        "シニア犬では、歯周病や口の痛みでドライフードを避けることがあります。粒を小さくする、ふやかす、香りを立てるだけで食べやすくなることもありますが、痛みがある場合は食事の工夫だけでは解決しません。"
+      ],
+      [
+        "切り替えはゆっくりでいい",
+        "新しいフードを急に増やすと、下痢や嘔吐につながることがあります。基本は7〜10日ほどかけて少しずつ混ぜます。お腹が弱い子は、もっとゆっくりでも構いません。"
+      ],
+      [
+        "「食いつき重視」でも、成分は確認する",
+        "食べてくれることは大事です。ただ、脂質が高いもの、おやつ扱いに近いもの、持病と相性が悪いものもあります。食いつきだけで選ばず、体重・便・健診結果と一緒に見ます。"
+      ]
     ]
   },
   {
-    slug:'senior-dog-weight-control',
-    title:'シニア犬の体重管理｜太る・痩せる時の食事チェック',
-    lead:'シニア犬の体重管理では、太る場合と痩せる場合で考え方が違います。どちらも体重記録と健診結果の確認が重要です。',
-    sections:[
-      ['太る場合','活動量低下、避妊去勢後、脂質の高いフード、おやつ過多がよくある原因です。低カロリー・低脂肪フードを検討しつつ、おやつ量を先に見直します。'],
-      ['痩せる場合','シニア犬の体重減少は、単に高カロリーフードへ変える前に原因確認が必要です。食欲、便、飲水量、尿量、痛み、口腔内、健診結果を見ます。'],
-      ['記録の重要性','見た目だけでは変化に気づきにくいので、同じ条件で体重を記録します。短期間での大きな増減は受診目安になります。'],
-      ['サイト内機能','体重記録機能で日付と体重を保存できます。診断結果とあわせて、食事量の見直しに使ってください。']
+    "slug": "senior-dog-weight-control",
+    "title": "シニア犬が太ってきた・痩せてきた時の食事チェック",
+    "lead": "太る時と痩せる時では、見る順番が違います。どちらも「年齢のせい」で終わらせず、体重記録と健診結果を合わせて確認します。",
+    "sections": [
+      [
+        "太ってきた子は、おやつと脂質から見る",
+        "活動量が落ちたのに、若い頃と同じ量を食べている。おやつが少しずつ増えている。脂質の高いフードに替えた。シニア期に太る時は、このあたりがよくあります。まずは1日の総カロリーを見ます。"
+      ],
+      [
+        "痩せてきた子は、単に高カロリーへ替えない",
+        "シニア犬の体重減少は、筋肉量の低下、歯や口の痛み、消化器、腎臓、内分泌、腫瘍など、いろいろな原因で起こります。高カロリーフードに替える前に、食欲、便、飲水量、尿量、健診結果を確認します。"
+      ],
+      [
+        "体重は同じ条件で記録する",
+        "抱っこして家庭用体重計で測る場合でも、同じ時間帯、同じ方法で続けると傾向が見えます。1回の数字より、2〜4週間の流れを見る方が役に立ちます。"
+      ],
+      [
+        "目標は「急に変えない」こと",
+        "減量も増量も、急ぎすぎると失敗しやすいです。食事量を少し調整し、便・食欲・体重を見ながら進めます。持病がある子は、必ず主治医と相談して決めます。"
+      ]
     ]
   },
   {
-    slug:'prescription-diet-vs-regular-food',
-    title:'療法食と一般食の違い｜自己判断で変えていい？',
-    lead:'療法食は病気の管理を目的に設計された食事です。一般食やシニア用フードとは役割が違います。',
-    sections:[
-      ['療法食は治療の一部','腎臓、心臓、消化器、尿石、膵炎などで使う療法食は、栄養バランスを特定の目的に合わせて調整しています。自己判断で中止・変更しないことが大切です。'],
-      ['一般食との違い','一般食は健康な犬の日常食として作られています。シニア用や低脂肪と書かれていても、療法食の代わりにはなりません。'],
-      ['変更前に確認すること','食べない、便が合わない、価格が高い、別商品にしたい場合も、まず主治医に相談してください。検査値や薬との兼ね合いが必要です。'],
-      ['このサイトでの扱い','本サイトは療法食の指示や治療判断は行いません。療法食中・服薬中・健診異常ありの場合は、相談推奨として表示します。']
+    "slug": "prescription-diet-vs-regular-food",
+    "title": "療法食をやめたい時に、自己判断しない方がいい理由",
+    "lead": "療法食は「体に良さそうなフード」ではなく、病気の管理に合わせて栄養設計された食事です。一般食やシニア用フードとは役割が違います。",
+    "sections": [
+      [
+        "療法食は治療の一部です",
+        "腎臓、心臓、消化器、尿石、膵炎などで使う療法食は、特定の栄養素を調整して作られています。食べない、価格が高い、別のフードにしたいと思っても、自己判断で中止すると管理が崩れることがあります。"
+      ],
+      [
+        "シニア用や低脂肪は、療法食の代わりではありません",
+        "一般食にもシニア用、低脂肪、胃腸ケアなどの表示があります。ただし、療法食と同じ目的・基準で作られているわけではありません。名前が似ていても、使い方は別物です。"
+      ],
+      [
+        "相談する時は、困っている理由を具体的に伝える",
+        "「食べない」「便がゆるい」「値段が負担」「他の子のフードを食べてしまう」など、困っている理由をそのまま伝えると相談しやすくなります。代替案や混ぜ方、検査のタイミングを一緒に決められることがあります。"
+      ],
+      [
+        "このサイトでは療法食の指示はしません",
+        "わんにゃんごはんカルテは、療法食をやめる・替える判断は行いません。療法食中、服薬中、健診異常ありの場合は、主治医に相談する前提で情報を整理します。"
+      ]
     ]
   }
 ]
+
+const RESULT_PROFILES = {
+  'まずは相談推奨タイプ': { code:'CHECK', name:'主治医相談ファースト型', animal:'慎重なカルテ犬', catch:'フードを替える前に、検査値や服薬状況を一度そろえたいタイプです。', traits:['健診項目や服薬の影響を受けやすい','療法食・サプリ・おやつの自己判断は避けたい','主治医に相談する材料を作ると進めやすい'] },
+  '体重管理タイプ': { code:'CAL', name:'カロリー見直し型', animal:'まじめな計量犬', catch:'ごはん本体より、おやつと総カロリーの見直しで変わりやすいタイプです。', traits:['体型と体重推移を優先して見る','kcal/100gと脂質を確認したい','2〜4週間ごとの記録が役に立つ'] },
+  '食いつき重視タイプ': { code:'APP', name:'食いつき観察型', animal:'気分屋グルメ犬', catch:'味だけでなく、口・歯・香り・粒サイズまで見たいタイプです。', traits:['食欲ムラの理由を分けて考えたい','急な切り替えより少しずつ試したい','食べない日が続く時は体調確認が先'] },
+  'お腹ケアタイプ': { code:'GUT', name:'お腹ゆっくり型', animal:'繊細なおなか犬', catch:'便の状態を見ながら、急な変更を避けたいタイプです。', traits:['切り替えは7〜10日以上かけたい','脂質やおやつ量も確認したい','便の記録がフード選びのヒントになる'] },
+  '皮膚・被毛ケアタイプ': { code:'SKIN', name:'皮膚・毛づや観察型', animal:'つやつやケア犬', catch:'主原料や脂肪酸を見つつ、数週間単位で変化を見たいタイプです。', traits:['すぐに結果を求めすぎない','かゆみ・脱毛が強い時は受診優先','主原料と続けやすさも大事'] },
+  '関節ケアタイプ': { code:'JOINT', name:'足腰サポート型', animal:'ゆっくり散歩犬', catch:'関節ケア成分だけでなく、体重管理も一緒に考えたいタイプです。', traits:['体重が足腰の負担に直結しやすい','サプリは補助として見る','床や散歩量もセットで整えたい'] },
+  'シニア総合ケアタイプ': { code:'BAL', name:'バランス見守り型', animal:'安定シニア犬', catch:'大きな偏りは少なめ。半年〜1年ごとの見直しで整えたいタイプです。', traits:['年齢・粒サイズ・続けやすさを見る','おやつ量を決めると安定しやすい','健診や体重変化で定期的に見直す'] }
+}
+function profileFor(type){ return RESULT_PROFILES[type] || RESULT_PROFILES['シニア総合ケアタイプ'] }
 
 function calcResult(a){
   const redFlags = []
@@ -201,11 +272,11 @@ function render(){
     <header class="site-header"><div class="brand">わんにゃんごはんカルテ</div><nav class="nav-links"><a href="/products/">商品一覧</a><a href="/products/compare/">比較</a><a href="#articles">記事</a><a href="#tracker">体重記録</a><a href="/pdf-karute/">詳細ごはんカルテPDF</a></nav><a href="#diagnosis" class="mini-cta js-diagnosis-start" data-location="header">無料でチェック</a></header>
     <div style="background:#f4f0e6;color:#62665b;font-size:.78rem;text-align:center;padding:6px 12px;font-weight:700;letter-spacing:.02em">PR｜本サイトはアフィリエイト広告を利用しています</div>
     <main>
-      <section class="hero"><p class="eyebrow">健診結果もふまえる / シニア犬向け</p><h1>シニア犬フード診断</h1><p class="lead">7歳からのごはん選びを、年齢・体型・悩み・健康診断の気になる項目から整理。ごはん量、おやつ上限、候補フードまでまとめます。</p><div class="hero-actions"><a href="#diagnosis" class="primary js-diagnosis-start" data-location="hero">診断をはじめる</a><a href="#why" class="secondary">何がわかる？</a></div><div class="trust"><span>約1分</span><span>登録不要</span><span>医療判断ではなく食事整理</span></div></section>
-      <section class="cards" id="why"><article><h2>ごはん量</h2><p>体重からRER/DERを計算し、1日の目安カロリーを表示。</p></article><article><h2>おやつ上限</h2><p>あげすぎ防止のため、1日カロリーの10%目安を表示。</p></article><article><h2>健診メモ</h2><p>BUN/Cre/ALT/脂質/尿検査など、食事変更前の相談ラインを整理。</p></article></section>
+      <section class="hero"><div class="hero-copy"><p class="eyebrow">うちの子のごはんを相談したい場所</p><h1>7歳を過ぎたら、ごはん選びは少しだけ慎重に。</h1><p class="lead">体重、体型、食いつき、健診で気になった項目から、今のごはんを一緒に整理します。結果はMBTIのような「ごはんタイプ」で表示。候補フードだけでなく、主治医に相談したいポイントまでまとめます。</p><div class="hero-actions"><a href="#diagnosis" class="primary js-diagnosis-start" data-location="hero">うちの子のタイプを見る</a><a href="/pdf-karute/" class="secondary">PDFカルテを見る</a></div><div class="trust"><span>約1分</span><span>登録不要</span><span>医療判断ではなく相談前の整理</span></div></div><aside class="hero-karute"><span class="karte-label">KARTE SAMPLE</span><strong>CAL</strong><p>カロリー見直し型</p><small>おやつ・脂質・体重推移を一緒に確認</small></aside></section>
+      <section class="cards" id="why"><article><span>01</span><h2>ごはんタイプ</h2><p>CHECK/CAL/APP/GUTなど、結果を覚えやすいタイプ名で表示します。</p></article><article><span>02</span><h2>ごはん量とおやつ</h2><p>体重から目安カロリーと、おやつの上限をざっくり計算します。</p></article><article><span>03</span><h2>健診メモ</h2><p>腎臓・肝臓・脂質・尿検査など、食事変更前に相談したい項目を整理します。</p></article></section>
       <section class="diagnosis" id="diagnosis">${renderDiagnosis()}</section>
       <section class="tracker" id="tracker">${renderTracker()}</section>
-      <section class="article-list" id="articles"><h2>シニア犬のごはん記事</h2><p class="helper">診断ツールだけでなく、食事量・体重管理・療法食の注意点を独自に整理した記事です。</p><div class="article-cards">${ARTICLES.map(a=>`<a class="article-card js-article-click" data-article="${a.slug}" href="/articles/${a.slug}/"><span>記事</span><strong>${a.title}</strong><small>${a.lead}</small></a>`).join('')}</div></section>
+      <section class="article-list" id="articles"><h2>シニア犬のごはん記事</h2><p class="helper">診察室でよく出る悩みを、できるだけ普通の言葉でまとめました。記事末に参考文献も載せています。</p><div class="article-cards">${ARTICLES.map(a=>`<a class="article-card js-article-click" data-article="${a.slug}" href="/articles/${a.slug}/"><span>記事</span><strong>${a.title}</strong><small>${a.lead}</small></a>`).join('')}</div></section>
       <section class="article-list" id="compare"><h2>シニア犬フード比較</h2><p class="helper">検索されやすい切り口で、候補フードのカロリー・脂質・注意点を比較します。</p><div class="article-cards"><a class="article-card" href="/products/compare/senior-dog-low-fat/"><span>比較</span><strong>低脂肪ドッグフード比較</strong><small>脂質や体重管理が気になるシニア犬向け。</small></a><a class="article-card" href="/products/compare/senior-dog-small-kibble/"><span>比較</span><strong>小粒ドッグフード比較</strong><small>口・歯・食べやすさが気になる小型シニア犬向け。</small></a><a class="article-card" href="/products/compare/senior-dog-weight-control/"><span>比較</span><strong>体重管理ドッグフード比較</strong><small>太りやすくなったシニア犬の食事整理に。</small></a></div></section>
     </main>
     <footer><p>本サイトはペットフード選びの参考情報を提供するもので、診断・治療・療法食の指示ではありません。持病、症状、療法食利用中の場合は獣医師に相談してください。</p></footer>`
@@ -220,13 +291,14 @@ function renderArticle(article){
 function renderDiagnosis(){
   if(step >= QUESTIONS.length){
     const r = calcResult(answers)
-    return `<div class="result karte"><p class="eyebrow">うちの子ごはんカルテ</p><h2>${r.type}</h2><p>${resultLead(r.type)}</p>
+    const p = profileFor(r.type)
+    return `<div class="result karte"><p class="eyebrow">うちの子ごはんカルテ</p><div class="type-card"><div><span class="type-code">${p.code}</span><h2>${p.name}</h2><p>${p.catch}</p></div><div class="type-animal">${p.animal}</div></div><p class="result-lead">${resultLead(r.type)}</p><div class="trait-list">${p.traits.map(x=>`<span>${x}</span>`).join('')}</div>
       <div class="result-grid"><div class="metric"><strong>${Math.round(r.kcal || 0)} kcal/日</strong><span>目安必要カロリー</span></div><div class="metric"><strong>${Math.round(r.snack || 0)} kcal/日まで</strong><span>おやつ上限の目安</span></div></div>
       <div class="karte-section"><h3>食事の優先順位</h3><ol>${priorities(r.type).map(x=>`<li>${x}</li>`).join('')}</ol></div>
       ${r.redFlags.length ? `<div class="alert"><h3>フード変更前に確認</h3><ul>${r.redFlags.map(x=>`<li>${x}</li>`).join('')}</ul></div>`:''}
       ${r.watch.length ? `<div class="note"><h3>健診メモ</h3><ul>${r.watch.map(x=>`<li>${x}</li>`).join('')}</ul></div>`:''}
       <h3>候補フード</h3><div class="foods">${r.foods.map(f=>`<article class="food"><h4>${f.name}</h4><p>${f.maker} / ${f.kcal}kcal / 脂質${f.fat}% / 約${f.priceKg.toLocaleString()}円/kg</p><ul>${(f.reasons.length?f.reasons:['条件に比較的合いやすい']).map(x=>`<li>${x}</li>`).join('')}</ul><div class="food-actions">${f.url !== '#' ? `<a class="primary buy-link" data-product="${f.name}" data-maker="${f.maker}" href="${f.url}" target="_blank" rel="noopener sponsored">通販サイトで見る</a>` : ''}${productDetailUrl(f.name) !== '#' ? `<a class="text-link product-link" data-product="${f.name}" data-maker="${f.maker}" href="${productDetailUrl(f.name)}">くわしく見る</a>` : ''}</div></article>`).join('')}</div>
-      <div class="pdf-cta"><h3>詳細ごはんカルテPDF</h3><p>現在のフード量・おやつ量・健診結果メモ・主治医に相談するポイントを1枚に整理します。</p><a class="primary pdf-interest" data-price="980" href="/pdf-karute/">初回モニター 980円で作成希望</a><small>※今は需要確認用。決済はまだ発生しません。</small></div>
+      <div class="pdf-cta"><h3>詳細ごはんカルテPDF</h3><p>無料診断より一歩くわしく、今のフード・おやつ・体重・健診表を「相談用の1枚」にまとめます。</p><a class="primary pdf-interest" data-price="980" href="/pdf-karute/">初回モニター 980円で作成希望</a><small>※今は需要確認用。決済はまだ発生しません。</small></div>
       <button class="secondary reset">もう一度診断</button></div>`
   }
   const q = QUESTIONS[step]
