@@ -1,0 +1,291 @@
+<!doctype html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>シニア犬フード 条件で絞り込む比較ツール｜わんにゃんごはんカルテ</title><meta name="description" content="年齢・活動量・気になる点を選ぶと、比較表の中で特に確認したい項目に印がつきます。タグや数値条件で全30商品を絞り込める比較ツールです。"><script async src="https://www.googletagmanager.com/gtag/js?id=G-S9DG1RKDT6"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-S9DG1RKDT6');</script><style>:root{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;color:#20231f;background:#fbfaf5;line-height:1.75}body{margin:0}a{color:inherit}.header{display:flex;gap:16px;justify-content:space-between;align-items:center;border-bottom:1px solid #e8e2d5;background:#fbfaf5;padding:14px 24px;position:sticky;top:0}.brand{font-weight:900}.nav{display:flex;gap:14px;font-weight:700;font-size:.92rem}.wrap{max-width:1040px;margin:auto;padding:24px}.hero{padding:42px 0}.eyebrow{color:#697046;font-weight:800}.lead{font-size:1.1rem}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}.card{background:#fff;border:1px solid #e8e2d5;border-radius:20px;padding:18px}.rank{font-size:.82rem;color:#697046;font-weight:900}.table{overflow:auto;background:#fff;border:1px solid #e8e2d5;border-radius:20px;margin:22px 0}table{border-collapse:collapse;width:100%;min-width:760px}th,td{padding:12px;border-bottom:1px solid #eee7da;text-align:left;vertical-align:top}th{background:#f4f0e6}.primary{display:inline-block;background:#2f5d3a;color:white;text-decoration:none;border-radius:999px;padding:12px 18px;font-weight:900}.secondary{display:inline-block;border:1px solid #2f5d3a;color:#2f5d3a;text-decoration:none;border-radius:999px;padding:11px 16px;font-weight:800}.notice{background:#fff7e6;border-left:5px solid #c88922;padding:14px;border-radius:14px;margin:22px 0}.actions{display:flex;gap:10px;flex-wrap:wrap}.small{color:#62665b;font-size:.94rem}footer{padding:30px 24px;color:#62665b}@media(max-width:640px){.header{align-items:flex-start;flex-direction:column}.wrap{padding:18px}}
+.field{display:flex;flex-direction:column;gap:6px;font-weight:700;font-size:.92rem}
+.field select,.field input{font:inherit;padding:8px 10px;border:1px solid #d8d2c2;border-radius:10px;background:#fff}
+.profile-row{display:flex;gap:16px;flex-wrap:wrap}
+.profile-row .field{min-width:180px;flex:1}
+.tag-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px 14px;margin:10px 0}
+.tag-grid label{display:flex;align-items:center;gap:6px;font-size:.9rem;font-weight:600;cursor:pointer}
+.range-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:14px 0}
+.range-field{font-weight:700;font-size:.9rem}
+.range-field .inputs{display:flex;align-items:center;gap:6px;margin-top:6px;font-weight:400}
+.range-field input{width:84px;font:inherit;padding:7px 8px;border:1px solid #d8d2c2;border-radius:10px;background:#fff}
+.count{font-weight:800;color:#2f5d3a}
+th.emph,td.emph{font-weight:900;color:#2f5d3a;background:#eef3e6}
+th.emph::before{content:'● ';color:#c88922}
+.legend{font-size:.85rem;color:#62665b;margin:6px 0 0}
+.reset-btn{background:#fff;border:1px solid #b7b09a;border-radius:999px;padding:9px 18px;font-weight:800;cursor:pointer;font-size:.92rem}
+h2{margin-top:0}
+.section-title{margin:0 0 10px}
+</style></head><body><header class="header"><a class="brand" href="/">わんにゃんごはんカルテ</a><nav class="nav"><a href="/products/">商品一覧</a><a href="/articles/">記事</a><a href="/#diagnosis">無料診断</a></nav></header><div style="background:#f4f0e6;color:#62665b;font-size:.78rem;text-align:center;padding:6px 12px;font-weight:700;letter-spacing:.02em">PR｜本サイトはアフィリエイト広告を利用しています</div><main class="wrap">
+
+<section class="hero"><p class="eyebrow">比較ツール</p><h1>条件で絞り込むシニア犬フード比較</h1><p class="lead">この子の年齢・活動量・気になる点を選ぶと、比較表の中で特に確認したい項目に印がつきます。タグや数値条件を組み合わせて、全30商品から候補を絞り込めます。</p><div class="actions"><a class="primary" href="/#diagnosis" onclick="gtag('event','diagnosis_start',{location:'compare_finder'})">無料診断を試す</a><a class="secondary" href="/products/compare/">比較一覧へ戻る</a></div></section>
+
+<section class="card">
+  <h2 class="section-title">この子の条件</h2>
+  <p class="small">入力しなくても比較表は使えます。選ぶと、表の中で特に見ておきたい列に印がつきます（列を隠すものではありません）。</p>
+  <div class="profile-row">
+    <label class="field">年齢
+      <select id="ageBand">
+        <option value="puppy">子犬</option>
+        <option value="adult" selected>成犬</option>
+        <option value="middle">中高齢</option>
+        <option value="senior">シニア</option>
+        <option value="hisenior">ハイシニア</option>
+      </select>
+    </label>
+    <label class="field">活動量
+      <select id="activity">
+        <option value="high">高い</option>
+        <option value="normal" selected>ふつう</option>
+        <option value="low">低い</option>
+      </select>
+    </label>
+    <label class="field">気になる点
+      <select id="concern">
+        <option value="" selected>特になし</option>
+        <option value="weight">体重管理</option>
+        <option value="picky">食べムラ</option>
+        <option value="cost">コスト重視</option>
+        <option value="coat">皮膚被毛</option>
+        <option value="stomach">消化器</option>
+      </select>
+    </label>
+  </div>
+  <p class="legend" id="emphNote"></p>
+</section>
+
+<section class="card">
+  <h2 class="section-title">絞り込み条件</h2>
+  <p class="small">チェックした特徴を<strong>すべて満たす</strong>商品だけを表示します。数値条件は空欄のままで構いません。</p>
+  <div class="tag-grid" id="tagGrid"></div>
+  <div class="range-grid">
+    <div class="range-field">kcal/100g
+      <div class="inputs"><input type="number" id="kcalMin" min="0" step="1" placeholder="最小"> 〜 <input type="number" id="kcalMax" min="0" step="1" placeholder="最大"></div>
+    </div>
+    <div class="range-field">タンパク質%
+      <div class="inputs"><input type="number" id="proteinMin" min="0" step="0.1" placeholder="最小"> 〜 <input type="number" id="proteinMax" min="0" step="0.1" placeholder="最大"></div>
+    </div>
+    <div class="range-field">脂質%
+      <div class="inputs"><input type="number" id="fatMin" min="0" step="0.1" placeholder="最小"> 〜 <input type="number" id="fatMax" min="0" step="0.1" placeholder="最大"></div>
+    </div>
+    <div class="range-field">kg単価（円）
+      <div class="inputs"><input type="number" id="priceMin" min="0" step="50" placeholder="最小"> 〜 <input type="number" id="priceMax" min="0" step="50" placeholder="最大"></div>
+    </div>
+  </div>
+  <button type="button" class="reset-btn" id="resetBtn">条件をリセット</button>
+</section>
+
+<p class="small"><span class="count" id="resultCount"></span> 件表示中（全30商品）</p>
+
+<section class="table"><table id="resultsTable"><thead><tr>
+  <th data-field="name">商品名</th>
+  <th data-field="maker">メーカー</th>
+  <th data-field="kcal">kcal/100g</th>
+  <th data-field="protein">タンパク質</th>
+  <th data-field="fat">脂質</th>
+  <th data-field="priceKg">kg単価目安</th>
+  <th data-field="tags">タグ</th>
+</tr></thead><tbody id="resultsBody"></tbody></table></section>
+
+<section class="notice"><strong>免責</strong><br>本ページは診断・治療・療法食の指示ではありません。特にBUN/Cre、ALT/ALP、TG/T-Cho、尿検査、体重減少、服薬・療法食がある場合は、フード変更前に主治医へ確認してください。</section>
+
+<section class="card"><h2>購入前に確認したいこと</h2><ul><li>療法食中・服薬中・健診異常がある場合は、購入前に主治医へ確認してください。</li><li>フード切り替えは少量から。便・吐き気・かゆみ・体重を見ながら進めます。</li><li>このページは商品選びの参考であり、診断・治療・療法食の指示ではありません。</li></ul><p><a class="secondary" href="/#diagnosis" onclick="gtag('event','diagnosis_start',{location:'compare_finder_bottom'})">うちの子タイプ診断で確認する</a> <a class="secondary" href="/pdf-karute/">健診ごはんカルテPDFを見る</a></p></section>
+
+</main><footer>© わんにゃんごはんカルテ</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var PRODUCTS = [
+    {name:'ニュートロ シュプレモ シニア犬用', maker:'Nutro', kcal:350, protein:26, fat:13, priceKg:1900, tags:['senior','coat','balanced','small'], slug:'nutro-supremo-senior'},
+    {name:'ヒルズ サイエンス・ダイエット シニア 小型犬用', maker:'Hill’s', kcal:365, protein:19, fat:14, priceKg:1300, tags:['senior','small','cost','balanced'], slug:'hills-senior-small'},
+    {name:'ロイヤルカナン ミニ エイジング12+', maker:'Royal Canin', kcal:383, protein:24, fat:14, priceKg:1700, tags:['senior','small','palatable'], slug:'royal-canin-mini-aging12'},
+    {name:'アカナ シニアドッグ', maker:'ACANA', kcal:332, protein:33, fat:14, priceKg:2300, tags:['senior','protein','weight'], slug:'acana-senior-dog'},
+    {name:'ピュリナ ワン 7歳以上 ほぐし粒入り', maker:'Purina', kcal:360, protein:27, fat:13, priceKg:900, tags:['senior','cost','palatable'], slug:'purina-one-senior7'},
+    {name:'このこのごはん', maker:'オモヤ', kcal:343, protein:20.9, fat:8.2, priceKg:3800, tags:['small','lowfat','japan','coat'], slug:'konokonogohan'},
+    {name:'モグワン ドッグフード', maker:'レティシアン', kcal:361, protein:27, fat:10, priceKg:2600, tags:['balanced','palatable','coat'], slug:'mogwan'},
+    {name:'犬猫生活 ドッグフード シニア', maker:'犬猫生活', kcal:347, protein:24, fat:10, priceKg:3200, tags:['senior','japan','lowfat'], slug:'inuneko-seikatsu-senior'},
+    {name:'セレクトバランス エイジングケア チキン', maker:'Select Balance', kcal:350, protein:20, fat:10, priceKg:1500, tags:['senior','lowfat','cost','small'], slug:'select-balance-agingcare-chicken'},
+    {name:'プロマネージ 7歳からの室内犬用', maker:'PROMANAGE', kcal:355, protein:24, fat:12, priceKg:1000, tags:['senior','cost','small'], slug:'promanage-senior7-indoor'},
+    {name:'アイムス 7歳以上 健康サポート', maker:'IAMS', kcal:365, protein:24, fat:11, priceKg:850, tags:['senior','cost'], slug:'iams-senior7-health'},
+    {name:'ユーカヌバ シニア 小型犬用', maker:'Eukanuba', kcal:376, protein:27, fat:15, priceKg:1500, tags:['senior','small','palatable'], slug:'eukanuba-senior-small'},
+    {name:'ナウフレッシュ スモールブリード シニア', maker:'NOW FRESH', kcal:341, protein:24, fat:12, priceKg:3100, tags:['senior','small','grainfree','weight'], slug:'nowfresh-smallbreed-senior'},
+    {name:'オリジン シニア', maker:'ORIJEN', kcal:371, protein:38, fat:15, priceKg:3200, tags:['senior','protein','ingredient'], slug:'orijen-senior'},
+    {name:'ソルビダ グレインフリー チキン 室内飼育7歳以上', maker:'SOLVIDA', kcal:350, protein:23, fat:10, priceKg:2600, tags:['senior','grainfree','lowfat','coat'], slug:'solvida-grainfree-chicken-senior7'},
+    {name:'アーテミス アガリクス I/S 小粒', maker:'Artemis', kcal:358, protein:24, fat:14, priceKg:2100, tags:['small','stomach','palatable'], slug:'artemis-agaricus-is-small'},
+    {name:'ナチュロル', maker:'楽しい製薬', kcal:400, protein:23, fat:10, priceKg:3600, tags:['japan','palatable','ingredient'], slug:'naturol'},
+    {name:'馬肉自然づくり', maker:'健康いぬ生活', kcal:399, protein:27, fat:11, priceKg:3300, tags:['japan','palatable','ingredient'], slug:'bameat-shizendukuri'},
+    {name:'Yum Yum Yum! シニア&ライト チキン', maker:'GREEN DOG', kcal:320, protein:20, fat:8.5, priceKg:4200, tags:['senior','japan','lowfat','weight','small'], slug:'yumyumyum-senior-light-chicken'},
+    {name:'ミシュワン シニア犬用', maker:'ミシュワン', kcal:332, protein:21.5, fat:9.5, priceKg:3800, tags:['senior','japan','small','lowfat'], slug:'mishone-senior'},
+    {name:'Dr.ケアワン', maker:'アニマルライフ研究所', kcal:347, protein:22.5, fat:7.5, priceKg:3900, tags:['japan','lowfat','coat','small'], slug:'dr-careone'},
+    {name:'ペトコトフーズ チキン', maker:'PETOKOTO', kcal:150, protein:13, fat:5.4, priceKg:5200, tags:['fresh','palatable','stomach'], slug:'petokoto-chicken'},
+    {name:'ブッチ ブラック・レーベル', maker:'Butch', kcal:116, protein:10.5, fat:8, priceKg:2600, tags:['wet','palatable','senior'], slug:'butch-black-label'},
+    {name:'カナガン ドッグフード チキン', maker:'レティシアン', kcal:376, protein:29, fat:15, priceKg:2600, tags:['grainfree','palatable','protein'], slug:'canagan-chicken'},
+    {name:'ネルソンズ ドッグフード', maker:'レティシアン', kcal:365, protein:28, fat:12, priceKg:2200, tags:['medium','ingredient','palatable'], slug:'nelsons-dogfood'},
+    {name:'POCHI ザ・ドッグフード エイジングケア', maker:'POCHI', kcal:315, protein:30, fat:10, priceKg:2400, tags:['senior','weight','lowfat','protein'], slug:'pochi-agingcare'},
+    {name:'ペロリコ ドッグフード ライト', maker:'レティシアン', kcal:326, protein:22.5, fat:8, priceKg:2600, tags:['weight','lowfat','senior'], slug:'perolico-light'},
+    {name:'ロイヤルカナン ミニ ライトウェイトケア', maker:'Royal Canin', kcal:319, protein:30, fat:11, priceKg:1700, tags:['weight','small','lowfat'], slug:'royal-canin-mini-lightweight-care'},
+    {name:'ヒルズ サイエンス・ダイエット 減量サポート 小型犬用', maker:'Hill’s', kcal:313, protein:24, fat:9, priceKg:1500, tags:['weight','small','lowfat','cost'], slug:'hills-weight-control-small'},
+    {name:'VetSolution 犬用 胃腸サポート', maker:'Monge', kcal:383, protein:24, fat:15, priceKg:2400, tags:['stomach','senior'], slug:'vetsolution-stomach-support'}
+  ];
+
+  var TAG_LABELS = {
+    senior:'シニア対応', small:'小粒/小型犬向け', cost:'コスパ重視', lowfat:'低脂肪',
+    grainfree:'グレインフリー', protein:'高たんぱく', weight:'体重管理向け', palatable:'嗜好性が高い',
+    japan:'国産', ingredient:'原材料へのこだわり', coat:'毛艶・皮膚ケア', stomach:'消化器にやさしい',
+    wet:'ウェット/半生', fresh:'フレッシュフード', medium:'中型犬向け', balanced:'バランス重視'
+  };
+
+  var FIELD_LABELS = { kcal:'kcal/100g', protein:'タンパク質%', fat:'脂質%', priceKg:'kg単価' };
+
+  // derive the tag list actually present in the data, in a stable order
+  var ALL_TAGS = Object.keys(TAG_LABELS).filter(function(tag){
+    return PRODUCTS.some(function(p){ return p.tags.indexOf(tag) !== -1; });
+  });
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  // --- build the tag checkbox grid ---
+  var tagGrid = document.getElementById('tagGrid');
+  ALL_TAGS.forEach(function(tag){
+    var label = document.createElement('label');
+    var cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.value = tag;
+    cb.className = 'tag-check';
+    cb.addEventListener('change', render);
+    label.appendChild(cb);
+    label.appendChild(document.createTextNode(TAG_LABELS[tag]));
+    tagGrid.appendChild(label);
+  });
+
+  // --- profile -> emphasized columns ---
+  // Simple, legible lookup: the current "concern" gives the strongest signal,
+  // then activity level and age band each add or reinforce a column.
+  // Result is capped at 3 emphasized fields.
+  function computeEmphasis(profile){
+    var order = [];
+    function add(field){ if (order.indexOf(field) === -1) order.push(field); }
+
+    var concernMap = {
+      weight:  ['kcal', 'fat'],
+      picky:   ['kcal', 'protein'],
+      cost:    ['priceKg', 'kcal'],
+      coat:    ['fat', 'protein'],
+      stomach: ['fat', 'protein']
+    };
+    (concernMap[profile.concern] || []).forEach(add);
+
+    if (profile.activity === 'high') { add('protein'); add('kcal'); }
+    if (profile.activity === 'low')  { add('kcal'); }
+
+    if (profile.ageBand === 'senior' || profile.ageBand === 'hisenior') { add('kcal'); }
+    if (profile.ageBand === 'puppy' || profile.ageBand === 'adult')     { add('protein'); }
+
+    return order.slice(0, 3);
+  }
+
+  function getProfile(){
+    return {
+      ageBand: document.getElementById('ageBand').value,
+      activity: document.getElementById('activity').value,
+      concern: document.getElementById('concern').value
+    };
+  }
+
+  function numOrNull(id){
+    var v = document.getElementById(id).value;
+    return v === '' ? null : parseFloat(v);
+  }
+
+  function filterProducts(){
+    var tags = Array.prototype.slice.call(document.querySelectorAll('.tag-check:checked')).map(function(cb){ return cb.value; });
+    var kcalMin = numOrNull('kcalMin'), kcalMax = numOrNull('kcalMax');
+    var proteinMin = numOrNull('proteinMin'), proteinMax = numOrNull('proteinMax');
+    var fatMin = numOrNull('fatMin'), fatMax = numOrNull('fatMax');
+    var priceMin = numOrNull('priceMin'), priceMax = numOrNull('priceMax');
+
+    return PRODUCTS.filter(function(p){
+      if (tags.length && !tags.every(function(t){ return p.tags.indexOf(t) !== -1; })) return false;
+      if (kcalMin !== null && p.kcal < kcalMin) return false;
+      if (kcalMax !== null && p.kcal > kcalMax) return false;
+      if (proteinMin !== null && p.protein < proteinMin) return false;
+      if (proteinMax !== null && p.protein > proteinMax) return false;
+      if (fatMin !== null && p.fat < fatMin) return false;
+      if (fatMax !== null && p.fat > fatMax) return false;
+      if (priceMin !== null && p.priceKg < priceMin) return false;
+      if (priceMax !== null && p.priceKg > priceMax) return false;
+      return true;
+    });
+  }
+
+  var thead = document.querySelectorAll('#resultsTable thead th');
+  var tbody = document.getElementById('resultsBody');
+  var countEl = document.getElementById('resultCount');
+  var emphNote = document.getElementById('emphNote');
+
+  function render(){
+    var emphasis = computeEmphasis(getProfile());
+
+    thead.forEach(function(th){
+      th.classList.toggle('emph', emphasis.indexOf(th.dataset.field) !== -1);
+    });
+
+    if (emphasis.length){
+      emphNote.textContent = '今の条件で特に見ておきたい列: ' + emphasis.map(function(f){ return FIELD_LABELS[f]; }).join(' / ') + '（表内で● 印つきの太字列）';
+    } else {
+      emphNote.textContent = '';
+    }
+
+    var list = filterProducts();
+    countEl.textContent = list.length;
+
+    if (!list.length){
+      tbody.innerHTML = '<tr><td colspan="7" class="small">条件に一致する商品がありません。チェックや数値条件を減らしてください。</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = list.map(function(p){
+      var cls = function(f){ return emphasis.indexOf(f) !== -1 ? ' class="emph"' : ''; };
+      var tagText = p.tags.map(function(t){ return TAG_LABELS[t] || t; }).join(' / ');
+      return '<tr>' +
+        '<td><a href="/products/' + escapeHtml(p.slug) + '/"><strong>' + escapeHtml(p.name) + '</strong></a></td>' +
+        '<td>' + escapeHtml(p.maker) + '</td>' +
+        '<td' + cls('kcal') + '>' + p.kcal + '</td>' +
+        '<td' + cls('protein') + '>' + p.protein + '%</td>' +
+        '<td' + cls('fat') + '>' + p.fat + '%</td>' +
+        '<td' + cls('priceKg') + '>約' + p.priceKg.toLocaleString('ja-JP') + '円</td>' +
+        '<td class="small">' + escapeHtml(tagText) + '</td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  ['ageBand','activity','concern'].forEach(function(id){
+    document.getElementById(id).addEventListener('change', render);
+  });
+  ['kcalMin','kcalMax','proteinMin','proteinMax','fatMin','fatMax','priceMin','priceMax'].forEach(function(id){
+    document.getElementById(id).addEventListener('input', render);
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', function(){
+    document.getElementById('ageBand').value = 'adult';
+    document.getElementById('activity').value = 'normal';
+    document.getElementById('concern').value = '';
+    document.querySelectorAll('.tag-check').forEach(function(cb){ cb.checked = false; });
+    ['kcalMin','kcalMax','proteinMin','proteinMax','fatMin','fatMax','priceMin','priceMax'].forEach(function(id){
+      document.getElementById(id).value = '';
+    });
+    render();
+  });
+
+  render();
+})();
+</script>
+
+</body></html>
