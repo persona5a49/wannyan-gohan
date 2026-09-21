@@ -45,12 +45,13 @@ const PRODUCT_SLUGS = {
 }
 function productDetailUrl(name){ return PRODUCT_SLUGS[name] ? `/products/${PRODUCT_SLUGS[name]}/` : '#' }
 
+const THERAPY_MAKERS = '主な取り扱いメーカー例：ロイヤルカナン／ヒルズ／ドクターズケア／ピュリナ（いずれも動物病院での処方・購入が基本です）'
 const THERAPEUTIC_FOODS = [
-  {name:'腎臓サポート系療法食', maker:'療法食カテゴリ', tags:['kidney','therapeutic'], note:'BUN/Cre/尿検査などを見て、主治医の指示で使う候補です。自己判断で始めないでください。'},
-  {name:'消化器サポート・低脂肪系療法食', maker:'療法食カテゴリ', tags:['stomach','lipid','therapeutic'], note:'下痢・嘔吐・膵炎リスク・脂質異常などで検討されることがあります。診断と処方方針の確認が必要です。'},
-  {name:'肝臓サポート系療法食', maker:'療法食カテゴリ', tags:['liver','therapeutic'], note:'肝酵素上昇の理由によって適否が変わります。検査結果と症状を合わせて主治医に確認してください。'},
-  {name:'糖コントロール系療法食', maker:'療法食カテゴリ', tags:['glucose','therapeutic'], note:'血糖・尿糖・体重変化を合わせて判断します。投薬中は特に自己判断で変更しないでください。'},
-  {name:'尿ケア・下部尿路系療法食', maker:'療法食カテゴリ', tags:['urine','therapeutic'], note:'尿石の種類や尿pHによって合う食事が違います。尿検査結果なしで選ばないでください。'}
+  {name:'腎臓サポート系療法食', maker:THERAPY_MAKERS, tags:['kidney','therapeutic'], note:'BUN/Cre/尿検査などを見て、主治医の指示で使う候補です。自己判断で始めず、診察のうえ動物病院で処方・購入してください。'},
+  {name:'消化器サポート・低脂肪系療法食', maker:THERAPY_MAKERS, tags:['stomach','lipid','therapeutic'], note:'下痢・嘔吐・膵炎リスク・脂質異常などで検討されることがあります。診断と処方方針の確認のうえ、動物病院で処方・購入してください。'},
+  {name:'肝臓サポート系療法食', maker:THERAPY_MAKERS, tags:['liver','therapeutic'], note:'肝酵素上昇の理由によって適否が変わります。検査結果と症状を合わせて主治医に確認し、動物病院で処方・購入してください。'},
+  {name:'糖コントロール系療法食', maker:THERAPY_MAKERS, tags:['glucose','therapeutic'], note:'血糖・尿糖・体重変化を合わせて判断します。投薬中は特に自己判断で変更せず、動物病院で処方・購入してください。'},
+  {name:'尿ケア・下部尿路系療法食', maker:THERAPY_MAKERS, tags:['urine','therapeutic'], note:'尿石の種類や尿pHによって合う食事が違います。尿検査結果なしで選ばず、動物病院で処方・購入してください。'}
 ]
 function therapeuticCandidates(a){
   const c=a.checkup||[]; const out=[]
