@@ -150,8 +150,8 @@ function trackEvent(name, params = {}){
 const ARTICLES = [
   {
     "slug": "senior-dog-food-choice",
-    "title": "7歳を過ぎた犬のフード、何を変えればいい？",
-    "lead": "シニア用に替えるかどうかは、年齢だけでは決めません。体重の増減、筋肉の落ち方、便、食欲、健診結果を見て、まず「今の子に何が起きているか」を整理します。",
+    "title": "10歳トイプードルが急にフードを残す。最初に見る順番",
+    "lead": "「飽きた」だけで片づけず、口・吐き気・便・体重・健診結果の順に見ます。フードを替える前の確認リストです。",
     "sections": [
       [
         "年齢だけで替えると、外すことがあります",
@@ -173,8 +173,8 @@ const ARTICLES = [
   },
   {
     "slug": "senior-dog-feeding-calculator",
-    "title": "シニア犬のごはん量がわからない時の計算方法",
-    "lead": "袋の給与量は便利ですが、その子の体型やおやつ量までは見てくれません。まずカロリーで考え、2〜4週間の体重変化で微調整します。",
+    "title": "チワワの体重が200g増えた。ごはんはどのくらい減らす？",
+    "lead": "小型犬の200gは意外と大きい変化です。袋の給与量ではなく、体重記録とおやつ込みの総カロリーで調整します。",
     "sections": [
       [
         "袋の量が合わないことは普通にあります",
@@ -196,8 +196,8 @@ const ARTICLES = [
   },
   {
     "slug": "senior-dog-not-eating",
-    "title": "老犬がごはんを食べない。フードを変える前に見ること",
-    "lead": "食べない理由は「飽きた」だけではありません。口の痛み、吐き気、腎臓や肝臓、痛み、薬の影響でも食欲は落ちます。",
+    "title": "柴犬が新しいフードを食べない時の切り替え方",
+    "lead": "慎重な子は、味よりも匂い・食器・場所・混ぜる割合で止まることがあります。焦らず戻せる切り替え方をまとめます。",
     "sections": [
       [
         "急に食べないなら、まず体調を見ます",
@@ -219,8 +219,8 @@ const ARTICLES = [
   },
   {
     "slug": "senior-dog-weight-control",
-    "title": "シニア犬が太ってきた・痩せてきた時の食事チェック",
-    "lead": "太る時と痩せる時では、見る順番が違います。どちらも「年齢のせい」で終わらせず、体重記録と健診結果を合わせて確認します。",
+    "title": "健診で中性脂肪が高いと言われた犬のおやつ管理",
+    "lead": "低脂肪フードを探す前に、まず家族全員のおやつ量・主食量・体型を揃えて見ます。",
     "sections": [
       [
         "太ってきた子は、おやつと脂質から見る",
@@ -242,8 +242,8 @@ const ARTICLES = [
   },
   {
     "slug": "prescription-diet-vs-regular-food",
-    "title": "療法食をやめたい時に、自己判断しない方がいい理由",
-    "lead": "療法食は「体に良さそうなフード」ではなく、病気の管理に合わせて栄養設計された食事です。一般食やシニア用フードとは役割が違います。",
+    "title": "療法食を食べない時、勝手に一般食へ戻していい？",
+    "lead": "腎臓・尿石・消化器などの療法食は治療の一部です。食べない時に相談で伝えることを整理します。",
     "sections": [
       [
         "療法食は治療の一部です",
@@ -386,7 +386,7 @@ function renderDiagnosis(){
       <div class="note"><h3>この診断について</h3><p>C-BARQ（Canine Behavioral Assessment & Research Questionnaire）の考え方を参考に、家庭で答えやすい場面へ置き換えたセルフチェックです。C-BARQ公式尺度そのものではなく、医学的診断・行動診断でもありません。</p><a class="text-link" href="/about-diagnosis/">参考にしている考え方を見る</a></div>
       ${r.therapyFoods.length ? `<div class="alert therapy"><h3>療法食を相談するなら</h3><p>血液検査・尿検査・服薬状況がある場合に、PDFカルテ側で整理して主治医に確認しやすくする候補です。無料診断では購入推奨ではなく「相談候補」として表示します。</p><div class="foods therapy-foods">${r.therapyFoods.map(f=>`<article class="food"><h4>${f.name}</h4><p>${f.maker}</p><ul><li>${f.note}</li></ul></article>`).join('')}</div></div>`:''}
       <h3>タイプに合わせた候補フード</h3><p class="helper">商品提案はサブです。健診異常・服薬・療法食がある場合は購入前に主治医へ確認してください。</p><div class="foods">${r.foods.map(f=>`<article class="food"><h4>${f.name}</h4><p>${f.maker} / ${f.kcal}kcal / 脂質${f.fat}% / 約${f.priceKg.toLocaleString()}円/kg</p><ul>${(f.reasons.length?f.reasons:['条件に比較的合いやすい']).map(x=>`<li>${x}</li>`).join('')}</ul><div class="food-actions">${f.url !== '#' ? `<a class="primary buy-link" data-product="${f.name}" data-maker="${f.maker}" href="${f.url}" target="_blank" rel="noopener sponsored">通販サイトで見る</a>` : ''}${productDetailUrl(f.name) !== '#' ? `<a class="text-link product-link" data-product="${f.name}" data-maker="${f.maker}" href="${productDetailUrl(f.name)}">くわしく見る</a>` : ''}</div></article>`).join('')}</div>
-      <div class="pdf-cta"><h3>健診ごはんカルテPDF</h3><p>タイプ診断に加えて、健診表・現在のフード・おやつ量・体重変化を「主治医に相談しやすい1枚」にまとめます。</p><a class="primary pdf-interest" data-price="980" href="/pdf-karute/">980円でカルテを申し込む</a><small>決済後に入力フォームへ進み、2〜3営業日以内にPDFをお届けします。</small></div>
+      <div class="pdf-cta"><p class="eyebrow">有料PDFで追加されること</p><h3>健診表・今のフード・おやつ量を、主治医に相談しやすい1枚へ</h3><p>無料診断は「方向性」まで。PDFカルテでは、検査値・体重・便・食べ方をまとめ、家族や病院で話しやすいメモにします。</p><div class="pdf-mini-grid"><span>健診数値の転記</span><span>相談ポイント整理</span><span>買う前の注意点</span></div><p class="helper"><strong>おすすめ：</strong>健診で指摘がある、療法食中、食べムラや体重変化を家族で共有したい子。<br><strong>不要：</strong>今すぐ症状が強い子は、申込みより先に受診してください。</p><a class="primary pdf-interest" data-price="980" href="/pdf-karute/">980円で相談用カルテを作る</a><small>決済後に入力フォームへ進み、2〜3営業日以内にPDFをお届けします。</small></div>
       <button class="secondary reset">もう一度診断</button></div>`
   }
   const q = QUESTIONS[step]
