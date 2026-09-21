@@ -84,7 +84,23 @@
     </fieldset>
 
     <fieldset>
-      <legend>①現在のフード量とごはん量の目安</legend>
+      <legend>①うちの子タイプ診断の結果</legend>
+      <p class="hint" style="margin:0 0 8px">無料診断の結果画面のスクリーンショット、またはフォームの性格関連の回答から入力してください。</p>
+      <label>タイプ名</label><input type="text" id="typeName" placeholder="例：静かな安心職人">
+      <div class="row">
+        <div><label>社交性</label><select id="axisSocial"><option value="">未回答</option><option value="open">人・犬に積極的</option><option value="watch">様子を見てから近づく</option></select></div>
+        <div><label>慎重さ</label><select id="axisCaution"><option value="">未回答</option><option value="challenge">新しいことに強い</option><option value="safe">安心できる手順が必要</option></select></div>
+      </div>
+      <div class="row">
+        <div><label>活動性</label><select id="axisActivity"><option value="">未回答</option><option value="active">活発・興奮しやすい</option><option value="calm">落ち着いている</option></select></div>
+        <div><label>飼い主との距離感</label><select id="axisBond"><option value="">未回答</option><option value="close">そばにいたい</option><option value="indie">マイペース</option></select></div>
+      </div>
+      <label>食べ物への反応</label>
+      <select id="foodDrive"><option value="normal">普通</option><option value="high">ごほうび・おやつに強く反応する</option><option value="low">食べムラがある／関心が薄い</option></select>
+    </fieldset>
+
+    <fieldset>
+      <legend>②現在のフード量とごはん量の目安</legend>
       <label>現在のフード名</label><input type="text" id="foodName">
       <div class="row">
         <div><label>1日の給与量（g）</label><input type="number" id="feedGram" min="0"></div>
@@ -137,32 +153,39 @@
           <div class="val" id="pvProfile">（左のフォームに入力してください）</div>
         </div>
 
-        <h2 class="sec"><span class="num">1</span>現在のフード量とごはん量の目安</h2>
+        <h2 class="sec"><span class="num">1</span>うちの子タイプ診断の結果</h2>
+        <div class="box green">
+          <div class="val" id="pvTypeName" style="font-size:19px;font-weight:800">（左のフォームにタイプ名を入力してください）</div>
+          <p class="small" id="pvTypeAxes" style="margin-top:6px"></p>
+        </div>
+
+        <h2 class="sec"><span class="num">2</span>現在のフード量とごはん量の目安</h2>
         <div class="metrics">
           <div class="box green metric"><strong id="pvFeedNow">-</strong><span id="pvFeedNowLabel">今あげている量（1日）</span></div>
           <div class="box green metric"><strong id="pvDER">-</strong><span>計算上の目安（RER/DER）</span></div>
         </div>
         <p class="small" id="pvFeedNote"></p>
 
-        <h2 class="sec"><span class="num">2</span>おやつ上限の目安</h2>
+        <h2 class="sec"><span class="num">3</span>おやつ上限の目安</h2>
         <div class="box amber"><span id="pvSnack">-</span>　※上記おやつ内容の実測が難しい場合は、パッケージ表示を目安にしてください</div>
 
-        <h2 class="sec"><span class="num">3</span>体重・体型・おやつ・サプリメモ</h2>
+        <h2 class="sec"><span class="num">4</span>体重・体型・おやつ・サプリメモ</h2>
         <div class="box beige">
           <div id="pvBodyMemo"></div>
         </div>
 
-        <h2 class="sec"><span class="num">4</span>健康診断で気になる項目</h2>
+        <h2 class="sec"><span class="num">5</span>健康診断で気になる項目</h2>
         <div class="box beige">
           <ul class="plain" id="pvCheckup"><li>特になし</li></ul>
         </div>
 
-        <h2 class="sec"><span class="num">5</span>主治医に相談するポイント（診察時にご持参ください）</h2>
+        <h2 class="sec"><span class="num">6</span>性格・健診をふまえた相談ポイント（診察時にご持参ください）</h2>
         <div class="box beige">
-          <ul class="plain" id="pvVetPoints"></ul>
+          <div id="pvVetPoints"></div>
+          <p class="small" id="pvRefs" style="margin-top:10px"></p>
         </div>
 
-        <h2 class="sec"><span class="num">6</span>食事を変更する前の注意点</h2>
+        <h2 class="sec"><span class="num">7</span>食事を変更する前の注意点</h2>
         <div class="box amber">
           <ul class="plain">
             <li>切替は7〜10日かけて少しずつ行い、体調変化があれば中止して受診してください</li>
@@ -171,7 +194,7 @@
           </ul>
         </div>
 
-        <h2 class="sec"><span class="num">7</span>候補フードの見方</h2>
+        <h2 class="sec"><span class="num">8</span>候補フードの見方</h2>
         <div class="box beige">
           <p style="margin:0;font-size:13px">カロリー・脂質・タンパク質・粒サイズを、現在のフードと比較しながら確認してください。候補は下記の「わんにゃんごはんカルテ」内の診断・商品ページでも確認できます。</p>
           <p class="small">https://www.wannyan-gohan.com/#diagnosis</p>
@@ -239,6 +262,15 @@ function render(){
       feedNowText += `（約${kcal}kcal）`;
     }
   }
+  // Type section
+  const typeName = $('typeName').value;
+  const axisSocial = $('axisSocial').value, axisCaution = $('axisCaution').value, axisActivity = $('axisActivity').value, axisBond = $('axisBond').value;
+  const foodDrive = $('foodDrive').value;
+  const AXIS_LABEL = {open:'人や犬に積極的',watch:'様子を見てから近づく',challenge:'新しいことに強い',safe:'安心できる手順が必要',active:'活発・興奮しやすい',calm:'落ち着いている',close:'そばにいたい',indie:'マイペース'};
+  $('pvTypeName').textContent = typeName ? typeName : '（左のフォームにタイプ名を入力してください）';
+  const axisLabels = [axisSocial,axisCaution,axisActivity,axisBond].filter(Boolean).map(a=>AXIS_LABEL[a]);
+  $('pvTypeAxes').textContent = axisLabels.length ? axisLabels.join('・') : '無料診断の結果（社交性・慎重さ・活動性・距離感）を入力すると、下の「相談ポイント」に性格傾向を反映します。';
+
   $('pvFeedNow').textContent = feedNowText;
   $('pvFeedNowLabel').textContent = '今あげている量（1日）' + ($('foodName').value ? '：' + $('foodName').value : '');
 
@@ -271,14 +303,88 @@ function render(){
   if (labValues) checkupLis.push(`<li>健診数値メモ：${labValues}</li>`);
   $('pvCheckup').innerHTML = checkupLis.length ? checkupLis.join('') : '<li>特になし</li>';
 
-  // Section 5 (auto-suggested vet talking points)
-  const vetPoints = [];
-  checked.forEach(c => vetPoints.push(`${c}の数値について、食事内容の見直しが必要かご相談ください`));
-  if ($('onMeds').value === 'はい') vetPoints.push('現在服薬中のため、食事変更が薬に影響しないかご確認ください');
-  if ($('onTherapeutic').value === 'はい') vetPoints.push('現在療法食を利用中のため、切替の可否は必ず主治医の判断に従ってください');
-  if ($('symptoms').value) vetPoints.push(`気になる症状：${$('symptoms').value}`);
-  if (!vetPoints.length) vetPoints.push('現時点で特に気になる項目はありませんが、体重・食欲の変化があれば診察時にお伝えください');
-  $('pvVetPoints').innerHTML = vetPoints.map(p => `<li>${p}</li>`).join('');
+  // Section 6 (personality x health synthesized insight engine)
+  const insights = buildInsights({
+    age: $('age').value, weight, body: $('targetBody').value,
+    checked, labValues, onMeds: $('onMeds').value, onTherapeutic: $('onTherapeutic').value,
+    symptoms: $('symptoms').value, axisSocial, axisCaution, axisActivity, axisBond, foodDrive
+  });
+  $('pvVetPoints').innerHTML = insights.points.map(p => `<div style="margin:0 0 12px;line-height:1.8">${p}</div>`).join('');
+  $('pvRefs').textContent = insights.refs.length ? '参考：' + insights.refs.join('／') : '';
+}
+
+// Cross-references personality axes + health flags + demographics into synthesized
+// talking points, instead of mechanically echoing checked items back.
+function buildInsights(ctx){
+  const { age, weight, body, checked, onMeds, onTherapeutic, symptoms,
+          axisSocial, axisCaution, axisActivity, axisBond, foodDrive } = ctx;
+  const pts = [];
+  const refs = new Set();
+  const bodyTxt = (body || '').trim();
+  const symTxt = (symptoms || '').trim();
+  const hasFlag = k => checked.some(c => c.includes(k));
+  const usedFlags = new Set();
+  const heavyish = /肥満|ぽっちゃり|obese|増加/i.test(bodyTxt);
+  const thinnish = /痩せ|やせ|減少/i.test(bodyTxt);
+
+  // A. 食物モチベーション × 代謝系健診値（肥満との関連）
+  const highDrive = foodDrive === 'high';
+  const metabolicFlag = hasFlag('中性脂肪') || hasFlag('血糖') || heavyish;
+  if (highDrive && metabolicFlag) {
+    const flagLabel = hasFlag('中性脂肪') ? '中性脂肪' : hasFlag('血糖') ? '血糖' : '体重・体型';
+    if (hasFlag('中性脂肪')) usedFlags.add('中性脂肪');
+    if (hasFlag('血糖')) usedFlags.add('血糖');
+    pts.push(`食べ物・ごほうびへの反応が強いタイプで、${flagLabel}に気になる点があります。食への反応（food motivation）が強い犬は肥満リスクが高くなりやすいことが行動学の研究でも指摘されており、おやつは「量」よりも「頻度」で管理し、必ず主食のカロリーから差し引いて計算することをおすすめします。`);
+    refs.add('Raffan et al. (2015) PeerJ - Canine food motivation questionnaire');
+  } else if (highDrive) {
+    pts.push('食べ物・ごほうびへの反応が強いタイプです。今のところ体重・代謝面で大きな指摘はありませんが、おやつの積み重ねで摂取カロリーが増えやすい傾向があるため、家族全員でおやつのルール（1日の上限・与える人）を揃えておくと安心です。');
+  }
+
+  // B. 慎重さ × 消化器症状（ストレス性の消化器反応）
+  const cautious = axisCaution === 'safe';
+  const giSymptom = /軟便|下痢|嘔吐|お腹|吐/.test(symTxt);
+  if (cautious && giSymptom) {
+    pts.push('新しいことには時間をかけて慣れていくタイプです。環境変化やフードの切り替えに伴うストレスで消化器症状（軟便・食欲低下）が出やすい傾向があるため、切り替えは目安の7〜10日よりさらに長め（10〜14日程度）にかけ、便の状態をこまめに確認することをおすすめします。');
+  } else if (cautious) {
+    pts.push('安心できる手順があると力を発揮するタイプです。フードを変える際は、匂い・置き場所・食器を急に変えず、小さな成功体験を積み重ねる形で進めると受け入れやすくなります。');
+  }
+
+  // C. 活動性 × 体重の増減方向
+  if (axisActivity === 'calm' && heavyish) {
+    pts.push('落ち着いた活動性のタイプは、消費カロリーが控えめになりがちです。運動量を急に増やすより、知育トイや嗅覚を使った遊びなど、運動以外の満足感を与える工夫のほうが、無理なく体重管理につながることがあります。');
+  }
+  if (axisActivity === 'active' && (thinnish || hasFlag('体重減少'))) {
+    usedFlags.add('体重減少');
+    pts.push('活動性が高いタイプは消費カロリーも大きくなりやすいため、体重が減ってきている場合はまず摂取量が運動量に見合っているか（1日の目安カロリーの見直し）を優先して確認することをおすすめします。');
+  }
+
+  // D. 飼い主との距離感 × 食欲の波
+  if (axisBond === 'close' && /ムラ|残す|食べない|食欲/.test(symTxt)) {
+    pts.push('飼い主のそばにいることが安心材料になるタイプです。留守番の直後や環境が変わったタイミングで食欲が落ちることがあるため、食事の時間を在宅時間に近づけるだけで改善することがあります。');
+  }
+
+  // E. シニア期 × 腎臓系（自己判断でのタンパク制限を避ける）
+  if (Number(age || 0) >= 10 && hasFlag('腎臓系')) {
+    usedFlags.add('腎臓系');
+    pts.push('シニア期に腎臓系の数値が気になる場合、自己判断でタンパク質やリンを大きく制限するのは推奨されません。療法食が必要かどうかは、複数回の検査結果の推移をもとに主治医が判断します。次の診察では、今回と前回の数値を並べてご確認いただくとスムーズです。');
+    refs.add('WSAVA Global Nutrition Guidelines');
+  }
+
+  // 残りのチェック項目は簡潔な確認事項として補足
+  checked.forEach(c => {
+    const key = c.replace(/（.*?）/, '');
+    if (!Array.from(usedFlags).some(u => c.includes(u))) {
+      pts.push(`${c}：直近の数値の推移を診察時にご確認ください。`);
+    }
+  });
+
+  if (onMeds === 'はい') pts.push('現在服薬中のため、食事内容の変更が薬の効果に影響しないか、あわせてご確認ください。');
+  if (onTherapeutic === 'はい') pts.push('現在療法食を利用中のため、切替や併用の可否は必ず主治医の判断に従ってください。');
+  if (symTxt && !giSymptom) pts.push(`気になる症状：${symTxt}`);
+
+  if (!pts.length) pts.push('現時点で特に気になる項目はありませんが、体重・食欲・便の変化があれば診察時にお伝えください。');
+
+  return { points: pts, refs: Array.from(refs) };
 }
 
 document.querySelectorAll('.panel input, .panel select, .panel textarea').forEach(el => {
