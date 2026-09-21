@@ -136,8 +136,10 @@ function derMultiplier(a){
   return 1.6
 }
 const labFields = [
-  ['bun','BUN','mg/dL'], ['cre','Cre','mg/dL'], ['alt','ALT','U/L'], ['alp','ALP','U/L'],
-  ['tg','TG','mg/dL'], ['tcho','T-Cho','mg/dL'], ['glu','GLU','mg/dL'], ['usg','尿比重',''], ['upc','UPC','']
+  ['bun','BUN','mg/dL'], ['cre','Cre','mg/dL'], ['sdma','SDMA','μg/dL'], ['alt','ALT','U/L'], ['alp','ALP','U/L'],
+  ['tg','TG','mg/dL'], ['tcho','T-Cho','mg/dL'], ['glu','GLU','mg/dL'], ['alb','ALB','g/dL'], ['tp','TP','g/dL'],
+  ['ca','Ca','mg/dL'], ['na','Na','mmol/L'], ['k','K','mmol/L'], ['rbc','RBC',''], ['hct','HCT','%'], ['wbc','WBC',''], ['plt','PLT',''],
+  ['usg','尿比重',''], ['upc','UPC','']
 ]
 function labNum(key){ return Number((answers.labs || {})[key] || 0) }
 
@@ -520,10 +522,10 @@ const ARTICLES = [
 ]
 
 const TYPE_NAMES = {
-  openchallengeactiveclose:'全力ハッピー隊長', openchallengeactiveindie:'ひとり探検アスリート', openchallengecalmclose:'にこにこ平和大使', openchallengecalmindie:'ゆるっと社交名人',
-  opensafeactiveclose:'どきどき甘えんぼランナー', opensafeactiveindie:'慎重派の冒険家', opensafecalmclose:'やさしい空気読みさん', opensafecalmindie:'おっとり観察家',
-  watchchallengeactiveclose:'飼い主専属アクティブさん', watchchallengeactiveindie:'マイワールド探検家', watchchallengecalmclose:'静かな相棒タイプ', watchchallengecalmindie:'職人気質のこだわりさん',
-  watchsafeactiveclose:'一生懸命な甘えんぼさん', watchsafeactiveindie:'そろりそろり探検隊', watchsafecalmclose:'安心確認の寄り添いさん', watchsafecalmindie:'静かな安心職人'
+  openchallengeactiveclose:'好奇心旺盛なアクティブ相棒タイプ', openchallengeactiveindie:'自分で切り開くチャレンジャータイプ', openchallengecalmclose:'人が好きな穏やかパートナータイプ', openchallengecalmindie:'ゆるやか社交のマイペースタイプ',
+  opensafeactiveclose:'慎重だけど遊びたい甘えんぼタイプ', opensafeactiveindie:'確認してから進む探検家タイプ', opensafecalmclose:'安心を確かめる寄り添いタイプ', opensafecalmindie:'静かに見守る観察家タイプ',
+  watchchallengeactiveclose:'飼い主と動きたい集中ランナータイプ', watchchallengeactiveindie:'自分の世界を持つ探検家タイプ', watchchallengecalmclose:'信頼相手に寄り添う静かな相棒タイプ', watchchallengecalmindie:'こだわりを大切にする職人タイプ',
+  watchsafeactiveclose:'慎重に確認する甘えんぼアクティブタイプ', watchsafeactiveindie:'そっと確かめる自立探検家タイプ', watchsafecalmclose:'安心重視の寄り添いタイプ', watchsafecalmindie:'自分のペースを守る安心職人タイプ'
 }
 const AXIS_COPY = {
   open:'人や犬、新しい場所に関心を向けやすい', watch:'外の刺激は少し距離を取って確認したい', challenge:'新しいことを試す力がある', safe:'安心できる手順があると動きやすい', active:'遊び・散歩・反応の熱量が高め', calm:'落ち着いた環境で安定しやすい', close:'飼い主とのつながりが安心材料', indie:'自分のペースや居場所を大切にする'
@@ -551,6 +553,71 @@ function profileFor(result){
 function displayTags(tags, breedGroup){
   const breedLabel = BREED_GROUPS[breedGroup]
   return breedLabel ? tags.filter(x=>x !== breedLabel) : tags
+}
+
+function lifeStage(a){
+  if(a.age==='under1') return '子犬期'
+  if(a.age==='under7') return '成犬期'
+  if(a.age==='7-9') return '中高齢期'
+  if(a.age==='10-12') return 'シニア期'
+  return 'ハイシニア期'
+}
+function buildIntegratedInsights(a, r){
+  const axes = r.profile.axes || []
+  const cards=[]
+  const active=axes.includes('active'), safe=axes.includes('safe'), close=axes.includes('close'), indie=axes.includes('indie')
+  if((a.appetite==='uneven'||a.appetite==='picky') && active && !['chubby','obese'].includes(a.body) && !['high','unknown'].includes(a.treatAmount)){
+    cards.push({title:'食事以外への関心が強く出やすい可能性', body:'食べムラがあっても、活動性が高く体型が大きく崩れていない場合、単純な「食欲がない」ではなく、遊び・散歩・周囲の刺激を優先して食事への集中が続きにくいことがあります。食器の場所、食事前の興奮、食後の楽しい予定まで含めて見ると原因を絞りやすくなります。', action:'まずは食事場所を静かにし、10〜15分で下げる、運動直後を避けるなど「集中しやすい条件」を固定して観察します。'})
+  }
+  if((a.appetite==='uneven'||a.appetite==='picky') && ['chubby','obese'].includes(a.body) && ['high','unknown'].includes(a.treatAmount)){
+    cards.push({title:'主食の優先順位が下がっている可能性', body:'食べムラがあり、体型が丸めで、おやつ量も多い/不明な場合、食欲そのものよりも「主食よりおいしいものを待つ」流れができている可能性があります。家族から少しずつもらう量は、主食の数十g分に相当することがあります。', action:'家族全員でおやつを1日分だけ小皿に分け、そこからしか出さない形にすると、主食量との関係が見えやすくなります。'})
+  }
+  if(safe && (a.foodNew==='safe1'||a.foodNew==='safe2'||a.stomach==='sensitive'||a.stomach==='soft')){
+    cards.push({title:'フード変更は味より「変化への負担」が壁になりやすい', body:'新しいものに慎重で、お腹も変わりやすい子では、フードの良し悪し以前に、匂い・粒・混ぜる割合・食器・時間が変わること自体が負担になります。急に良い商品へ替えるより、慣れた手順の中で小さく変える方が成功しやすいタイプです。', action:'7〜10日より長めに、最初は数粒だけ混ぜるところから始めます。便が崩れた日は増やさず、元の割合に戻します。'})
+  }
+  if(close && a.alone==='close2'){
+    cards.push({title:'安心できる人の存在が食事にも影響しやすい', body:'飼い主との距離が安心材料になりやすい子では、留守番や家族の動き、食事中の声かけの有無で食べ方が変わることがあります。「甘え」ではなく、安心できる条件が整うと行動が安定しやすいと考えると対策しやすくなります。', action:'食事中に過度に注目しすぎず、同じ場所・同じ声かけ・同じ時間で落ち着ける流れを作ります。'})
+  }
+  if(indie && a.bond==='indie2'){
+    cards.push({title:'自分で選べる余白があると安定しやすい', body:'マイペースさが強い子は、構われすぎることや急な変更で食事・休息のリズムが崩れることがあります。しつけで押し切るより、選べる場所や休める時間を残す方が、結果的に暮らしが安定しやすいタイプです。', action:'食事場所、休む場所、家族が触るタイミングを固定し、「自分から来る」余白を残します。'})
+  }
+  if((a.waterUrine==='more'||a.waterUrine==='muchmore') || (a.checkup||[]).some(x=>['kidney','urine','glucose'].includes(x))){
+    cards.push({title:'水・尿・健診値は食事だけで判断しない領域', body:'飲水や尿、腎臓・尿・血糖の項目は、フードの種類だけでは判断できません。体重変化、食欲、尿検査、服薬状況と合わせて見る必要があり、ネット診断で「この商品が合う」と断定しない方が安全です。', action:'フード購入より先に、主治医へ「今の食事量・おやつ・飲水尿の変化・健診値」をセットで相談します。'})
+  }
+  if(cards.length<3){
+    cards.push({title:`${lifeStage(a)}として今見たいポイント`, body:`${lifeStage(a)}では、性格タイプだけでなく、体重の増減・活動量・便・食欲の変化をセットで見ることが大切です。同じフードでも、年齢と生活リズムで適量や優先条件は変わります。`, action:'月1回の体重記録と、便・食欲・おやつ量のメモを残すと、次の見直しが数字で判断しやすくなります。'})
+  }
+  return cards.slice(0,5)
+}
+function foodSelectionConditions(a, r){
+  const out=[]
+  if(r.tags.includes('体重管理')) out.push(['体型管理','kcal/100g、脂質、1日給与量、おやつ込みの総カロリーを優先して確認します。'])
+  if(r.tags.includes('食べムラあり')) out.push(['食べやすさ','粒サイズ、香り、食感、ふやかしやすさを見ます。食いつきだけで高脂質に寄せすぎないことも大切です。'])
+  if(r.tags.includes('お腹そっと派')) out.push(['消化・便','脂質、食物繊維、切り替え速度、便の変化を見ます。急な変更は避けます。'])
+  if(r.tags.includes('口・歯チェック')) out.push(['口・歯','粒の硬さ・大きさ、ふやかしやすさを見ます。痛みがある場合は食事工夫より受診が優先です。'])
+  if((a.preference||[]).includes('cost')) out.push(['続けやすさ','kg単価だけでなく、給与量から1日コストを見ます。'])
+  if(!out.length) out.push(['総合バランス','年齢、体型、活動量、便、食べ方の変化を見ながら、続けやすい主食を選びます。'])
+  return out.slice(0,5)
+}
+function vetConsultItems(a, r){
+  const items=[]
+  if(r.hasWeight) items.push(`現在の体重とBCSは適正か。目安${Math.round(r.kcal)}kcal/日から始めてよいか。`)
+  if(a.currentFood==='therapeutic'||(a.checkup||[]).includes('meds')) items.push('療法食・服薬中でも、現在の給与量や間食の扱いを変えてよいか。')
+  if(r.redFlags.length||r.watch.length) items.push('健診値の変化が食事・おやつ・体重変化と関連する可能性があるか。追加検査や再検査が必要か。')
+  if(a.appetite==='poor'||a.appetite==='picky'||a.vomit==='often'||a.vomit==='acute') items.push('食べムラや嘔吐が、口・消化器・痛み・内科疾患と関係していないか。')
+  if(['smell','chew','pain'].includes(a.mouthState)) items.push('口臭・噛みにくさ・痛みが食事量に影響していないか。歯科処置や検査が必要か。')
+  return items.slice(0,5)
+}
+function relatedArticlesFor(a, r){
+  const picks=[]
+  const add=slug=>{ const article=ARTICLES.find(x=>x.slug===slug); if(article && !picks.includes(article)) picks.push(article) }
+  if(r.tags.includes('食べムラあり')) { add('senior-dog-not-eating'); add('toy-poodle-senior-not-eating'); add('shiba-inu-not-eating') }
+  if(r.tags.includes('体重管理')) { add('senior-dog-feeding-calculator'); add('chihuahua-weight-gain'); add('senior-dog-triglyceride-treats') }
+  if((a.checkup||[]).includes('kidney') || labNum('bun') || labNum('cre')) { add('dog-high-bun-food'); add('dog-high-cre-food') }
+  if((a.checkup||[]).includes('liver') || labNum('alt') || labNum('alp')) { add('dog-high-alt-food'); add('dog-high-alp-food') }
+  if((a.checkup||[]).includes('urine')) add('dog-urinalysis-food')
+  if(!picks.length) { add('senior-dog-food-choice'); add('prescription-diet-vs-regular-food') }
+  return picks.slice(0,4)
 }
 function subTags(a, redFlags=[], watch=[]){
   const tags=[]; const concerns=a.concerns||[]; const c=a.checkup||[]
@@ -601,7 +668,12 @@ function calcResult(a){
     return {...f, score:s, reasons: reasons.slice(0,3)}
   }).sort((a,b)=>b.score-a.score).slice(0,3)
   const kcal = rer(a.weight) * derMultiplier(a)
-  return {type:typeResult.name, profile, tags, breedNote: BREED_NOTES[a.breedGroup] || '', redFlags, watch, foods:scored, therapyFoods, kcal, snack:kcal*0.1, hasWeight:Number(a.weight)>0}
+  const base = {type:typeResult.name, profile, tags, breedNote: BREED_NOTES[a.breedGroup] || '', redFlags, watch, foods:scored, therapyFoods, kcal, snack:kcal*0.1, hasWeight:Number(a.weight)>0}
+  base.insights = buildIntegratedInsights(a, base)
+  base.conditions = foodSelectionConditions(a, base)
+  base.vetConsult = vetConsultItems(a, base)
+  base.related = relatedArticlesFor(a, base)
+  return base
 }
 
 function render(){
@@ -614,7 +686,7 @@ function render(){
       <section class="diagnosis" id="diagnosis">${renderDiagnosis()}</section>
       <section class="tracker" id="tracker">${renderTracker()}</section>
       <section class="article-list" id="articles"><h2>シニア犬のごはん記事</h2><p class="helper">診察室でよく出る悩みを、できるだけ普通の言葉でまとめました。記事末に参考文献も載せています。</p><div class="article-cards">${ARTICLES.map(a=>`<a class="article-card js-article-click" data-article="${a.slug}" href="/articles/${a.slug}/"><span>記事</span><strong>${a.title}</strong><small>${a.lead}</small></a>`).join('')}</div><p><a class="secondary" href="/type-guides/">タイプ別ごはんガイドを見る</a></p></section>
-      <section class="article-list" id="compare"><h2>シニア犬フード比較</h2><p class="helper">検索されやすい切り口で、候補フードのカロリー・脂質・注意点を比較します。</p><div class="article-cards"><a class="article-card" href="/products/compare/senior-dog-low-fat/"><span>比較</span><strong>低脂肪ドッグフード比較</strong><small>脂質や体重管理が気になるシニア犬向け。</small></a><a class="article-card" href="/products/compare/senior-dog-small-kibble/"><span>比較</span><strong>小粒ドッグフード比較</strong><small>口・歯・食べやすさが気になる小型シニア犬向け。</small></a><a class="article-card" href="/products/compare/senior-dog-weight-control/"><span>比較</span><strong>体重管理ドッグフード比較</strong><small>太りやすくなったシニア犬の食事整理に。</small></a></div></section>
+      <section class="article-list" id="compare"><h2>条件から見るフード比較</h2><p class="helper">年齢・体型・活動量・食べ方・健診メモによって、見るべき成分やコストは変わります。まずは診断結果で重視条件を整理し、比較ページではkcal・脂質・粒サイズ・価格・1日コストを見比べます。</p><div class="article-cards"><a class="article-card" href="/products/compare/senior-dog-low-fat/"><span>比較</span><strong>低脂肪ドッグフード比較</strong><small>脂質や体重管理が気になる子向け。</small></a><a class="article-card" href="/products/compare/senior-dog-small-kibble/"><span>比較</span><strong>小粒ドッグフード比較</strong><small>口・歯・食べやすさが気になる小型犬向け。</small></a><a class="article-card" href="/products/compare/senior-dog-weight-control/"><span>比較</span><strong>体重管理ドッグフード比較</strong><small>太りやすくなった子の食事整理に。</small></a></div></section>
     </main>
     <footer><p>本サイトはペットフード選びの参考情報を提供するもので、診断・治療・療法食の指示ではありません。持病、症状、療法食利用中の場合は獣医師に相談してください。<br><a href="/legal/tokushoho/">特定商取引法に基づく表記</a>　<a href="/legal/privacy/">プライバシーポリシー</a></p></footer>`
   bindEvents()
@@ -632,14 +704,18 @@ function renderDiagnosis(){
     const shownTags = displayTags(r.tags, answers.breedGroup)
     return `<div class="result karte"><p class="eyebrow">うちの子ごはん・暮らしカルテ</p><div class="type-card"><div><span class="type-code">16タイプ診断</span><h2>${name}は「${r.type}」</h2><p>${r.profile.lead}</p></div><div class="type-animal">${answers.breedGroup && BREED_GROUPS[answers.breedGroup] ? BREED_GROUPS[answers.breedGroup] : '暮らしタイプ'}</div></div><div class="trait-list">${shownTags.map(x=>`<span>${x}</span>`).join('')}</div>
       ${r.hasWeight ? `<div class="result-grid"><div class="metric"><strong>${Math.round(r.kcal)} kcal/日</strong><span>目安必要カロリー</span></div><div class="metric"><strong>${Math.round(r.snack)} kcal/日まで</strong><span>おやつ上限の目安</span></div></div>` : `<div class="note"><h3>カロリー計算</h3><p>体重を入力すると、目安カロリーとおやつ上限を表示できます。今回はタイプ判定と注意点のみ表示します。</p></div>`}
-      <div class="share-panel"><button class="primary save-share" type="button">結果画像を保存</button><button class="secondary native-share" type="button">LINE/Xで共有</button><canvas id="shareCanvas" width="1200" height="630" aria-label="診断結果シェア画像"></canvas><p class="helper">画像には医療情報や健診数値は入れず、タイプ名だけを共有します。</p></div><div class="karte-section"><h3>この子にありそうなこと</h3><ul>${r.profile.likely.map(x=>`<li>${x}</li>`).join('')}${r.breedNote ? `<li>${r.breedNote}</li>` : ''}</ul></div>
+      <div class="share-panel"><button class="primary save-share" type="button">結果画像を保存</button><button class="secondary native-share" type="button">LINE/Xで共有</button><canvas id="shareCanvas" width="1200" height="630" aria-label="診断結果シェア画像"></canvas><p class="helper">画像には医療情報や健診数値は入れず、タイプ名だけを共有します。</p></div>
+      <div class="karte-section deep-summary"><h3>${name}の全体像</h3><p>${r.profile.lead}${r.breedNote ? ' '+r.breedNote : ''} ここでは回答を並べ直すのではなく、性格・活動量・食べ方・体型・健診メモの組み合わせから、暮らしで見たいポイントを整理します。</p></div>
+      <div class="karte-section"><h3>解釈カード</h3><div class="insight-grid">${r.insights.map(x=>`<article class="insight-card"><h4>${x.title}</h4><p>${x.body}</p><strong>実生活では：</strong><p>${x.action}</p></article>`).join('')}</div></div>
       <div class="karte-section"><h3>接し方のコツ</h3><ul>${r.profile.care.map(x=>`<li>${x}</li>`).join('')}</ul></div>
-      <div class="karte-section"><h3>ごはんの見直し方</h3><ul>${r.profile.food.map(x=>`<li>${x}</li>`).join('')}</ul></div>
       ${r.redFlags.length ? `<div class="alert"><h3>フード変更前に主治医へ確認</h3><ul>${r.redFlags.map(x=>`<li>${x}</li>`).join('')}</ul></div>`:''}
       ${r.watch.length ? `<div class="note"><h3>健診メモ</h3><ul>${r.watch.map(x=>`<li>${x}</li>`).join('')}</ul></div>`:''}
       <div class="note"><h3>この診断について</h3><p>C-BARQ（Canine Behavioral Assessment & Research Questionnaire）の考え方を参考に、家庭で答えやすい場面へ置き換えたセルフチェックです。C-BARQ公式尺度そのものではなく、医学的診断・行動診断でもありません。</p><a class="text-link" href="/about-diagnosis/">参考にしている考え方を見る</a></div>
       ${r.therapyFoods.length ? `<div class="alert therapy"><h3>療法食を相談するなら</h3><p>血液検査・尿検査・服薬状況がある場合に、PDFカルテ側で整理して主治医に確認しやすくする候補です。無料診断では購入推奨ではなく「相談候補」として表示します。</p><div class="foods therapy-foods">${r.therapyFoods.map(f=>`<article class="food"><h4>${f.name}</h4><p>${f.maker}</p><ul><li>${f.note}</li></ul></article>`).join('')}</div></div>`:''}
-      <h3>タイプに合わせた候補フード</h3><p class="helper">商品提案はサブです。健診異常・服薬・療法食がある場合は購入前に主治医へ確認してください。</p><div class="foods">${r.foods.map(f=>`<article class="food"><h4>${f.name}</h4><p>${f.maker} / ${f.kcal}kcal / 脂質${f.fat}% / 約${f.priceKg.toLocaleString()}円/kg</p><ul>${(f.reasons.length?f.reasons:['条件に比較的合いやすい']).map(x=>`<li>${x}</li>`).join('')}</ul><div class="food-actions">${f.url !== '#' ? `<a class="primary buy-link" data-product="${f.name}" data-maker="${f.maker}" href="${f.url}" target="_blank" rel="noopener sponsored">通販サイトで見る</a>` : ''}${productDetailUrl(f.name) !== '#' ? `<a class="text-link product-link" data-product="${f.name}" data-maker="${f.maker}" href="${productDetailUrl(f.name)}">くわしく見る</a>` : ''}</div></article>`).join('')}</div>
+      <div class="karte-section"><h3>フードを選ぶ前に見る条件</h3><p class="helper">いきなり商品名で選ばず、まず${name}の場合に重視する条件を決めます。</p><div class="condition-grid">${r.conditions.map(([h,b])=>`<article><h4>${h}</h4><p>${b}</p></article>`).join('')}</div></div>
+      <h3>目的別の候補フード</h3><p class="helper">ランキングではなく、上の条件に合う選択肢として表示します。健診異常・服薬・療法食がある場合は購入前に主治医へ確認してください。</p><div class="foods">${r.foods.map(f=>`<article class="food"><h4>${f.name}</h4><p>${f.maker} / ${f.kcal}kcal / 脂質${f.fat}% / 約${f.priceKg.toLocaleString()}円/kg</p><ul>${(f.reasons.length?f.reasons:['条件に比較的合いやすい']).map(x=>`<li>${x}</li>`).join('')}<li>目安給与量：約${r.hasWeight ? Math.round(r.kcal / f.kcal * 100) : '—'}g/日・1日コスト約${r.hasWeight ? Math.round((r.kcal / f.kcal * 100) * f.priceKg / 1000) : '—'}円</li></ul><div class="food-actions">${f.url !== '#' ? `<a class="primary buy-link" data-product="${f.name}" data-maker="${f.maker}" href="${f.url}" target="_blank" rel="noopener sponsored">通販サイトで見る</a>` : ''}${productDetailUrl(f.name) !== '#' ? `<a class="text-link product-link" data-product="${f.name}" data-maker="${f.maker}" href="${productDetailUrl(f.name)}">くわしく見る</a>` : ''}</div></article>`).join('')}</div>
+      <div class="karte-section"><h3>動物病院で相談したいこと</h3><ul>${r.vetConsult.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+      <div class="karte-section"><h3>この結果から深掘りする記事</h3><div class="article-cards mini">${r.related.map(a=>`<a class="article-card" href="/articles/${a.slug}/"><span>関連記事</span><strong>${a.title}</strong><small>${a.lead}</small></a>`).join('')}</div></div>
       <div class="pdf-cta"><p class="eyebrow">有料PDFで追加されること</p><h3>健診表・今のフード・おやつ量を、主治医に相談しやすい1枚へ</h3><p>無料診断は「方向性」まで。PDFカルテでは、検査値・体重・便・食べ方をまとめ、家族や病院で話しやすいメモにします。</p><div class="pdf-mini-grid"><span>健診数値の転記</span><span>相談ポイント整理</span><span>買う前の注意点</span></div><p class="helper"><strong>おすすめ：</strong>健診で指摘がある、療法食中、食べムラや体重変化を家族で共有したい子。<br><strong>不要：</strong>今すぐ症状が強い子は、申込みより先に受診してください。</p><a class="primary pdf-interest" data-price="980" href="/pdf-karute/">980円で相談用カルテを作る</a><small>決済後に入力フォームへ進み、2〜3営業日以内にPDFをお届けします。</small></div>
       <button class="secondary reset">もう一度診断</button></div>`
   }
