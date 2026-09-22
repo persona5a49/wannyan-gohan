@@ -1002,6 +1002,34 @@ function relatedArticlesFor(a, r){
   if(!picks.length) { add('dog-leftover-food-checklist'); add('prescription-diet-vs-regular-food') }
   return picks.slice(0,4)
 }
+function relatedArticleGroups(a, r){
+  const groups = []
+  const add=(topic, slugs)=>{
+    const seen = new Set()
+    const arts = slugs.map(s=>ARTICLES.find(x=>x.slug===s)).filter(x=>{ if(!x || seen.has(x.slug)) return false; seen.add(x.slug); return true })
+    if(arts.length) groups.push({topic, articles: arts.slice(0,4)})
+  }
+  if(r.tags.includes('食べムラあり') || r.tags.includes('食細め注意')){
+    add('食べムラ・食が細い', ['cautious-dog-food-transition','toy-poodle-senior-not-eating','shiba-inu-not-eating','toy-poodle-young-picky-eating','puppy-not-eating-enough','maltese-picky-eating-food'])
+  }
+  if(r.tags.includes('体重管理') || a.body==='chubby' || a.body==='obese'){
+    add('体重管理・BCS', ['small-dog-feeding-gram-calculator','chihuahua-weight-gain','dog-weight-gain-after-neuter','dog-low-activity-portion-mismatch','labrador-obesity-food','senior-dog-triglyceride-treats'])
+  }
+  const axes = (r.profile && r.profile.axes) || []
+  if(axes.includes('watch') || axes.includes('safe')){
+    add('慎重な性格との付き合い方', ['cautious-dog-food-transition','prescription-diet-vs-regular-food'])
+  }
+  const c = a.checkup||[]
+  const healthSlugs = []
+  if(c.includes('kidney') || labNum('bun') || labNum('cre')) healthSlugs.push('dog-high-bun-food','dog-high-cre-food')
+  if(c.includes('liver') || labNum('alt') || labNum('alp')) healthSlugs.push('dog-high-alt-food','dog-high-alp-food')
+  if(c.includes('urine')) healthSlugs.push('dog-urinalysis-food')
+  if(c.includes('lipid') || labNum('tg') || labNum('tcho')) healthSlugs.push('senior-dog-triglyceride-treats')
+  if(labNum('alb')) healthSlugs.push('dog-low-albumin-food')
+  if(healthSlugs.length) add('健診で気になる項目', healthSlugs)
+  if(!groups.length) add('まず読みたい記事', ['dog-leftover-food-checklist','prescription-diet-vs-regular-food'])
+  return groups.slice(0,4)
+}
 function subTags(a, redFlags=[], watch=[]){
   const tags=[]; const concerns=a.concerns||[]; const c=a.checkup||[]
   if(a.breedGroup && BREED_GROUPS[a.breedGroup]) tags.push(BREED_GROUPS[a.breedGroup])
@@ -1116,6 +1144,7 @@ function calcResult(a){
   base.conditions = foodSelectionConditions(a, base)
   base.vetConsult = vetConsultItems(a, base)
   base.related = relatedArticlesFor(a, base)
+  base.relatedGroups = relatedArticleGroups(a, base)
   base.nextSteps = buildNextSteps(a, base)
   base.recheckItems = buildRecheckItems(a, base)
   return base
@@ -1182,7 +1211,7 @@ function renderDiagnosis(){
       <div class="karte-section"><h3>フードを選ぶ前に見る条件</h3><p class="helper">いきなり商品名で選ばず、まず${name}の場合に重視する条件を決めます。</p><div class="condition-grid">${r.conditions.map(([h,b])=>`<article><h4>${h}</h4><p>${b}</p></article>`).join('')}</div></div>
       ${r.foods.length ? `<h3>${r.isPuppy ? '子犬期向けの候補フード' : '目的別の候補フード'}</h3><p class="helper">${r.isPuppy ? '子犬用として作られた総合栄養食のみを表示しています。成長のスピードには個体差があるため、給与量はパッケージ記載の目安を優先し、気になる場合は獣医師に相談してください。' : 'ランキングではなく、上の条件に合う選択肢として表示します。健診異常・服薬・療法食がある場合は購入前に主治医へ確認してください。'}</p><div class="foods">${r.foods.map(f=>`<article class="food"><h4>${f.name}</h4><p>${f.maker} / ${f.kcal}kcal / 脂質${f.fat}% / 約${f.priceKg.toLocaleString()}円/kg${f.mainProtein ? ` / 主原料:${f.mainProtein}` : ''}</p>${f.note ? `<p class="personalize-note"><strong>${name}の場合：</strong>${f.note}</p>` : ''}<ul>${(f.reasons.length?f.reasons:['条件に比較的合いやすい']).map(x=>`<li>${x}</li>`).join('')}<li>目安給与量：約${r.hasWeight ? Math.round(r.kcal / f.kcal * 100) : '—'}g/日・1日コスト約${r.hasWeight ? Math.round((r.kcal / f.kcal * 100) * f.priceKg / 1000) : '—'}円</li></ul><div class="food-actions">${f.url !== '#' ? `<a class="primary buy-link" data-product="${f.name}" data-maker="${f.maker}" href="${f.url}" target="_blank" rel="noopener sponsored">通販サイトで見る</a>` : ''}${productDetailUrl(f.name) !== '#' ? `<a class="text-link product-link" data-product="${f.name}" data-maker="${f.maker}" href="${productDetailHref(f.name, answers, r)}">くわしく見る</a>` : ''}</div></article>`).join('')}</div>` : `<div class="note"><h3>候補フードについて</h3><p>現在のフード候補は、いずれも成犬・シニア犬向けに作られた商品です。子犬期は成長のためにタンパク質・脂質・カルシウムなどの必要量が成犬とは大きく異なるため、このカタログからはおすすめを表示しません。総合栄養食と明記された「子犬用」「オールステージ対応」フードを選ぶか、かかりつけの獣医師にご相談ください。</p></div>`}
       <div class="karte-section"><h3>動物病院で相談したいこと</h3><ul>${r.vetConsult.map(x=>`<li>${x}</li>`).join('')}</ul></div>
-      <div class="karte-section"><h3>この結果から深掘りする記事</h3><div class="article-cards mini">${r.related.map(a=>`<a class="article-card" href="/articles/${a.slug}/"><span>関連記事</span><strong>${a.title}</strong><small>${a.lead}</small></a>`).join('')}</div></div>
+      <div class="karte-section"><h3>この結果から深掘りする記事</h3><p class="helper">${name}の回答で気になったポイントごとに、関連する記事をまとめました。</p>${r.relatedGroups.map(g=>`<div class="related-group"><h4>${g.topic}</h4><div class="article-cards mini">${g.articles.map(a=>`<a class="article-card" href="/articles/${a.slug}/"><span>関連記事</span><strong>${a.title}</strong><small>${a.lead}</small></a>`).join('')}</div></div>`).join('')}</div>
       <div class="karte-section next-steps"><h3>${name}の次の3ステップ</h3><ol>${r.nextSteps.map(x=>`<li>${x}</li>`).join('')}</ol></div>
       <div class="karte-section recheck-note"><h3>3か月後に見直したい項目</h3><p class="helper">同じ診断にもう一度答えると、今回との変化を自動で比較して表示します。継続して使うことで、単発の診断より変化が見えやすくなります。</p><ul>${r.recheckItems.map(x=>`<li>${x}</li>`).join('')}</ul></div>
       <div class="pdf-cta"><p class="eyebrow">有料PDFで追加されること</p><h3>健診表・今のフード・おやつ量を、主治医に相談しやすい1枚へ</h3><p>無料診断は「方向性」まで。PDFカルテでは、検査値・体重・便・食べ方をまとめ、家族や病院で話しやすいメモにします。</p><div class="pdf-mini-grid"><span>健診数値の転記</span><span>相談ポイント整理</span><span>買う前の注意点</span></div><p class="helper"><strong>おすすめ：</strong>健診で指摘がある、療法食中、食べムラや体重変化を家族で共有したい子。<br><strong>不要：</strong>今すぐ症状が強い子は、申込みより先に受診してください。</p><a class="primary pdf-interest" data-price="980" href="/pdf-karute/">980円で相談用カルテを作る</a><small>決済後に入力フォームへ進み、2〜3営業日以内にPDFをお届けします。</small></div>
