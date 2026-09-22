@@ -827,7 +827,7 @@ function render(){
 
 
 function renderArticle(article){
-  return `<article class="article-full" id="article-${article.slug}"><p class="eyebrow">読みもの</p><h2>${article.title}</h2><p class="lead small">${article.lead}</p>${article.sections.map(([h,b])=>`<section><h3>${h}</h3><p>${b}</p></section>`).join('')}<div class="article-cta"><a class="primary" href="#diagnosis">シニア犬フード診断を試す</a><a class="secondary" href="#tracker">体重記録を使う</a></div></article>`
+  return `<article class="article-full" id="article-${article.slug}"><p class="eyebrow">読みもの</p><h2>${article.title}</h2><p class="lead small">${article.lead}</p>${article.sections.map(([h,b])=>`<section><h3>${h}</h3><p>${b}</p></section>`).join('')}<div class="article-cta"><a class="primary" href="#diagnosis">うちの子タイプ診断を試す</a><a class="secondary" href="#tracker">体重記録を使う</a></div></article>`
 }
 
 function renderDiagnosis(){
