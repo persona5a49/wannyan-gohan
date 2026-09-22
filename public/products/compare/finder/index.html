@@ -24,7 +24,7 @@ h2{margin-top:0}
 
 <section class="card">
   <h2 class="section-title">この子の条件</h2>
-  <p class="small">入力しなくても比較表は使えます。選ぶと、表の中で特に見ておきたい列に印がつきます（列を隠すものではありません）。</p>
+  <p class="small">入力しなくても比較表は使えます。選ぶと、表の中で特に見ておきたい列に印がつき、「この子の場合」列にはその軸を重視したときの向き不向きが表示されます（列を隠すものではなく、商品の総合順位をつけるものでもありません）。</p>
   <div class="profile-row">
     <label class="field">年齢
       <select id="ageBand">
@@ -42,14 +42,15 @@ h2{margin-top:0}
         <option value="low">低い</option>
       </select>
     </label>
-    <label class="field">気になる点
+    <label class="field">重視する軸
       <select id="concern">
-        <option value="" selected>特になし</option>
-        <option value="weight">体重管理</option>
-        <option value="picky">食べムラ</option>
+        <option value="" selected>特に指定しない</option>
+        <option value="weight">体重管理重視</option>
+        <option value="picky">食べムラ重視</option>
         <option value="cost">コスト重視</option>
-        <option value="coat">皮膚被毛</option>
-        <option value="stomach">消化器</option>
+        <option value="activity">活動量重視</option>
+        <option value="coat">皮膚被毛重視</option>
+        <option value="stomach">消化器重視</option>
       </select>
     </label>
     <label class="field">体重（kg）
@@ -62,8 +63,18 @@ h2{margin-top:0}
         <option value="unknown" selected>わからない</option>
       </select>
     </label>
+    <label class="field">体型（BCS）
+      <select id="bcs">
+        <option value="" selected>選択なし</option>
+        <option value="thin">肋骨が目立つ・やせ気味</option>
+        <option value="normal">くびれがあり、ちょうどよい</option>
+        <option value="chubby">少し丸くなってきた</option>
+        <option value="obese">明らかにぽっちゃり</option>
+      </select>
+    </label>
   </div>
   <p class="legend" id="emphNote"></p>
+  <p class="legend" id="profileNote"></p>
 </section>
 
 <section class="card">
@@ -92,7 +103,7 @@ h2{margin-top:0}
   <button type="button" class="reset-btn" id="resetBtn">条件をリセット</button>
 </section>
 
-<p class="small"><span class="count" id="resultCount"></span> 件表示中（全30商品）</p>
+<p class="small"><span class="count" id="resultCount"></span> 件表示中（全30商品）。並び順は総合ランキングではなく登録順です。「この子の場合」列は、選んだ軸ごとにこの子に合うかどうかを個別に整理したものです。</p>
 
 <section class="table"><table id="resultsTable"><thead><tr>
   <th data-field="name">商品名</th>
@@ -164,13 +175,18 @@ h2{margin-top:0}
 
   var FIELD_LABELS = { kcal:'kcal/100g', protein:'タンパク質%', fat:'脂質%', priceKg:'kg単価', feedAmount:'1日給与量', dailyCost:'1日コスト' };
 
-  // --- this子の体重・年齢・避妊去勢から1日の目安カロリーを出す ---
+  // --- BCS（体型）の1-5目安スコア。src/main.jsのBCS_SCOREと同じマッピング（site-wide共通）。---
+  var BCS_SCORE = {thin:2, normal:3, chubby:4, obese:5};
+  function bcsScore(bodyKey){ return BCS_SCORE[bodyKey] || null; }
+  function bcsLabel(bodyKey){ var s = bcsScore(bodyKey); return s ? 'BCS目安' + s + '/5' : null; }
+
+  // --- this子の体重・年齢・避妊去勢・BCSから1日の目安カロリーを出す ---
   // 計算式はsrc/main.jsのrer()/derMultiplier()と同じ（RER = 70 * 体重^0.75、DER = RER * 係数）。
-  // 体型（肥満度）はこのページでは収集していないため、その分岐は省いている。
   function rer(weight){ return 70 * Math.pow(Number(weight || 0), 0.75); }
   function derMultiplier(profile){
     if (profile.ageBand === 'puppy') return 2.0;
     if (profile.ageBand === 'hisenior') return 1.1;
+    if (profile.bcs === 'obese') return 1.0;
     if (profile.neuter === 'yes') return 1.4;
     return 1.6;
   }
@@ -239,6 +255,9 @@ h2{margin-top:0}
     };
     (concernMap[profile.concern] || []).forEach(add);
 
+    if (profile.bcs === 'chubby' || profile.bcs === 'obese') { add('kcal'); add('fat'); }
+    if (profile.bcs === 'thin') { add('kcal'); }
+
     if (profile.activity === 'high') { add('protein'); add('kcal'); }
     if (profile.activity === 'low')  { add('kcal'); }
 
@@ -257,7 +276,40 @@ h2{margin-top:0}
   // This never asserts a health benefit (no "腎臓に良い" style claims) —
   // it only restates what the kcal/protein/fat/price/tag numbers say, and is
   // explicitly comparative/descriptive, not a purchase recommendation.
+  // --- BCS（体型）を踏まえた補足を一文添える ---
+  // 体重管理重視の軸と同じ低脂質/低カロリー寄りの判定を流用しているだけで、
+  // 新たな数値基準は作っていない。太り気味〜肥満（chubby/obese）では
+  // カロリーを意識した書き方に寄せつつ「BCSがさらに上がる場合は給与量の
+  // 再調整が必要」という注意を必ず添え、やせ気味（thin）では嗜好性・給餌回数の
+  // 工夫という注意を添える。どちらも良い面だけを述べて終わらないようにしている。
+  function bcsInterpretationSuffix(p, profile){
+    var score = bcsScore(profile.bcs);
+    if (!score) return '';
+    var lowCalLeaning = p.kcal <= 330 || p.fat <= 9 || p.tags.indexOf('lowfat') !== -1 || p.tags.indexOf('weight') !== -1;
+    var palatableLeaning = p.tags.indexOf('palatable') !== -1 || p.tags.indexOf('wet') !== -1 || p.tags.indexOf('fresh') !== -1;
+
+    if (profile.bcs === 'chubby' || profile.bcs === 'obese'){
+      if (lowCalLeaning){
+        return ' BCS目安' + score + '/5で体重管理を意識したい体型のため、カロリー・脂質が低めなこの数値は活かしやすい一方、BCSがさらに上がる場合は給与量の再調整が必要です。';
+      }
+      return ' BCS目安' + score + '/5で体重管理を意識したい体型のため、この数値のままだとカロリーが高めになりやすく、給与量を控えめにするなど体重管理の視点での確認が必要です。';
+    }
+    if (profile.bcs === 'thin'){
+      if (palatableLeaning){
+        return ' BCS目安' + score + '/5でやや細めの体型のため、嗜好性への配慮があるこの数値は食べやすさの面でプラスですが、量や回数を分けるなど食べやすさの工夫も合わせて確認したいところです。';
+      }
+      return ' BCS目安' + score + '/5でやや細めの体型のため、この数値だけでなく、量や回数を分けるなど食べやすさの工夫も合わせて確認したいところです。';
+    }
+    // normal
+    return ' BCS目安' + score + '/5で標準的な体型です。';
+  }
+
   function interpretForProduct(p, profile, visibleList){
+    // 既存の軸別ロジック（気になる点/活動量/年齢帯）はbaseText()にまとめ、
+    // 最後にBCSの補足文をbcsInterpretationSuffix()で必ず一文加える。
+    return baseText() + bcsInterpretationSuffix(p, profile);
+
+    function baseText(){
     var kcalLow = p.kcal <= 330, kcalHigh = p.kcal >= 365;
     var proteinLow = p.protein <= 20, proteinHigh = p.protein >= 28;
     var fatLow = p.fat <= 9, fatHigh = p.fat >= 15;
@@ -377,6 +429,7 @@ h2{margin-top:0}
     }
 
     return '標準的な数値で、際立った強みは特にありません。';
+    }
   }
 
   function getProfile(){
@@ -385,7 +438,8 @@ h2{margin-top:0}
       activity: document.getElementById('activity').value,
       concern: document.getElementById('concern').value,
       weightKg: numOrNull('weightKg'),
-      neuter: document.getElementById('neuter').value
+      neuter: document.getElementById('neuter').value,
+      bcs: document.getElementById('bcs').value
     };
   }
 
@@ -421,10 +475,28 @@ h2{margin-top:0}
   var tbody = document.getElementById('resultsBody');
   var countEl = document.getElementById('resultCount');
   var emphNote = document.getElementById('emphNote');
+  var profileNoteEl = document.getElementById('profileNote');
+
+  // this子の入力（体重・避妊去勢・BCS）から算出できる日々の目安カロリーを、
+  // 「この子の場合」列と同じ土台で一箇所にまとめて示す。数値はcomputeDailyKcal()による
+  // RER/DER目安であり、パッケージ記載の給与量表や獣医師の指示に代わるものではない。
+  function buildProfileNote(profile, dailyKcal){
+    var parts = [];
+    if (profile.weightKg) parts.push('体重' + profile.weightKg + 'kg');
+    if (profile.neuter === 'yes') parts.push('避妊・去勢済み');
+    else if (profile.neuter === 'no') parts.push('避妊・去勢未');
+    var bl = bcsLabel(profile.bcs);
+    if (bl) parts.push(bl);
+    if (!parts.length) return '';
+    var text = 'この子の条件: ' + parts.join('・') + '。';
+    if (dailyKcal !== null) text += ' RER/DER計算による1日の目安カロリーは約' + Math.round(dailyKcal) + 'kcalです。';
+    return text;
+  }
 
   function render(){
     var profile = getProfile();
     var emphasis = computeEmphasis(profile);
+    var dailyKcal = computeDailyKcal(profile);
 
     thead.forEach(function(th){
       th.classList.toggle('emph', emphasis.indexOf(th.dataset.field) !== -1);
@@ -436,6 +508,8 @@ h2{margin-top:0}
       emphNote.textContent = '';
     }
 
+    profileNoteEl.textContent = buildProfileNote(profile, dailyKcal);
+
     var list = filterProducts();
     countEl.textContent = list.length;
 
@@ -443,8 +517,6 @@ h2{margin-top:0}
       tbody.innerHTML = '<tr><td colspan="11" class="small">条件に一致する商品がありません。チェックや数値条件を減らしてください。</td></tr>';
       return;
     }
-
-    var dailyKcal = computeDailyKcal(profile);
 
     tbody.innerHTML = list.map(function(p){
       var cls = function(f){ return emphasis.indexOf(f) !== -1 ? ' class="emph"' : ''; };
@@ -470,7 +542,7 @@ h2{margin-top:0}
     }).join('');
   }
 
-  ['ageBand','activity','concern','neuter'].forEach(function(id){
+  ['ageBand','activity','concern','neuter','bcs'].forEach(function(id){
     document.getElementById(id).addEventListener('change', render);
   });
   ['kcalMin','kcalMax','proteinMin','proteinMax','fatMin','fatMax','priceMin','priceMax','weightKg'].forEach(function(id){
@@ -483,6 +555,7 @@ h2{margin-top:0}
     document.getElementById('concern').value = '';
     document.getElementById('weightKg').value = '';
     document.getElementById('neuter').value = 'unknown';
+    document.getElementById('bcs').value = '';
     document.querySelectorAll('.tag-check').forEach(function(cb){ cb.checked = false; });
     document.getElementById('mainProteinFilter').value = '';
     ['kcalMin','kcalMax','proteinMin','proteinMax','fatMin','fatMax','priceMin','priceMax'].forEach(function(id){
