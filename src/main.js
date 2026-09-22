@@ -650,8 +650,15 @@ const AXIS_COPY = {
 }
 function scoreAxes(a){
   const sc={open:0,watch:0,challenge:0,safe:0,active:0,calm:0,close:0,indie:0}
-  Object.values(a).forEach(v=>{ if(typeof v!=='string') return; ['open','watch','challenge','safe','active','calm','close','indie'].forEach(k=>{ if(v.startsWith(k)) sc[k]+=Number(v.slice(-1))||1 }) })
+  Object.entries(a).forEach(([key,v])=>{ if(key==='dogs' || typeof v!=='string') return; ['open','watch','challenge','safe','active','calm','close','indie'].forEach(k=>{ if(v.startsWith(k)) sc[k]+=Number(v.slice(-1))||1 }) })
   return sc
+}
+function dogAffinity(a){
+  if(a.dogs==='open2') return {label:'犬にも積極的に関わりたいタイプ', note:'他の犬との接触・ドッグランなどでは刺激が強く出やすいぶん、興奮のコントロールを意識すると安心です。'}
+  if(a.dogs==='open1') return {label:'犬にも友好的なタイプ', note:'人への社交性と近い形で、他の犬とも落ち着いて関われることが多いでしょう。'}
+  if(a.dogs==='watch1') return {label:'犬には様子見から入るタイプ', note:'人には社交的でも、犬同士の距離の詰め方は苦手なことがあります。無理に挨拶させず、距離を選べる状況を作ると安心です。'}
+  if(a.dogs==='watch2') return {label:'犬が苦手・警戒しやすいタイプ', note:'人への態度だけで「社交的だから大丈夫」と判断せず、他の犬との接触は本犬のペースを優先してください。'}
+  return null
 }
 function typeFor(a){ const sc=scoreAxes(a); const axes=[sc.open>=sc.watch?'open':'watch',sc.challenge>=sc.safe?'challenge':'safe',sc.active>=sc.calm?'active':'calm',sc.close>=sc.indie?'close':'indie']; return {name:TYPE_NAMES[axes.join('')]||'安心重視の寄り添いタイプ', axes} }
 const APPROACH_WHY = {
@@ -719,6 +726,9 @@ function buildIntegratedInsights(a, r){
   if((a.waterUrine==='more'||a.waterUrine==='muchmore') || (a.checkup||[]).some(x=>['kidney','urine','glucose'].includes(x))){
     cards.push({title:'水・尿・健診値は食事だけで判断しない領域', body:'飲水や尿、腎臓・尿・血糖の項目は、フードの種類だけでは判断できません。体重変化、食欲、尿検査、服薬状況と合わせて見る必要があり、ネット診断で「この商品が合う」と断定しない方が安全です。', action:'フード購入より先に、主治医へ「今の食事量・おやつ・飲水尿の変化・健診値」をセットで相談します。'})
   }
+  if(axes.includes('open') && (a.dogs==='watch1'||a.dogs==='watch2')){
+    cards.push({title:'人には社交的でも、犬同士の距離感は別に見た方がよさそうです', body:'知らない人には積極的に近づける一方で、他の犬には様子を見る・避けるという反応が出ています。これは「社交的か人見知りか」という一軸では説明できず、人への社交性と犬への社交性は別の傾向として持っている可能性があります。ドッグランや多頭飼いの場では、人へのフレンドリーさをそのまま当てはめて無理に挨拶させると、ストレスサインを見逃しやすくなります。', action:'他の犬と会う場面では、まず距離を取って様子を見せてから本犬のペースで近づかせ、しっぽ・耳・体の緊張など人への反応とは別のサインを確認します。'})
+  }
   if(cards.length<3){
     cards.push({title:`${lifeStage(a)}として今見たいポイント`, body:`${lifeStage(a)}では、性格タイプだけでなく、体重の増減・活動量・便・食欲の変化をセットで見ることが大切です。同じフードでも、年齢と生活リズムで適量や優先条件は変わります。`, action:'月1回の体重記録と、便・食欲・おやつ量のメモを残すと、次の見直しが数字で判断しやすくなります。'})
   }
@@ -767,6 +777,8 @@ function subTags(a, redFlags=[], watch=[]){
   if(concerns.includes('coat')) tags.push('皮膚・毛づや配慮')
   if(a.treatAmount==='high'||a.treatAmount==='unknown') tags.push('おやつ量確認')
   if(redFlags.length || watch.length || c.some(x=>x!=='none') || a.currentFood==='therapeutic') tags.push('健診相談あり')
+  const dogAff = dogAffinity(a)
+  if(dogAff) tags.push(dogAff.label)
   return [...new Set(tags)].slice(0,6)
 }
 
