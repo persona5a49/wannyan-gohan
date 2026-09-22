@@ -52,6 +52,16 @@ h2{margin-top:0}
         <option value="stomach">消化器</option>
       </select>
     </label>
+    <label class="field">体重（kg）
+      <input type="number" id="weightKg" min="0" step="0.1" placeholder="例: 5.2">
+    </label>
+    <label class="field">避妊・去勢
+      <select id="neuter">
+        <option value="yes">済み</option>
+        <option value="no">未</option>
+        <option value="unknown" selected>わからない</option>
+      </select>
+    </label>
   </div>
   <p class="legend" id="emphNote"></p>
 </section>
@@ -86,11 +96,13 @@ h2{margin-top:0}
   <th data-field="protein">タンパク質</th>
   <th data-field="fat">脂質</th>
   <th data-field="priceKg">kg単価目安</th>
+  <th data-field="feedAmount">1日給与量</th>
+  <th data-field="dailyCost">1日コスト</th>
   <th data-field="tags">タグ</th>
   <th data-field="interpret">この子の場合</th>
 </tr></thead><tbody id="resultsBody"></tbody></table></section>
 
-<section class="notice"><strong>免責</strong><br>本ページは診断・治療・療法食の指示ではありません。特にBUN/Cre、ALT/ALP、TG/T-Cho、尿検査、体重減少、服薬・療法食がある場合は、フード変更前に主治医へ確認してください。</section>
+<section class="notice"><strong>免責</strong><br>本ページは診断・治療・療法食の指示ではありません。特にBUN/Cre、ALT/ALP、TG/T-Cho、尿検査、体重減少、服薬・療法食がある場合は、フード変更前に主治医へ確認してください。表内の「1日給与量」「1日コスト」は、体重・年齢・避妊去勢の有無からRER/DER計算など獣医栄養学で一般的に使われる考え方を参考に算出した目安であり、パッケージ記載の給与量表や獣医師の指示に代わるものではありません。</section>
 
 <section class="card"><h2>購入前に確認したいこと</h2><ul><li>療法食中・服薬中・健診異常がある場合は、購入前に主治医へ確認してください。</li><li>フード切り替えは少量から。便・吐き気・かゆみ・体重を見ながら進めます。</li><li>このページは商品選びの参考であり、診断・治療・療法食の指示ではありません。</li></ul><p><a class="secondary" href="/#diagnosis" onclick="gtag('event','diagnosis_start',{location:'compare_finder_bottom'})">うちの子タイプ診断で確認する</a> <a class="secondary" href="/pdf-karute/">健診ごはんカルテPDFを見る</a></p></section>
 
@@ -140,7 +152,30 @@ h2{margin-top:0}
     wet:'ウェット/半生', fresh:'フレッシュフード', medium:'中型犬向け', balanced:'バランス重視'
   };
 
-  var FIELD_LABELS = { kcal:'kcal/100g', protein:'タンパク質%', fat:'脂質%', priceKg:'kg単価' };
+  var FIELD_LABELS = { kcal:'kcal/100g', protein:'タンパク質%', fat:'脂質%', priceKg:'kg単価', feedAmount:'1日給与量', dailyCost:'1日コスト' };
+
+  // --- this子の体重・年齢・避妊去勢から1日の目安カロリーを出す ---
+  // 計算式はsrc/main.jsのrer()/derMultiplier()と同じ（RER = 70 * 体重^0.75、DER = RER * 係数）。
+  // 体型（肥満度）はこのページでは収集していないため、その分岐は省いている。
+  function rer(weight){ return 70 * Math.pow(Number(weight || 0), 0.75); }
+  function derMultiplier(profile){
+    if (profile.ageBand === 'puppy') return 2.0;
+    if (profile.ageBand === 'hisenior') return 1.1;
+    if (profile.neuter === 'yes') return 1.4;
+    return 1.6;
+  }
+  function computeDailyKcal(profile){
+    if (!profile.weightKg || profile.weightKg <= 0) return null;
+    return rer(profile.weightKg) * derMultiplier(profile);
+  }
+  function computeFeedAmount(p, dailyKcal){
+    if (dailyKcal === null) return null;
+    return Math.round(dailyKcal / p.kcal * 100);
+  }
+  function computeDailyCost(p, feedAmount){
+    if (feedAmount === null) return null;
+    return Math.round(feedAmount * p.priceKg / 1000);
+  }
 
   // derive the tag list actually present in the data, in a stable order
   var ALL_TAGS = Object.keys(TAG_LABELS).filter(function(tag){
@@ -178,7 +213,7 @@ h2{margin-top:0}
     var concernMap = {
       weight:  ['kcal', 'fat'],
       picky:   ['kcal', 'protein'],
-      cost:    ['priceKg', 'kcal'],
+      cost:    ['dailyCost', 'priceKg', 'kcal'],
       coat:    ['fat', 'protein'],
       stomach: ['fat', 'protein']
     };
@@ -239,6 +274,22 @@ h2{margin-top:0}
       return '食べムラが気になる条件では、この数値だけで判断できる強みは特にありません。';
     }
     if (profile.concern === 'cost'){
+      var costDailyKcal = computeDailyKcal(profile);
+      var costFeedAmount = computeFeedAmount(p, costDailyKcal);
+      var costDailyCost = computeDailyCost(p, costFeedAmount);
+      if (costDailyCost !== null){
+        var yenText = 'この子の場合、1日あたり約' + costDailyCost.toLocaleString('ja-JP') + '円です。';
+        if (isCheapestVisible()){
+          return yenText + '表示中の候補の中でも価格が抑えられています。';
+        }
+        if (priceLow){
+          return yenText + '続けやすい価格帯で候補として有力です。';
+        }
+        if (priceHigh){
+          return yenText + '価格帯はやや高めなので他候補との比較が必要です。';
+        }
+        return yenText + '価格帯は中程度で際立った強みは特にありません。';
+      }
       if (isCheapestVisible()){
         return 'コスト重視の条件では、表示中の候補の中でも価格が抑えられています。';
       }
@@ -312,7 +363,9 @@ h2{margin-top:0}
     return {
       ageBand: document.getElementById('ageBand').value,
       activity: document.getElementById('activity').value,
-      concern: document.getElementById('concern').value
+      concern: document.getElementById('concern').value,
+      weightKg: numOrNull('weightKg'),
+      neuter: document.getElementById('neuter').value
     };
   }
 
@@ -365,14 +418,20 @@ h2{margin-top:0}
     countEl.textContent = list.length;
 
     if (!list.length){
-      tbody.innerHTML = '<tr><td colspan="8" class="small">条件に一致する商品がありません。チェックや数値条件を減らしてください。</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="10" class="small">条件に一致する商品がありません。チェックや数値条件を減らしてください。</td></tr>';
       return;
     }
+
+    var dailyKcal = computeDailyKcal(profile);
 
     tbody.innerHTML = list.map(function(p){
       var cls = function(f){ return emphasis.indexOf(f) !== -1 ? ' class="emph"' : ''; };
       var tagText = p.tags.map(function(t){ return TAG_LABELS[t] || t; }).join(' / ');
       var interpretText = interpretForProduct(p, profile, list);
+      var feedAmount = computeFeedAmount(p, dailyKcal);
+      var dailyCost = computeDailyCost(p, feedAmount);
+      var feedAmountText = feedAmount === null ? '—' : feedAmount + 'g';
+      var dailyCostText = dailyCost === null ? '—' : '約' + dailyCost.toLocaleString('ja-JP') + '円';
       return '<tr>' +
         '<td><a href="/products/' + escapeHtml(p.slug) + '/"><strong>' + escapeHtml(p.name) + '</strong></a></td>' +
         '<td>' + escapeHtml(p.maker) + '</td>' +
@@ -380,16 +439,18 @@ h2{margin-top:0}
         '<td' + cls('protein') + '>' + p.protein + '%</td>' +
         '<td' + cls('fat') + '>' + p.fat + '%</td>' +
         '<td' + cls('priceKg') + '>約' + p.priceKg.toLocaleString('ja-JP') + '円</td>' +
+        '<td' + cls('feedAmount') + '>' + feedAmountText + '</td>' +
+        '<td' + cls('dailyCost') + '>' + dailyCostText + '</td>' +
         '<td class="small">' + escapeHtml(tagText) + '</td>' +
         '<td class="interpret">' + escapeHtml(interpretText) + '</td>' +
       '</tr>';
     }).join('');
   }
 
-  ['ageBand','activity','concern'].forEach(function(id){
+  ['ageBand','activity','concern','neuter'].forEach(function(id){
     document.getElementById(id).addEventListener('change', render);
   });
-  ['kcalMin','kcalMax','proteinMin','proteinMax','fatMin','fatMax','priceMin','priceMax'].forEach(function(id){
+  ['kcalMin','kcalMax','proteinMin','proteinMax','fatMin','fatMax','priceMin','priceMax','weightKg'].forEach(function(id){
     document.getElementById(id).addEventListener('input', render);
   });
 
@@ -397,6 +458,8 @@ h2{margin-top:0}
     document.getElementById('ageBand').value = 'adult';
     document.getElementById('activity').value = 'normal';
     document.getElementById('concern').value = '';
+    document.getElementById('weightKg').value = '';
+    document.getElementById('neuter').value = 'unknown';
     document.querySelectorAll('.tag-check').forEach(function(cb){ cb.checked = false; });
     ['kcalMin','kcalMax','proteinMin','proteinMax','fatMin','fatMax','priceMin','priceMax'].forEach(function(id){
       document.getElementById(id).value = '';
