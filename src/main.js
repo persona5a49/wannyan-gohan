@@ -157,10 +157,122 @@ function loadHistory(){
 function saveHistory(list){ localStorage.setItem(HISTORY_KEY, JSON.stringify(list)) }
 function addHistoryEntry(a, r){
   const list = loadHistory()
-  list.push({date: new Date().toISOString().slice(0,10), dogName: a.dogName || null, type: r.type, weight: a.weight || null, body: a.body || null, tags: r.tags || []})
+  list.push({
+    date: new Date().toISOString().slice(0,10),
+    dogName: a.dogName || null,
+    type: r.type,
+    weight: a.weight || null,
+    body: a.body || null,
+    appetite: a.appetite || null,
+    treatAmount: a.treatAmount || null,
+    activity: a.activity || null,
+    stool: a.stool || null,
+    waterUrine: a.waterUrine || null,
+    currentFood: a.currentFood || null,
+    checkup: a.checkup || [],
+    labs: a.labs || {},
+    kcal: r.hasWeight ? Math.round(r.kcal) : null,
+    tags: r.tags || []
+  })
   saveHistory(list.slice(-20))
 }
 function clearHistory(){ saveHistory([]) }
+
+const APPETITE_RANK = {good:0, uneven:1, picky:2, poor:3}
+const APPETITE_LABEL = {good:'安定して食べる', uneven:'食べムラがある', picky:'選り好みが出やすい', poor:'あまり食べない'}
+const TREAT_LABEL = {low:'ほとんどあげない', moderate:'少しあげる', high:'主食より多い', unknown:'家族分含め不明'}
+const STOOL_RANK = {normal:0, soft:1, constipation:1, diarrhea:2}
+const STOOL_LABEL = {normal:'安定している', soft:'柔らかい日がある', constipation:'硬め・出にくい', diarrhea:'下痢になりやすい'}
+const WATER_RANK = {normal:0, unknown:0, more:1, muchmore:2}
+const WATER_LABEL = {normal:'大きな変化なし', more:'増えた気がする', muchmore:'明らかに増えた', unknown:'よく分からない'}
+const FOOD_LABEL = {dry:'ドライ中心', wet:'ウェット/手作り多め', mixed:'ドライ＋トッピング', therapeutic:'療法食'}
+
+function buildHistoryComparison(previous, current){
+  const details = []
+  const watchItems = []
+  const prevW = Number(previous.weight), curW = Number(current.weight)
+  if(prevW>0 && curW>0){
+    const diffKg = Math.round((curW-prevW)*100)/100
+    if(Math.abs(diffKg) >= 0.05){
+      const diffText = Math.abs(diffKg) < 1 ? `${Math.round(Math.abs(diffKg)*1000)}g` : `${Math.abs(diffKg)}kg`
+      details.push(`前回より体重が${diffText}${diffKg>0?'増えています':'減っています'}。`)
+    } else {
+      details.push('体重は前回からほぼ変化ありません。')
+    }
+  }
+  const prevBcs = bcsScore(previous.body), curBcs = bcsScore(current.body)
+  if(prevBcs && curBcs && prevBcs!==curBcs){
+    details.push(`BCS目安は${prevBcs}/5から${curBcs}/5に変化しています。`)
+    if(curBcs > prevBcs) watchItems.push('体型がやや丸め方向に変化しています。給与量とおやつを見直すタイミングかもしれません。')
+    if(curBcs < prevBcs) watchItems.push('体型がやや痩せ方向に変化しています。食欲や体調に変化がないか確認してください。')
+  }
+  if(previous.appetite && current.appetite && previous.appetite!==current.appetite){
+    const prevR = APPETITE_RANK[previous.appetite], curR = APPETITE_RANK[current.appetite]
+    if(curR < prevR) details.push(`食欲は「${APPETITE_LABEL[previous.appetite]}」から「${APPETITE_LABEL[current.appetite]}」に改善しています。`)
+    else if(curR > prevR){
+      details.push(`食欲は「${APPETITE_LABEL[previous.appetite]}」から「${APPETITE_LABEL[current.appetite]}」に変化しています。`)
+      watchItems.push('食べムラが増えている場合、口・体調・環境の変化がないか確認すると安心です。')
+    }
+  }
+  if(previous.treatAmount && current.treatAmount && previous.treatAmount!==current.treatAmount){
+    details.push(`おやつの量は「${TREAT_LABEL[previous.treatAmount]||previous.treatAmount}」から「${TREAT_LABEL[current.treatAmount]||current.treatAmount}」に変化しています。`)
+  }
+  if(previous.stool && current.stool && previous.stool!==current.stool){
+    const prevR = STOOL_RANK[previous.stool]??0, curR = STOOL_RANK[current.stool]??0
+    details.push(`便の状態は「${STOOL_LABEL[previous.stool]||previous.stool}」から「${STOOL_LABEL[current.stool]||current.stool}」に変化しています。`)
+    if(curR > prevR) watchItems.push('便の状態が崩れる方向に変化している場合、フード変更や体調変化と合わせて確認してください。')
+  }
+  if(previous.waterUrine && current.waterUrine && previous.waterUrine!==current.waterUrine){
+    const curR = WATER_RANK[current.waterUrine]??0
+    details.push(`飲水・おしっこの様子は「${WATER_LABEL[previous.waterUrine]||previous.waterUrine}」から「${WATER_LABEL[current.waterUrine]||current.waterUrine}」に変化しています。`)
+    if(curR >= 2) watchItems.push('飲水量やおしっこの変化が続く場合は、フードより先に主治医へ相談してください。')
+  }
+  if(previous.currentFood && current.currentFood && previous.currentFood!==current.currentFood){
+    details.push(`主食は「${FOOD_LABEL[previous.currentFood]||previous.currentFood}」から「${FOOD_LABEL[current.currentFood]||current.currentFood}」に変わっています。`)
+  }
+  const prevLabs = previous.labs || {}, curLabs = current.labs || {}
+  labFields.forEach(([key,label,unit])=>{
+    const pv = Number(prevLabs[key]), cv = Number(curLabs[key])
+    if(pv>0 && cv>0 && Math.abs(pv-cv)>0.001){
+      const dir = cv>pv ? '上昇' : '低下'
+      let flagged = false
+      if(key==='cre' && cv>=1.4) flagged=true
+      if(key==='bun' && cv>=30) flagged=true
+      if(key==='alt' && cv>=120) flagged=true
+      if(key==='alp' && cv>=350) flagged=true
+      if(key==='tg' && cv>=150) flagged=true
+      if(key==='tcho' && cv>=300) flagged=true
+      if(key==='glu' && cv>=130) flagged=true
+      const text = `${label}は前回より${dir}しています（${pv}→${cv}${unit}）。`
+      if(flagged) watchItems.push(text + '基準範囲外の可能性があるため、主治医への相談継続をおすすめします。')
+      else details.push(text)
+    }
+  })
+  if(previous.type && current.type && previous.type!==current.type){
+    details.push(`タイプの傾向が「${previous.type}」から「${current.type}」に変わっています。回答内容の変化を反映したものです。`)
+  }
+  return {details, watchItems}
+}
+
+const BCS_SCORE = {thin:2, normal:3, chubby:4, obese:5}
+function bcsScore(bodyKey){ return BCS_SCORE[bodyKey] || null }
+function bcsLabel(bodyKey){ const s=bcsScore(bodyKey); return s ? `BCS目安${s}/5` : null }
+
+const EVIDENCE_NOTES = {
+  bcs: {label:'BCS評価について', text:'体型を5段階の目安で見る考え方は、WSAVA（世界小動物獣医師会）のボディコンディションスコアの考え方を参考にしています。回答からの簡易推定のため、実際の触診によるBCSとは異なることがあります。'},
+  kidney: {label:'腎臓の数値について', text:'BUN・Cre・SDMA・尿検査の解釈は、IRIS（国際腎臓病研究グループ）のステージ分類の考え方を参考にしています。'},
+  liver: {label:'肝臓の数値について', text:'ALT・ALPの解釈は、AAHA（米国動物病院協会）の健診ガイドラインを参考にしています。'},
+  lipid: {label:'中性脂肪・コレステロールについて', text:'脂質系の数値は、体重・おやつ量と合わせて見る一般的な栄養管理の考え方を参考にしています。'},
+  glucose: {label:'血糖について', text:'血糖の解釈は、再検査・尿糖の確認を含めた一般的な内科的アプローチを参考にしています。'},
+  urine: {label:'尿検査について', text:'尿検査の解釈は、IRISおよび一般的な下部尿路疾患の考え方を参考にしています。'},
+  energy: {label:'必要エネルギー量について', text:'目安カロリーの計算は、NRC（全米研究評議会）・FEDIAF（欧州ペットフード工業連合会）の栄養要求量の考え方を参考にしています。個別の代謝差は反映していない一般的な目安です。'},
+  behavior: {label:'行動傾向について', text:'性格・行動タイプの判定は、C-BARQ（Canine Behavioral Assessment & Research Questionnaire）の考え方を家庭向けに参考にしています。公式尺度そのものではありません。'}
+}
+function evidenceToggle(key){
+  const e = EVIDENCE_NOTES[key]
+  if(!e) return ''
+  return `<details class="evidence-note"><summary>なぜ？（${e.label}）</summary><p class="helper">${e.text}</p></details>`
+}
 
 function rer(weight){ return 70 * Math.pow(Number(weight || 0), 0.75) }
 function derMultiplier(a){
@@ -908,34 +1020,80 @@ function subTags(a, redFlags=[], watch=[]){
   return [...new Set(tags)].slice(0,6)
 }
 
+function personalizedFoodNote(a, r, f){
+  const name = a.dogName ? `${a.dogName}ちゃん` : 'この子'
+  const parts = []
+  if(Number(a.weight)>0) parts.push(`${a.weight}kg`)
+  if(a.neuter==='yes') parts.push('避妊・去勢済み')
+  const bl = bcsLabel(a.body); if(bl) parts.push(bl)
+  const active = (r.profile.axes||[]).includes('active')
+  parts.push(active ? '活動量高め' : '活動量は落ち着きめ')
+  const purpose = []
+  if(r.tags.includes('体重管理')) purpose.push('体重管理')
+  if(r.tags.includes('食べムラあり')) purpose.push('食べムラ対策')
+  if(r.tags.includes('お腹そっと派')) purpose.push('お腹への配慮')
+  if(r.tags.includes('皮膚・毛づや配慮')) purpose.push('皮膚・毛艶ケア')
+  const lead = purpose.length
+    ? `${name}は${parts.join('、')}で、${purpose.join('・')}が気になるところです。`
+    : `${name}は${parts.join('、')}です。`
+  const notes = []
+  if(f.kcal <= 330) notes.push('このフードはエネルギー密度が控えめなので、体重管理を意識する場合は合わせやすい一方、食が細い子では必要量を食べきれないことがあります。')
+  else if(f.kcal >= 365) notes.push('このフードはエネルギー密度が比較的高いため、少量でも必要カロリーを確保しやすい反面、体重が増えやすい子では給与量の管理がより重要になります。')
+  if(f.fat <= 9) notes.push('脂質は低めで、お腹に配慮したい子や体重管理中の子に合わせやすい範囲です。')
+  else if(f.fat >= 15) notes.push('脂質はやや高めなので、中性脂肪や膵臓が気になる場合は主治医に相談してから検討してください。')
+  if(f.protein >= 28) notes.push('タンパク質はやや高めの設計です。')
+  else if(f.protein <= 20) notes.push('タンパク質は控えめな設計です。')
+  if(a.body==='chubby' || a.body==='obese') notes.push('今後BCSがさらに上がる場合は、給与量の再調整が必要です。')
+  if(a.body==='thin') notes.push('体重が増えにくい場合は、量や回数を分けるなど食べやすさの工夫も合わせて見ます。')
+  return lead + notes.join('')
+}
+function buildNextSteps(a, r){
+  const steps = []
+  if(a.treatAmount==='high'||a.treatAmount==='unknown') steps.push('おやつの量を1週間、実際に量って記録する')
+  if(r.hasWeight) steps.push('体重を2〜4週間後に再測定し、この診断結果と比較する')
+  if(r.redFlags.length || r.watch.length) steps.push('次回健診で気になる数値を主治医に相談する')
+  if(a.appetite==='uneven'||a.appetite==='picky'||a.appetite==='poor') steps.push('食べムラがある日とない日の条件（場所・時間・おやつの有無）をメモする')
+  if(a.stool==='soft'||a.stool==='diarrhea') steps.push('便の状態を1週間記録し、フード変更のタイミングを判断する材料にする')
+  if(!steps.length) steps.push('今の体重・BCS・食べ方を記録しておき、次回の変化と比較できるようにする')
+  return steps.slice(0,3)
+}
+function buildRecheckItems(a, r){
+  const items = ['体重', 'BCS（体型）']
+  if(a.appetite!=='good') items.push('食欲・食べムラ')
+  if(a.stool!=='normal') items.push('便の状態')
+  if(a.treatAmount==='high'||a.treatAmount==='unknown') items.push('おやつの量')
+  if(r.watch.length || r.redFlags.length) items.push('健診で指摘された数値')
+  return [...new Set(items)].slice(0,6)
+}
 function calcResult(a){
   const redFlags = []
   const watch = []
   const c = a.checkup || []
-  if(c.includes('kidney') || labNum('cre') >= 1.4 || labNum('bun') >= 30) redFlags.push('腎臓系が気になる場合は、自己判断でタンパク質・リンを調整せず、主治医に相談してください。')
-  if(c.includes('liver') || labNum('alt') >= 120 || labNum('alp') >= 350) redFlags.push('肝臓系が気になる場合は、サプリや高脂質フードを足す前に主治医へ確認してください。')
-  if(c.includes('weightloss')) redFlags.push('シニア期の体重減少は食事だけで判断せず、検査・診察で原因確認が必要です。')
-  if(c.includes('meds')) redFlags.push('服薬中・療法食中の場合は、フード変更前に必ず獣医師へ相談してください。')
-  if(c.includes('urine') || (labNum('usg') > 0 && labNum('usg') < 1.025) || labNum('upc') >= 0.5) watch.push('尿検査に気になる点がある場合は、飲水量・尿量・腎臓系の確認とセットで考える必要があります。')
-  if(c.includes('lipid') || labNum('tg') >= 150 || labNum('tcho') >= 300) watch.push('脂質系が気になる場合は、まず脂質量・おやつ・体型管理を優先して見直します。')
-  if(c.includes('glucose') || labNum('glu') >= 130) watch.push('血糖が気になる場合は、食事変更だけで判断せず、再検査や尿糖の確認も含めて相談してください。')
-  if(a.currentFood==='therapeutic') redFlags.push('現在療法食を使っている場合、一般食や別の療法食への変更は主治医確認が必要です。')
-  if(a.vomit==='acute' || a.vomit==='often') redFlags.push('吐く回数が多い・急に増えた場合は、フード選びより先に受診相談を優先してください。')
-  if(a.waterUrine==='muchmore') redFlags.push('飲水量や尿量が明らかに増えた場合は、腎臓・内分泌・尿検査を含めた確認が必要です。')
-  if(a.mouthState==='pain') watch.push('口の痛み・出血・歯石が目立つ場合、食べムラの原因がフードではなく口腔内にあることがあります。')
+  if(c.includes('kidney') || labNum('cre') >= 1.4 || labNum('bun') >= 30) redFlags.push({text:'腎臓系が気になる場合は、自己判断でタンパク質・リンを調整せず、主治医に相談してください。', key:'kidney'})
+  if(c.includes('liver') || labNum('alt') >= 120 || labNum('alp') >= 350) redFlags.push({text:'肝臓系が気になる場合は、サプリや高脂質フードを足す前に主治医へ確認してください。', key:'liver'})
+  if(c.includes('weightloss')) redFlags.push({text:'シニア期の体重減少は食事だけで判断せず、検査・診察で原因確認が必要です。', key:null})
+  if(c.includes('meds')) redFlags.push({text:'服薬中・療法食中の場合は、フード変更前に必ず獣医師へ相談してください。', key:null})
+  if(c.includes('urine') || (labNum('usg') > 0 && labNum('usg') < 1.025) || labNum('upc') >= 0.5) watch.push({text:'尿検査に気になる点がある場合は、飲水量・尿量・腎臓系の確認とセットで考える必要があります。', key:'urine'})
+  if(c.includes('lipid') || labNum('tg') >= 150 || labNum('tcho') >= 300) watch.push({text:'脂質系が気になる場合は、まず脂質量・おやつ・体型管理を優先して見直します。', key:'lipid'})
+  if(c.includes('glucose') || labNum('glu') >= 130) watch.push({text:'血糖が気になる場合は、食事変更だけで判断せず、再検査や尿糖の確認も含めて相談してください。', key:'glucose'})
+  if(a.currentFood==='therapeutic') redFlags.push({text:'現在療法食を使っている場合、一般食や別の療法食への変更は主治医確認が必要です。', key:null})
+  if(a.vomit==='acute' || a.vomit==='often') redFlags.push({text:'吐く回数が多い・急に増えた場合は、フード選びより先に受診相談を優先してください。', key:null})
+  if(a.waterUrine==='muchmore') redFlags.push({text:'飲水量や尿量が明らかに増えた場合は、腎臓・内分泌・尿検査を含めた確認が必要です。', key:'kidney'})
+  if(a.mouthState==='pain') watch.push({text:'口の痛み・出血・歯石が目立つ場合、食べムラの原因がフードではなく口腔内にあることがあります。', key:null})
   const typeResult = typeFor(a)
   const profile = profileFor(typeResult)
   const tags = subTags(a, redFlags, watch)
   const therapyFoods = therapeuticCandidates(a)
   const isPuppy = a.age==='under1'
   const foodPool = isPuppy ? FOODS.filter(f=>f.tags.includes('puppy')) : FOODS.filter(f=>!f.tags.includes('puppy'))
+  const pseudoR = {profile, tags}
   const scored = foodPool.map(f=>{
     let s=0; const reasons=[]
     if(isPuppy){
       reasons.push('子犬期の総合栄養食')
       if((a.preference||[]).includes('small') && f.tags.includes('small')) {s+=2; reasons.push('小粒寄り')}
       if((a.preference||[]).includes('cost') && f.priceKg<1600) {s+=3; reasons.push('続けやすい価格帯')}
-      return {...f, score:s, reasons: reasons.slice(0,3)}
+      return {...f, score:s, reasons: reasons.slice(0,3), note: personalizedFoodNote(a, pseudoR, f)}
     }
     const isSenior = ['7-9','10-12','13+'].includes(a.age)
     const isYoungAdult = a.age==='1-6'
@@ -950,14 +1108,16 @@ function calcResult(a){
     if((a.preference||[]).includes('small') && f.tags.includes('small')) {s+=2; reasons.push('小粒寄り')}
     if((a.preference||[]).includes('cost') && f.priceKg<1600) {s+=3; reasons.push('続けやすい価格帯')}
     if((a.preference||[]).includes('japan') && f.tags.includes('japan')) {s+=2; reasons.push('国産系')}
-    return {...f, score:s, reasons: reasons.slice(0,3)}
+    return {...f, score:s, reasons: reasons.slice(0,3), note: personalizedFoodNote(a, pseudoR, f)}
   }).sort((a,b)=>b.score-a.score).slice(0,3)
   const kcal = rer(a.weight) * derMultiplier(a)
-  const base = {type:typeResult.name, profile, tags, breedNote: BREED_NOTES[a.breedGroup] || '', redFlags, watch, foods:scored, therapyFoods, kcal, snack:kcal*0.1, hasWeight:Number(a.weight)>0, isPuppy}
+  const base = {type:typeResult.name, profile, tags, breedNote: BREED_NOTES[a.breedGroup] || '', redFlags, watch, foods:scored, therapyFoods, kcal, snack:kcal*0.1, hasWeight:Number(a.weight)>0, isPuppy, bcs: bcsLabel(a.body)}
   base.insights = buildIntegratedInsights(a, base)
   base.conditions = foodSelectionConditions(a, base)
   base.vetConsult = vetConsultItems(a, base)
   base.related = relatedArticlesFor(a, base)
+  base.nextSteps = buildNextSteps(a, base)
+  base.recheckItems = buildRecheckItems(a, base)
   return base
 }
 
@@ -985,22 +1145,19 @@ function renderArticle(article){
 function formatDateJp(iso){ return (iso || '').replace(/-/g,'/') }
 function renderHistorySection(list){
   if(list.length < 2){
-    if(list.length === 1) return `<p class="helper history-hint">次回の記録と比較できるようになります。</p>`
+    if(list.length === 1) return `<p class="helper history-hint">次回の記録と比較できるようになります。体重・BCS・食欲・便・おやつ量などの変化を自動で比較します。</p>`
     return ''
   }
   const current = list[list.length-1]
   const previous = list[list.length-2]
-  const prevW = Number(previous.weight)
-  const curW = Number(current.weight)
-  const hasWeights = prevW > 0 && curW > 0
-  let compareNote = `前回（${formatDateJp(previous.date)}）は「${previous.type}」${hasWeights ? '・'+prevW+'kg' : ''}でした。今回は「${current.type}」${hasWeights ? '・'+curW+'kg' : ''}です。`
-  if(hasWeights){
-    const diffRatio = (curW - prevW) / prevW
-    if(diffRatio >= 0.05) compareNote += ' 体重が増えています。健診結果と合わせて確認いただくと安心です。'
-    else if(diffRatio <= -0.05) compareNote += ' 体重が減っています。健診結果と合わせて確認いただくと安心です。'
-  }
+  const cmp = buildHistoryComparison(previous, current)
+  const summary = `前回（${formatDateJp(previous.date)}）から今回（${formatDateJp(current.date)}）までの変化をまとめました。`
   const recent = list.slice(-5).reverse()
-  return `<div class="karte-section history-section"><h3>これまでの記録</h3><p>${compareNote}</p><ul class="history-list">${recent.map(h=>`<li><span>${formatDateJp(h.date)}</span><span>${h.type}</span><span>${h.weight ? h.weight+'kg' : '—'}</span></li>`).join('')}</ul><button type="button" class="text-link clear-history">履歴を削除</button></div>`
+  return `<div class="karte-section history-section"><h3>これまでの記録と変化</h3><p>${summary}</p>
+    ${cmp.details.length ? `<ul class="history-detail-list">${cmp.details.map(x=>`<li>${x}</li>`).join('')}</ul>` : '<p class="helper">前回から大きな変化は見られません。</p>'}
+    ${cmp.watchItems.length ? `<div class="note history-watch"><h4>主治医に伝えるとよいポイント</h4><ul>${cmp.watchItems.map(x=>`<li>${x}</li>`).join('')}</ul></div>` : ''}
+    <details class="history-log"><summary>過去の記録一覧を見る</summary><ul class="history-list">${recent.map(h=>`<li><span>${formatDateJp(h.date)}</span><span>${h.type}</span><span>${h.weight ? h.weight+'kg' : '—'}</span></li>`).join('')}</ul></details>
+    <button type="button" class="text-link clear-history">履歴を削除</button></div>`
 }
 function renderDiagnosis(){
   if(step >= QUESTIONS.length){
@@ -1009,23 +1166,25 @@ function renderDiagnosis(){
     const shownTags = displayTags(r.tags, answers.breedGroup)
     const historyAll = loadHistory()
     const matchedHistory = answers.dogName ? historyAll.filter(h=>h.dogName===answers.dogName) : historyAll
-    return `<div class="result karte"><p class="eyebrow">うちの子ごはん・暮らしカルテ</p><div class="type-card"><div><span class="type-code">16タイプ診断</span><h2>${name}は「${r.type}」</h2><p>${r.profile.lead}</p></div><div class="type-animal">${answers.breedGroup && BREED_GROUPS[answers.breedGroup] ? BREED_GROUPS[answers.breedGroup] : '暮らしタイプ'}</div></div><div class="trait-list">${shownTags.map(x=>`<span>${x}</span>`).join('')}</div>
-      ${r.hasWeight ? `<div class="result-grid"><div class="metric"><strong>${Math.round(r.kcal)} kcal/日</strong><span>目安必要カロリー</span></div><div class="metric"><strong>${Math.round(r.snack)} kcal/日まで</strong><span>おやつ上限の目安</span></div></div>${r.isPuppy ? `<p class="helper">子犬期は成長段階によって必要カロリーが大きく変わるため、上の数字はあくまで簡易的な目安です。フードのパッケージ記載の給与量や、かかりつけの獣医師の指示を優先してください。</p>` : ''}` : `<div class="note"><h3>カロリー計算</h3><p>体重を入力すると、目安カロリーとおやつ上限を表示できます。今回はタイプ判定と注意点のみ表示します。</p></div>`}
+    return `<div class="result karte"><p class="eyebrow">うちの子ごはん・暮らしカルテ</p><div class="type-card"><div><span class="type-code">16タイプ診断</span><h2>${name}は「${r.type}」</h2><p>${r.profile.lead}</p></div><div class="type-animal">${answers.breedGroup && BREED_GROUPS[answers.breedGroup] ? BREED_GROUPS[answers.breedGroup] : '暮らしタイプ'}</div></div><div class="trait-list">${shownTags.map(x=>`<span>${x}</span>`).join('')}${r.bcs ? `<span>${r.bcs}</span>`:''}</div>
+      ${r.hasWeight ? `<div class="result-grid"><div class="metric"><strong>${Math.round(r.kcal)} kcal/日</strong><span>目安必要カロリー</span></div><div class="metric"><strong>${Math.round(r.snack)} kcal/日まで</strong><span>おやつ上限の目安</span></div></div>${evidenceToggle('energy')}${r.isPuppy ? `<p class="helper">子犬期は成長段階によって必要カロリーが大きく変わるため、上の数字はあくまで簡易的な目安です。フードのパッケージ記載の給与量や、かかりつけの獣医師の指示を優先してください。</p>` : ''}` : `<div class="note"><h3>カロリー計算</h3><p>体重を入力すると、目安カロリーとおやつ上限を表示できます。今回はタイプ判定と注意点のみ表示します。</p></div>`}
       <div class="share-panel"><button class="primary save-share" type="button">結果画像を保存</button><button class="secondary native-share" type="button">LINE/Xで共有</button><canvas id="shareCanvas" width="1200" height="630" aria-label="診断結果シェア画像"></canvas><p class="helper">画像には医療情報や健診数値は入れず、タイプ名だけを共有します。</p></div>
-      <div class="karte-section deep-summary"><h3>${name}の全体像</h3><p>${r.profile.lead}${r.breedNote ? ' '+r.breedNote : ''} ここでは回答を並べ直すのではなく、性格・活動量・食べ方・体型・健診メモの組み合わせから、暮らしで見たいポイントを整理します。</p></div>
+      <div class="karte-section deep-summary"><h3>${name}の全体像</h3><p>${r.profile.lead}${r.breedNote ? ' '+r.breedNote : ''}${r.bcs ? ` 体型は${r.bcs}です。` : ''} ここでは回答を並べ直すのではなく、性格・活動量・食べ方・体型（BCS）・健診メモの組み合わせから、暮らしで見たいポイントを整理します。</p>${r.bcs ? evidenceToggle('bcs') : ''}</div>
       ${renderHistorySection(matchedHistory)}
-      <div class="karte-section"><h3>解釈カード</h3><div class="insight-grid">${r.insights.map(x=>`<article class="insight-card"><h4>${x.title}</h4><p>${x.body}</p><strong>実生活では：</strong><p>${x.action}</p></article>`).join('')}</div></div>
+      <div class="karte-section"><h3>解釈カード</h3>${evidenceToggle('behavior')}<div class="insight-grid">${r.insights.map(x=>`<article class="insight-card"><h4>${x.title}</h4><p>${x.body}</p><strong>実生活では：</strong><p>${x.action}</p></article>`).join('')}</div></div>
       <div class="karte-section"><h3>接し方のコツ</h3><ul>${r.profile.care.map(x=>`<li>${x}</li>`).join('')}</ul></div>
-      ${r.redFlags.length ? `<div class="alert"><h3>フード変更前に主治医へ確認</h3><ul>${r.redFlags.map(x=>`<li>${x}</li>`).join('')}</ul></div>`:''}
-      ${r.watch.length ? `<div class="note"><h3>健診メモ</h3><ul>${r.watch.map(x=>`<li>${x}</li>`).join('')}</ul></div>`:''}
+      ${r.redFlags.length ? `<div class="alert"><h3>フード変更前に主治医へ確認</h3><ul>${r.redFlags.map(x=>`<li>${x.text}${evidenceToggle(x.key)}</li>`).join('')}</ul></div>`:''}
+      ${r.watch.length ? `<div class="note"><h3>健診メモ</h3><ul>${r.watch.map(x=>`<li>${x.text}${evidenceToggle(x.key)}</li>`).join('')}</ul></div>`:''}
       <div class="note"><h3>この診断について</h3><p>C-BARQ（Canine Behavioral Assessment & Research Questionnaire）の考え方を参考に、家庭で答えやすい場面へ置き換えたセルフチェックです。C-BARQ公式尺度そのものではなく、医学的診断・行動診断でもありません。</p><a class="text-link" href="/about-diagnosis/">参考にしている考え方を見る</a>
         <details style="margin-top:12px"><summary style="cursor:pointer;font-weight:800;color:var(--green)">この評価の根拠を見る</summary><p class="helper" style="margin-top:8px">目安カロリー・おやつ上限は、RER/DER計算など獣医栄養学で一般的に使われる考え方を参考にしています。個別の栄養設計の根拠として使うものではなく、一般的な目安です。</p><ul class="helper" style="padding-left:20px;margin:6px 0"><li>C-BARQ（Canine Behavioral Assessment & Research Questionnaire）</li><li>WSAVA（世界小動物獣医師会）Global Nutrition Guidelines</li><li>AAHA（米国動物病院協会）の栄養評価ガイドライン</li><li>NRC（全米研究評議会）犬猫の栄養要求量</li><li>FEDIAF（欧州ペットフード工業連合会）栄養ガイドライン</li><li>AAFCO（米国飼料検査官協会）の栄養基準</li></ul></details>
       </div>
       ${r.therapyFoods.length ? `<div class="alert therapy"><h3>療法食を相談するなら</h3><p>血液検査・尿検査・服薬状況がある場合に、PDFカルテ側で整理して主治医に確認しやすくする候補です。無料診断では購入推奨ではなく「相談候補」として表示します。</p><div class="foods therapy-foods">${r.therapyFoods.map(f=>`<article class="food"><h4>${f.name}</h4><p>${f.maker}</p><ul><li>${f.note}</li></ul></article>`).join('')}</div></div>`:''}
       <div class="karte-section"><h3>フードを選ぶ前に見る条件</h3><p class="helper">いきなり商品名で選ばず、まず${name}の場合に重視する条件を決めます。</p><div class="condition-grid">${r.conditions.map(([h,b])=>`<article><h4>${h}</h4><p>${b}</p></article>`).join('')}</div></div>
-      ${r.foods.length ? `<h3>${r.isPuppy ? '子犬期向けの候補フード' : '目的別の候補フード'}</h3><p class="helper">${r.isPuppy ? '子犬用として作られた総合栄養食のみを表示しています。成長のスピードには個体差があるため、給与量はパッケージ記載の目安を優先し、気になる場合は獣医師に相談してください。' : 'ランキングではなく、上の条件に合う選択肢として表示します。健診異常・服薬・療法食がある場合は購入前に主治医へ確認してください。'}</p><div class="foods">${r.foods.map(f=>`<article class="food"><h4>${f.name}</h4><p>${f.maker} / ${f.kcal}kcal / 脂質${f.fat}% / 約${f.priceKg.toLocaleString()}円/kg${f.mainProtein ? ` / 主原料:${f.mainProtein}` : ''}</p><ul>${(f.reasons.length?f.reasons:['条件に比較的合いやすい']).map(x=>`<li>${x}</li>`).join('')}<li>目安給与量：約${r.hasWeight ? Math.round(r.kcal / f.kcal * 100) : '—'}g/日・1日コスト約${r.hasWeight ? Math.round((r.kcal / f.kcal * 100) * f.priceKg / 1000) : '—'}円</li></ul><div class="food-actions">${f.url !== '#' ? `<a class="primary buy-link" data-product="${f.name}" data-maker="${f.maker}" href="${f.url}" target="_blank" rel="noopener sponsored">通販サイトで見る</a>` : ''}${productDetailUrl(f.name) !== '#' ? `<a class="text-link product-link" data-product="${f.name}" data-maker="${f.maker}" href="${productDetailHref(f.name, answers, r)}">くわしく見る</a>` : ''}</div></article>`).join('')}</div>` : `<div class="note"><h3>候補フードについて</h3><p>現在のフード候補は、いずれも成犬・シニア犬向けに作られた商品です。子犬期は成長のためにタンパク質・脂質・カルシウムなどの必要量が成犬とは大きく異なるため、このカタログからはおすすめを表示しません。総合栄養食と明記された「子犬用」「オールステージ対応」フードを選ぶか、かかりつけの獣医師にご相談ください。</p></div>`}
+      ${r.foods.length ? `<h3>${r.isPuppy ? '子犬期向けの候補フード' : '目的別の候補フード'}</h3><p class="helper">${r.isPuppy ? '子犬用として作られた総合栄養食のみを表示しています。成長のスピードには個体差があるため、給与量はパッケージ記載の目安を優先し、気になる場合は獣医師に相談してください。' : 'ランキングではなく、上の条件に合う選択肢として表示します。健診異常・服薬・療法食がある場合は購入前に主治医へ確認してください。'}</p><div class="foods">${r.foods.map(f=>`<article class="food"><h4>${f.name}</h4><p>${f.maker} / ${f.kcal}kcal / 脂質${f.fat}% / 約${f.priceKg.toLocaleString()}円/kg${f.mainProtein ? ` / 主原料:${f.mainProtein}` : ''}</p>${f.note ? `<p class="personalize-note"><strong>${name}の場合：</strong>${f.note}</p>` : ''}<ul>${(f.reasons.length?f.reasons:['条件に比較的合いやすい']).map(x=>`<li>${x}</li>`).join('')}<li>目安給与量：約${r.hasWeight ? Math.round(r.kcal / f.kcal * 100) : '—'}g/日・1日コスト約${r.hasWeight ? Math.round((r.kcal / f.kcal * 100) * f.priceKg / 1000) : '—'}円</li></ul><div class="food-actions">${f.url !== '#' ? `<a class="primary buy-link" data-product="${f.name}" data-maker="${f.maker}" href="${f.url}" target="_blank" rel="noopener sponsored">通販サイトで見る</a>` : ''}${productDetailUrl(f.name) !== '#' ? `<a class="text-link product-link" data-product="${f.name}" data-maker="${f.maker}" href="${productDetailHref(f.name, answers, r)}">くわしく見る</a>` : ''}</div></article>`).join('')}</div>` : `<div class="note"><h3>候補フードについて</h3><p>現在のフード候補は、いずれも成犬・シニア犬向けに作られた商品です。子犬期は成長のためにタンパク質・脂質・カルシウムなどの必要量が成犬とは大きく異なるため、このカタログからはおすすめを表示しません。総合栄養食と明記された「子犬用」「オールステージ対応」フードを選ぶか、かかりつけの獣医師にご相談ください。</p></div>`}
       <div class="karte-section"><h3>動物病院で相談したいこと</h3><ul>${r.vetConsult.map(x=>`<li>${x}</li>`).join('')}</ul></div>
       <div class="karte-section"><h3>この結果から深掘りする記事</h3><div class="article-cards mini">${r.related.map(a=>`<a class="article-card" href="/articles/${a.slug}/"><span>関連記事</span><strong>${a.title}</strong><small>${a.lead}</small></a>`).join('')}</div></div>
+      <div class="karte-section next-steps"><h3>${name}の次の3ステップ</h3><ol>${r.nextSteps.map(x=>`<li>${x}</li>`).join('')}</ol></div>
+      <div class="karte-section recheck-note"><h3>3か月後に見直したい項目</h3><p class="helper">同じ診断にもう一度答えると、今回との変化を自動で比較して表示します。継続して使うことで、単発の診断より変化が見えやすくなります。</p><ul>${r.recheckItems.map(x=>`<li>${x}</li>`).join('')}</ul></div>
       <div class="pdf-cta"><p class="eyebrow">有料PDFで追加されること</p><h3>健診表・今のフード・おやつ量を、主治医に相談しやすい1枚へ</h3><p>無料診断は「方向性」まで。PDFカルテでは、検査値・体重・便・食べ方をまとめ、家族や病院で話しやすいメモにします。</p><div class="pdf-mini-grid"><span>健診数値の転記</span><span>相談ポイント整理</span><span>買う前の注意点</span></div><p class="helper"><strong>おすすめ：</strong>健診で指摘がある、療法食中、食べムラや体重変化を家族で共有したい子。<br><strong>不要：</strong>今すぐ症状が強い子は、申込みより先に受診してください。</p><a class="primary pdf-interest" data-price="980" href="/pdf-karute/">980円で相談用カルテを作る</a><small>決済後に入力フォームへ進み、2〜3営業日以内にPDFをお届けします。</small></div>
       <button class="secondary reset">もう一度診断</button></div>`
   }
