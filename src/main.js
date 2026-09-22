@@ -46,6 +46,22 @@ const PRODUCT_SLUGS = {
   'ニュートロ シュプレモ シニア犬用': 'nutro-supremo-senior'
 }
 function productDetailUrl(name){ return PRODUCT_SLUGS[name] ? `/products/${PRODUCT_SLUGS[name]}/` : '#' }
+function productDetailHref(name, answers, r){
+  const base = productDetailUrl(name)
+  if(base === '#') return base
+  const axes = (r && r.profile && r.profile.axes) || []
+  const tags = (r && r.tags) || []
+  const params = []
+  if(answers && answers.body) params.push('bcs=' + encodeURIComponent(answers.body))
+  params.push('activity=' + encodeURIComponent(axes.includes('active') ? 'active' : 'calm'))
+  let concern = null
+  if(tags.includes('体重管理')) concern = 'weight'
+  else if(tags.includes('食べムラあり')) concern = 'picky'
+  else if(tags.includes('皮膚・毛づや配慮')) concern = 'coat'
+  else if(tags.includes('お腹そっと派')) concern = 'stomach'
+  if(concern) params.push('concern=' + encodeURIComponent(concern))
+  return base + (params.length ? '?' + params.join('&') : '')
+}
 
 const THERAPY_MAKERS = '主な取り扱いメーカー例：ロイヤルカナン／ヒルズ／ドクターズケア／ピュリナ（いずれも動物病院での処方・購入が基本です）'
 const THERAPEUTIC_FOODS = [
@@ -913,7 +929,7 @@ function renderDiagnosis(){
       </div>
       ${r.therapyFoods.length ? `<div class="alert therapy"><h3>療法食を相談するなら</h3><p>血液検査・尿検査・服薬状況がある場合に、PDFカルテ側で整理して主治医に確認しやすくする候補です。無料診断では購入推奨ではなく「相談候補」として表示します。</p><div class="foods therapy-foods">${r.therapyFoods.map(f=>`<article class="food"><h4>${f.name}</h4><p>${f.maker}</p><ul><li>${f.note}</li></ul></article>`).join('')}</div></div>`:''}
       <div class="karte-section"><h3>フードを選ぶ前に見る条件</h3><p class="helper">いきなり商品名で選ばず、まず${name}の場合に重視する条件を決めます。</p><div class="condition-grid">${r.conditions.map(([h,b])=>`<article><h4>${h}</h4><p>${b}</p></article>`).join('')}</div></div>
-      ${r.foods.length ? `<h3>${r.isPuppy ? '子犬期向けの候補フード' : '目的別の候補フード'}</h3><p class="helper">${r.isPuppy ? '子犬用として作られた総合栄養食のみを表示しています。成長のスピードには個体差があるため、給与量はパッケージ記載の目安を優先し、気になる場合は獣医師に相談してください。' : 'ランキングではなく、上の条件に合う選択肢として表示します。健診異常・服薬・療法食がある場合は購入前に主治医へ確認してください。'}</p><div class="foods">${r.foods.map(f=>`<article class="food"><h4>${f.name}</h4><p>${f.maker} / ${f.kcal}kcal / 脂質${f.fat}% / 約${f.priceKg.toLocaleString()}円/kg</p><ul>${(f.reasons.length?f.reasons:['条件に比較的合いやすい']).map(x=>`<li>${x}</li>`).join('')}<li>目安給与量：約${r.hasWeight ? Math.round(r.kcal / f.kcal * 100) : '—'}g/日・1日コスト約${r.hasWeight ? Math.round((r.kcal / f.kcal * 100) * f.priceKg / 1000) : '—'}円</li></ul><div class="food-actions">${f.url !== '#' ? `<a class="primary buy-link" data-product="${f.name}" data-maker="${f.maker}" href="${f.url}" target="_blank" rel="noopener sponsored">通販サイトで見る</a>` : ''}${productDetailUrl(f.name) !== '#' ? `<a class="text-link product-link" data-product="${f.name}" data-maker="${f.maker}" href="${productDetailUrl(f.name)}">くわしく見る</a>` : ''}</div></article>`).join('')}</div>` : `<div class="note"><h3>候補フードについて</h3><p>現在のフード候補は、いずれも成犬・シニア犬向けに作られた商品です。子犬期は成長のためにタンパク質・脂質・カルシウムなどの必要量が成犬とは大きく異なるため、このカタログからはおすすめを表示しません。総合栄養食と明記された「子犬用」「オールステージ対応」フードを選ぶか、かかりつけの獣医師にご相談ください。</p></div>`}
+      ${r.foods.length ? `<h3>${r.isPuppy ? '子犬期向けの候補フード' : '目的別の候補フード'}</h3><p class="helper">${r.isPuppy ? '子犬用として作られた総合栄養食のみを表示しています。成長のスピードには個体差があるため、給与量はパッケージ記載の目安を優先し、気になる場合は獣医師に相談してください。' : 'ランキングではなく、上の条件に合う選択肢として表示します。健診異常・服薬・療法食がある場合は購入前に主治医へ確認してください。'}</p><div class="foods">${r.foods.map(f=>`<article class="food"><h4>${f.name}</h4><p>${f.maker} / ${f.kcal}kcal / 脂質${f.fat}% / 約${f.priceKg.toLocaleString()}円/kg</p><ul>${(f.reasons.length?f.reasons:['条件に比較的合いやすい']).map(x=>`<li>${x}</li>`).join('')}<li>目安給与量：約${r.hasWeight ? Math.round(r.kcal / f.kcal * 100) : '—'}g/日・1日コスト約${r.hasWeight ? Math.round((r.kcal / f.kcal * 100) * f.priceKg / 1000) : '—'}円</li></ul><div class="food-actions">${f.url !== '#' ? `<a class="primary buy-link" data-product="${f.name}" data-maker="${f.maker}" href="${f.url}" target="_blank" rel="noopener sponsored">通販サイトで見る</a>` : ''}${productDetailUrl(f.name) !== '#' ? `<a class="text-link product-link" data-product="${f.name}" data-maker="${f.maker}" href="${productDetailHref(f.name, answers, r)}">くわしく見る</a>` : ''}</div></article>`).join('')}</div>` : `<div class="note"><h3>候補フードについて</h3><p>現在のフード候補は、いずれも成犬・シニア犬向けに作られた商品です。子犬期は成長のためにタンパク質・脂質・カルシウムなどの必要量が成犬とは大きく異なるため、このカタログからはおすすめを表示しません。総合栄養食と明記された「子犬用」「オールステージ対応」フードを選ぶか、かかりつけの獣医師にご相談ください。</p></div>`}
       <div class="karte-section"><h3>動物病院で相談したいこと</h3><ul>${r.vetConsult.map(x=>`<li>${x}</li>`).join('')}</ul></div>
       <div class="karte-section"><h3>この結果から深掘りする記事</h3><div class="article-cards mini">${r.related.map(a=>`<a class="article-card" href="/articles/${a.slug}/"><span>関連記事</span><strong>${a.title}</strong><small>${a.lead}</small></a>`).join('')}</div></div>
       <div class="pdf-cta"><p class="eyebrow">有料PDFで追加されること</p><h3>健診表・今のフード・おやつ量を、主治医に相談しやすい1枚へ</h3><p>無料診断は「方向性」まで。PDFカルテでは、検査値・体重・便・食べ方をまとめ、家族や病院で話しやすいメモにします。</p><div class="pdf-mini-grid"><span>健診数値の転記</span><span>相談ポイント整理</span><span>買う前の注意点</span></div><p class="helper"><strong>おすすめ：</strong>健診で指摘がある、療法食中、食べムラや体重変化を家族で共有したい子。<br><strong>不要：</strong>今すぐ症状が強い子は、申込みより先に受診してください。</p><a class="primary pdf-interest" data-price="980" href="/pdf-karute/">980円で相談用カルテを作る</a><small>決済後に入力フォームへ進み、2〜3営業日以内にPDFをお届けします。</small></div>
