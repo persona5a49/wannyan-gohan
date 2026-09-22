@@ -653,7 +653,7 @@ function scoreAxes(a){
   Object.values(a).forEach(v=>{ if(typeof v!=='string') return; ['open','watch','challenge','safe','active','calm','close','indie'].forEach(k=>{ if(v.startsWith(k)) sc[k]+=Number(v.slice(-1))||1 }) })
   return sc
 }
-function typeFor(a){ const sc=scoreAxes(a); const axes=[sc.open>=sc.watch?'open':'watch',sc.challenge>=sc.safe?'challenge':'safe',sc.active>=sc.calm?'active':'calm',sc.close>=sc.indie?'close':'indie']; return {name:TYPE_NAMES[axes.join('')]||'安心確認の寄り添いさん', axes} }
+function typeFor(a){ const sc=scoreAxes(a); const axes=[sc.open>=sc.watch?'open':'watch',sc.challenge>=sc.safe?'challenge':'safe',sc.active>=sc.calm?'active':'calm',sc.close>=sc.indie?'close':'indie']; return {name:TYPE_NAMES[axes.join('')]||'安心重視の寄り添いタイプ', axes} }
 const APPROACH_WHY = {
   openchallenge:'人や新しい環境にも物怖じせず飛び込んでいけるタイプで、警戒よりも好奇心が先に立ちます。初対面の相手にもすぐ心を開きやすいぶん、飛び出しや誤飲などへの注意は飼い主側で意識して補う必要があります。',
   opensafe:'人や犬には積極的に関心を向ける一方で、初めての物事には少し時間をかけて確かめたい面もあります。「人は平気だけど新しいモノは慎重」という組み合わせが、この子らしさの土台になっています。',
