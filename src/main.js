@@ -123,6 +123,7 @@ const QUESTIONS = [
   {key:'waterUrine', label:'水を飲む量やおしっこの変化は？', type:'choice', options:[['normal','大きな変化なし'],['more','増えた気がする'],['muchmore','明らかに増えた'],['unknown','よく分からない']]},
   {key:'mouthState', label:'口・歯の様子は？', type:'choice', options:[['none','特になし'],['smell','口臭がある'],['chew','硬いものを避ける'],['pain','痛そう・出血・歯石が多い']]},
   {key:'currentFood', label:'今の主食は？', type:'choice', options:[['dry','ドライ中心'],['wet','ウェット/手作り多め'],['mixed','ドライ＋トッピング'],['therapeutic','療法食を使用中']]},
+  {key:'currentFoodName', label:'今の主食の商品名がわかれば教えてください（任意）', type:'text', placeholder:'例：モグワン ドッグフード'},
   {key:'treatAmount', label:'おやつの量は？', type:'choice', options:[['low','ほとんどあげない'],['moderate','少しあげる'],['high','主食に比べて多いと思う'],['unknown','家族分まで含めると不明']]},
   {key:'concerns', label:'今、気になることを選んでください', type:'multi', options:[['weight','体重管理'],['appetite','食べムラ'],['stomach','お腹・便'],['coat','皮膚・毛艶'],['joint','関節'],['mouth','口・歯'],['behavior','しつけ・行動'],['senior','シニア全般']]},
   {key:'checkup', label:'健診・治療で気になることは？', type:'multi', options:[['none','特になし'],['kidney','腎臓系'],['liver','肝臓系'],['lipid','中性脂肪/コレステロール'],['glucose','血糖'],['urine','尿検査'],['weightloss','体重減少'],['meds','服薬/療法食あり']]},
@@ -161,6 +162,7 @@ function addHistoryEntry(a, r){
     date: new Date().toISOString().slice(0,10),
     dogName: a.dogName || null,
     type: r.type,
+    age: a.age || null,
     weight: a.weight || null,
     body: a.body || null,
     appetite: a.appetite || null,
@@ -169,6 +171,7 @@ function addHistoryEntry(a, r){
     stool: a.stool || null,
     waterUrine: a.waterUrine || null,
     currentFood: a.currentFood || null,
+    foodName: (a.currentFoodName || '').trim() || null,
     checkup: a.checkup || [],
     labs: a.labs || {},
     kcal: r.hasWeight ? Math.round(r.kcal) : null,
@@ -929,13 +932,15 @@ function displayTags(tags, breedGroup){
   return breedLabel ? tags.filter(x=>x !== breedLabel) : tags
 }
 
-function lifeStage(a){
-  if(a.age==='under1') return '子犬期'
-  if(a.age==='1-6') return '成犬期'
-  if(a.age==='7-9') return '中高齢期'
-  if(a.age==='10-12') return 'シニア期'
-  return 'ハイシニア期'
+function lifeStageLabel(age){
+  if(age==='under1') return '子犬期'
+  if(age==='1-6') return '成犬期'
+  if(age==='7-9') return '中高齢期'
+  if(age==='10-12') return 'シニア期'
+  if(age==='13+') return 'ハイシニア期'
+  return ''
 }
+function lifeStage(a){ return lifeStageLabel(a.age) || 'ハイシニア期' }
 function buildIntegratedInsights(a, r){
   const axes = r.profile.axes || []
   const cards=[]
@@ -1188,6 +1193,30 @@ function renderHistorySection(list){
     <details class="history-log"><summary>過去の記録一覧を見る</summary><ul class="history-list">${recent.map(h=>`<li><span>${formatDateJp(h.date)}</span><span>${h.type}</span><span>${h.weight ? h.weight+'kg' : '—'}</span></li>`).join('')}</ul></details>
     <button type="button" class="text-link clear-history">履歴を削除</button></div>`
 }
+function buildFoodChangeEvents(list){
+  const events = []
+  for(let i=1;i<list.length;i++){
+    const prev = list[i-1], cur = list[i]
+    if(prev.foodName && cur.foodName && prev.foodName!==cur.foodName){
+      const cmp = buildHistoryComparison(prev, cur)
+      events.push({date:cur.date, from:prev.foodName, to:cur.foodName, notes:cmp.details.concat(cmp.watchItems)})
+    }
+  }
+  return events
+}
+function renderHealthTimeline(list){
+  if(list.length < 2) return ''
+  const events = buildFoodChangeEvents(list)
+  const rows = list.slice().reverse()
+  return `<div class="karte-section health-timeline"><h3>健康タイムライン（犬の健康手帳）</h3><p class="helper">これまでの記録を、年齢・体重・BCS・食欲・主食の変化まで含めて時系列で振り返れます。</p>
+    <details class="timeline-log"><summary>全${list.length}件の記録を見る</summary><ul class="timeline-list">${rows.map(h=>{
+      const stage = lifeStageLabel(h.age)
+      const bcs = bcsScore(h.body)
+      return `<li><span class="timeline-date">${formatDateJp(h.date)}</span><span>${stage || '—'}</span><span>${h.weight ? h.weight+'kg' : '—'}</span><span>${bcs ? 'BCS'+bcs+'/5' : '—'}</span><span>${APPETITE_LABEL[h.appetite] || '—'}</span><span>${h.foodName || FOOD_LABEL[h.currentFood] || '—'}</span></li>`
+    }).join('')}</ul></details>
+    ${events.length ? `<div class="food-change-log"><h4>フード変更の記録</h4>${events.map(e=>`<div class="food-change-item"><p><strong>${formatDateJp(e.date)}</strong>：「${e.from}」から「${e.to}」に変更</p>${e.notes.length ? `<ul>${e.notes.map(n=>`<li>${n}</li>`).join('')}</ul>` : '<p class="helper">次回の記録でその後の変化を比較できます。</p>'}</div>`).join('')}<p class="helper">複数回のフード変更を記録すると、どのフードで状態が安定しやすいか振り返りやすくなります。</p></div>` : ''}
+    </div>`
+}
 function renderDiagnosis(){
   if(step >= QUESTIONS.length){
     const r = calcResult(answers)
@@ -1200,6 +1229,7 @@ function renderDiagnosis(){
       <div class="share-panel"><button class="primary save-share" type="button">結果画像を保存</button><button class="secondary native-share" type="button">LINE/Xで共有</button><canvas id="shareCanvas" width="1200" height="630" aria-label="診断結果シェア画像"></canvas><p class="helper">画像には医療情報や健診数値は入れず、タイプ名だけを共有します。</p></div>
       <div class="karte-section deep-summary"><h3>${name}の全体像</h3><p>${r.profile.lead}${r.breedNote ? ' '+r.breedNote : ''}${r.bcs ? ` 体型は${r.bcs}です。` : ''} ここでは回答を並べ直すのではなく、性格・活動量・食べ方・体型（BCS）・健診メモの組み合わせから、暮らしで見たいポイントを整理します。</p>${r.bcs ? evidenceToggle('bcs') : ''}</div>
       ${renderHistorySection(matchedHistory)}
+      ${renderHealthTimeline(matchedHistory)}
       <div class="karte-section"><h3>解釈カード</h3>${evidenceToggle('behavior')}<div class="insight-grid">${r.insights.map(x=>`<article class="insight-card"><h4>${x.title}</h4><p>${x.body}</p><strong>実生活では：</strong><p>${x.action}</p></article>`).join('')}</div></div>
       <div class="karte-section"><h3>接し方のコツ</h3><ul>${r.profile.care.map(x=>`<li>${x}</li>`).join('')}</ul></div>
       ${r.redFlags.length ? `<div class="alert"><h3>フード変更前に主治医へ確認</h3><ul>${r.redFlags.map(x=>`<li>${x.text}${evidenceToggle(x.key)}</li>`).join('')}</ul></div>`:''}
