@@ -14,6 +14,7 @@
 th.emph,td.emph{font-weight:900;color:#2f5d3a;background:#eef3e6}
 th.emph::before{content:'● ';color:#c88922}
 .legend{font-size:.85rem;color:#62665b;margin:6px 0 0}
+.interpret{min-width:220px;max-width:260px;font-size:.92rem}
 .reset-btn{background:#fff;border:1px solid #b7b09a;border-radius:999px;padding:9px 18px;font-weight:800;cursor:pointer;font-size:.92rem}
 h2{margin-top:0}
 .section-title{margin:0 0 10px}
@@ -86,6 +87,7 @@ h2{margin-top:0}
   <th data-field="fat">脂質</th>
   <th data-field="priceKg">kg単価目安</th>
   <th data-field="tags">タグ</th>
+  <th data-field="interpret">この子の場合</th>
 </tr></thead><tbody id="resultsBody"></tbody></table></section>
 
 <section class="notice"><strong>免責</strong><br>本ページは診断・治療・療法食の指示ではありません。特にBUN/Cre、ALT/ALP、TG/T-Cho、尿検査、体重減少、服薬・療法食がある場合は、フード変更前に主治医へ確認してください。</section>
@@ -191,6 +193,121 @@ h2{margin-top:0}
     return order.slice(0, 3);
   }
 
+  // --- profile + product -> one-line "この子の場合" interpretation ---
+  // Thresholds/wording reuse what's already established elsewhere on the site:
+  // kcal<355 and priceKg<1600 come straight from src/main.js's food-selection
+  // scoring (体重管理 / コスト重視 reasons). The high-side cutoffs and the
+  // 低め/標準的/高め wording mirror the "数値の目安" copy used on individual
+  // product pages (e.g. /products/royal-canin-mini-aging12/).
+  // This never asserts a health benefit (no "腎臓に良い" style claims) —
+  // it only restates what the kcal/protein/fat/price/tag numbers say, and is
+  // explicitly comparative/descriptive, not a purchase recommendation.
+  function interpretForProduct(p, profile, visibleList){
+    var kcalLow = p.kcal <= 330, kcalHigh = p.kcal >= 365;
+    var proteinLow = p.protein <= 20, proteinHigh = p.protein >= 28;
+    var fatLow = p.fat <= 9, fatHigh = p.fat >= 15;
+    var priceLow = p.priceKg < 1600, priceHigh = p.priceKg >= 2300;
+
+    function isCheapestVisible(){
+      if (!visibleList || visibleList.length < 2) return false;
+      var min = Math.min.apply(null, visibleList.map(function(x){ return x.priceKg; }));
+      return p.priceKg === min;
+    }
+    function isHighestKcalVisible(){
+      if (!visibleList || visibleList.length < 2) return false;
+      var max = Math.max.apply(null, visibleList.map(function(x){ return x.kcal; }));
+      return p.kcal === max;
+    }
+
+    // 1) "気になる点" が最優先のシグナル（computeEmphasisと同じ優先順位）
+    if (profile.concern === 'weight'){
+      if (kcalLow || fatLow || p.tags.indexOf('lowfat') !== -1 || p.tags.indexOf('weight') !== -1){
+        return '体重管理を意識する条件では、カロリーや脂質が低めで見直しやすい数値です。';
+      }
+      if (kcalHigh || fatHigh){
+        return '体重管理を意識する条件では、カロリーや脂質がやや高めなので給与量の調整が必要です。';
+      }
+      return '体重管理を意識する条件では、カロリー・脂質とも標準的な範囲です。';
+    }
+    if (profile.concern === 'picky'){
+      if (p.tags.indexOf('palatable') !== -1 || p.tags.indexOf('wet') !== -1 || p.tags.indexOf('fresh') !== -1){
+        return '食べムラが気になる条件では、嗜好性への配慮がある候補として挙げられます。';
+      }
+      if (kcalHigh){
+        return '食べムラが気になる条件では、カロリー密度が高く少量でも摂取量を確保しやすい数値です。';
+      }
+      return '食べムラが気になる条件では、この数値だけで判断できる強みは特にありません。';
+    }
+    if (profile.concern === 'cost'){
+      if (isCheapestVisible()){
+        return 'コスト重視の条件では、表示中の候補の中でも価格が抑えられています。';
+      }
+      if (priceLow){
+        return 'コスト重視の条件では、続けやすい価格帯で候補として有力です。';
+      }
+      if (priceHigh){
+        return 'コスト重視の条件では、価格帯がやや高めなので他候補との比較が必要です。';
+      }
+      return 'コスト重視の条件では、価格帯は中程度で際立った強みは特にありません。';
+    }
+    if (profile.concern === 'coat'){
+      if (p.tags.indexOf('coat') !== -1){
+        return '皮膚・被毛が気になる条件では、毛艶ケアを意識した候補として挙げられます。';
+      }
+      return '皮膚・被毛が気になる条件では、この数値だけで判断できる強みは特にありません。';
+    }
+    if (profile.concern === 'stomach'){
+      if (p.tags.indexOf('stomach') !== -1 || fatLow){
+        return '消化器が気になる条件では、脂質が低めか消化への配慮がある候補です。';
+      }
+      return '消化器が気になる条件では、この数値だけで判断できる強みは特にありません。';
+    }
+
+    // 2) 気になる点が未選択なら、活動量がカロリーの読み方を左右する
+    if (profile.activity === 'high'){
+      if (kcalHigh){
+        return isHighestKcalVisible()
+          ? '活動量が高いこの子には、他候補よりカロリー密度が高く量を抑えやすい数値です。'
+          : '活動量が高いこの子には、カロリー密度が高めで量を抑えやすい数値です。';
+      }
+      if (kcalLow){
+        return '活動量が高いこの子には、カロリーが低めなぶん給与量が多くなりやすい数値です。';
+      }
+      return '活動量が高いこの子にとって、カロリーは標準的な範囲です。';
+    }
+    if (profile.activity === 'low'){
+      if (kcalHigh){
+        return '活動量が低いこの子には、カロリーが高めで体重管理に注意が必要な数値です。';
+      }
+      if (kcalLow){
+        return '活動量が低いこの子には、カロリーが低めで体重管理をしやすい数値です。';
+      }
+      return '活動量が低いこの子にとって、カロリーは標準的な範囲です。';
+    }
+
+    // 3) 活動量もふつうなら、年齢帯がタンパク質の読み方を左右する
+    if (profile.ageBand === 'senior' || profile.ageBand === 'hisenior'){
+      if (kcalLow){
+        return 'シニア期で食が細い子には、カロリー密度が低めなぶん量を確保しやすい数値です。';
+      }
+      if (proteinHigh){
+        return 'シニア期のこの子には、タンパク質がやや高めで筋肉量の維持を意識した数値です。';
+      }
+      return 'シニア期のこの子にとって、数値は標準的な範囲です。';
+    }
+    if (profile.ageBand === 'puppy' || profile.ageBand === 'adult'){
+      if (proteinHigh){
+        return 'この年齢のこの子には、タンパク質が高めで活動量の多い時期に合わせやすい数値です。';
+      }
+      if (proteinLow){
+        return 'この年齢のこの子には、タンパク質がやや低めな数値です。';
+      }
+      return 'この年齢のこの子にとって、タンパク質は標準的な範囲です。';
+    }
+
+    return '標準的な数値で、際立った強みは特にありません。';
+  }
+
   function getProfile(){
     return {
       ageBand: document.getElementById('ageBand').value,
@@ -231,7 +348,8 @@ h2{margin-top:0}
   var emphNote = document.getElementById('emphNote');
 
   function render(){
-    var emphasis = computeEmphasis(getProfile());
+    var profile = getProfile();
+    var emphasis = computeEmphasis(profile);
 
     thead.forEach(function(th){
       th.classList.toggle('emph', emphasis.indexOf(th.dataset.field) !== -1);
@@ -247,13 +365,14 @@ h2{margin-top:0}
     countEl.textContent = list.length;
 
     if (!list.length){
-      tbody.innerHTML = '<tr><td colspan="7" class="small">条件に一致する商品がありません。チェックや数値条件を減らしてください。</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" class="small">条件に一致する商品がありません。チェックや数値条件を減らしてください。</td></tr>';
       return;
     }
 
     tbody.innerHTML = list.map(function(p){
       var cls = function(f){ return emphasis.indexOf(f) !== -1 ? ' class="emph"' : ''; };
       var tagText = p.tags.map(function(t){ return TAG_LABELS[t] || t; }).join(' / ');
+      var interpretText = interpretForProduct(p, profile, list);
       return '<tr>' +
         '<td><a href="/products/' + escapeHtml(p.slug) + '/"><strong>' + escapeHtml(p.name) + '</strong></a></td>' +
         '<td>' + escapeHtml(p.maker) + '</td>' +
@@ -262,6 +381,7 @@ h2{margin-top:0}
         '<td' + cls('fat') + '>' + p.fat + '%</td>' +
         '<td' + cls('priceKg') + '>約' + p.priceKg.toLocaleString('ja-JP') + '円</td>' +
         '<td class="small">' + escapeHtml(tagText) + '</td>' +
+        '<td class="interpret">' + escapeHtml(interpretText) + '</td>' +
       '</tr>';
     }).join('');
   }
