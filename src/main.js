@@ -787,7 +787,8 @@ function calcResult(a){
   const profile = profileFor(typeResult)
   const tags = subTags(a, redFlags, watch)
   const therapyFoods = therapeuticCandidates(a)
-  const scored = FOODS.map(f=>{
+  const isPuppy = a.age==='under1'
+  const scored = isPuppy ? [] : FOODS.map(f=>{
     let s=0; const reasons=[]
     if(f.tags.includes('senior')) {s+=2; reasons.push('シニア期向け')}
     if(tags.includes('体重管理') && (f.kcal<355 || f.tags.includes('lowfat') || f.tags.includes('weight'))) {s+=5; reasons.push('カロリー/脂質を見直しやすい')}
@@ -801,7 +802,7 @@ function calcResult(a){
     return {...f, score:s, reasons: reasons.slice(0,3)}
   }).sort((a,b)=>b.score-a.score).slice(0,3)
   const kcal = rer(a.weight) * derMultiplier(a)
-  const base = {type:typeResult.name, profile, tags, breedNote: BREED_NOTES[a.breedGroup] || '', redFlags, watch, foods:scored, therapyFoods, kcal, snack:kcal*0.1, hasWeight:Number(a.weight)>0}
+  const base = {type:typeResult.name, profile, tags, breedNote: BREED_NOTES[a.breedGroup] || '', redFlags, watch, foods:scored, therapyFoods, kcal, snack:kcal*0.1, hasWeight:Number(a.weight)>0, isPuppy}
   base.insights = buildIntegratedInsights(a, base)
   base.conditions = foodSelectionConditions(a, base)
   base.vetConsult = vetConsultItems(a, base)
@@ -836,7 +837,7 @@ function renderDiagnosis(){
     const name = answers.dogName ? `${answers.dogName}ちゃん` : 'うちの子'
     const shownTags = displayTags(r.tags, answers.breedGroup)
     return `<div class="result karte"><p class="eyebrow">うちの子ごはん・暮らしカルテ</p><div class="type-card"><div><span class="type-code">16タイプ診断</span><h2>${name}は「${r.type}」</h2><p>${r.profile.lead}</p></div><div class="type-animal">${answers.breedGroup && BREED_GROUPS[answers.breedGroup] ? BREED_GROUPS[answers.breedGroup] : '暮らしタイプ'}</div></div><div class="trait-list">${shownTags.map(x=>`<span>${x}</span>`).join('')}</div>
-      ${r.hasWeight ? `<div class="result-grid"><div class="metric"><strong>${Math.round(r.kcal)} kcal/日</strong><span>目安必要カロリー</span></div><div class="metric"><strong>${Math.round(r.snack)} kcal/日まで</strong><span>おやつ上限の目安</span></div></div>` : `<div class="note"><h3>カロリー計算</h3><p>体重を入力すると、目安カロリーとおやつ上限を表示できます。今回はタイプ判定と注意点のみ表示します。</p></div>`}
+      ${r.hasWeight ? `<div class="result-grid"><div class="metric"><strong>${Math.round(r.kcal)} kcal/日</strong><span>目安必要カロリー</span></div><div class="metric"><strong>${Math.round(r.snack)} kcal/日まで</strong><span>おやつ上限の目安</span></div></div>${r.isPuppy ? `<p class="helper">子犬期は成長段階によって必要カロリーが大きく変わるため、上の数字はあくまで簡易的な目安です。フードのパッケージ記載の給与量や、かかりつけの獣医師の指示を優先してください。</p>` : ''}` : `<div class="note"><h3>カロリー計算</h3><p>体重を入力すると、目安カロリーとおやつ上限を表示できます。今回はタイプ判定と注意点のみ表示します。</p></div>`}
       <div class="share-panel"><button class="primary save-share" type="button">結果画像を保存</button><button class="secondary native-share" type="button">LINE/Xで共有</button><canvas id="shareCanvas" width="1200" height="630" aria-label="診断結果シェア画像"></canvas><p class="helper">画像には医療情報や健診数値は入れず、タイプ名だけを共有します。</p></div>
       <div class="karte-section deep-summary"><h3>${name}の全体像</h3><p>${r.profile.lead}${r.breedNote ? ' '+r.breedNote : ''} ここでは回答を並べ直すのではなく、性格・活動量・食べ方・体型・健診メモの組み合わせから、暮らしで見たいポイントを整理します。</p></div>
       <div class="karte-section"><h3>解釈カード</h3><div class="insight-grid">${r.insights.map(x=>`<article class="insight-card"><h4>${x.title}</h4><p>${x.body}</p><strong>実生活では：</strong><p>${x.action}</p></article>`).join('')}</div></div>
@@ -846,7 +847,7 @@ function renderDiagnosis(){
       <div class="note"><h3>この診断について</h3><p>C-BARQ（Canine Behavioral Assessment & Research Questionnaire）の考え方を参考に、家庭で答えやすい場面へ置き換えたセルフチェックです。C-BARQ公式尺度そのものではなく、医学的診断・行動診断でもありません。</p><a class="text-link" href="/about-diagnosis/">参考にしている考え方を見る</a></div>
       ${r.therapyFoods.length ? `<div class="alert therapy"><h3>療法食を相談するなら</h3><p>血液検査・尿検査・服薬状況がある場合に、PDFカルテ側で整理して主治医に確認しやすくする候補です。無料診断では購入推奨ではなく「相談候補」として表示します。</p><div class="foods therapy-foods">${r.therapyFoods.map(f=>`<article class="food"><h4>${f.name}</h4><p>${f.maker}</p><ul><li>${f.note}</li></ul></article>`).join('')}</div></div>`:''}
       <div class="karte-section"><h3>フードを選ぶ前に見る条件</h3><p class="helper">いきなり商品名で選ばず、まず${name}の場合に重視する条件を決めます。</p><div class="condition-grid">${r.conditions.map(([h,b])=>`<article><h4>${h}</h4><p>${b}</p></article>`).join('')}</div></div>
-      <h3>目的別の候補フード</h3><p class="helper">ランキングではなく、上の条件に合う選択肢として表示します。健診異常・服薬・療法食がある場合は購入前に主治医へ確認してください。</p><div class="foods">${r.foods.map(f=>`<article class="food"><h4>${f.name}</h4><p>${f.maker} / ${f.kcal}kcal / 脂質${f.fat}% / 約${f.priceKg.toLocaleString()}円/kg</p><ul>${(f.reasons.length?f.reasons:['条件に比較的合いやすい']).map(x=>`<li>${x}</li>`).join('')}<li>目安給与量：約${r.hasWeight ? Math.round(r.kcal / f.kcal * 100) : '—'}g/日・1日コスト約${r.hasWeight ? Math.round((r.kcal / f.kcal * 100) * f.priceKg / 1000) : '—'}円</li></ul><div class="food-actions">${f.url !== '#' ? `<a class="primary buy-link" data-product="${f.name}" data-maker="${f.maker}" href="${f.url}" target="_blank" rel="noopener sponsored">通販サイトで見る</a>` : ''}${productDetailUrl(f.name) !== '#' ? `<a class="text-link product-link" data-product="${f.name}" data-maker="${f.maker}" href="${productDetailUrl(f.name)}">くわしく見る</a>` : ''}</div></article>`).join('')}</div>
+      ${r.isPuppy ? `<div class="note"><h3>候補フードについて</h3><p>現在のフード候補は、いずれも成犬・シニア犬向けに作られた商品です。子犬期は成長のためにタンパク質・脂質・カルシウムなどの必要量が成犬とは大きく異なるため、このカタログからはおすすめを表示しません。総合栄養食と明記された「子犬用」「オールステージ対応」フードを選ぶか、かかりつけの獣医師にご相談ください。</p></div>` : `<h3>目的別の候補フード</h3><p class="helper">ランキングではなく、上の条件に合う選択肢として表示します。健診異常・服薬・療法食がある場合は購入前に主治医へ確認してください。</p><div class="foods">${r.foods.map(f=>`<article class="food"><h4>${f.name}</h4><p>${f.maker} / ${f.kcal}kcal / 脂質${f.fat}% / 約${f.priceKg.toLocaleString()}円/kg</p><ul>${(f.reasons.length?f.reasons:['条件に比較的合いやすい']).map(x=>`<li>${x}</li>`).join('')}<li>目安給与量：約${r.hasWeight ? Math.round(r.kcal / f.kcal * 100) : '—'}g/日・1日コスト約${r.hasWeight ? Math.round((r.kcal / f.kcal * 100) * f.priceKg / 1000) : '—'}円</li></ul><div class="food-actions">${f.url !== '#' ? `<a class="primary buy-link" data-product="${f.name}" data-maker="${f.maker}" href="${f.url}" target="_blank" rel="noopener sponsored">通販サイトで見る</a>` : ''}${productDetailUrl(f.name) !== '#' ? `<a class="text-link product-link" data-product="${f.name}" data-maker="${f.maker}" href="${productDetailUrl(f.name)}">くわしく見る</a>` : ''}</div></article>`).join('')}</div>`}
       <div class="karte-section"><h3>動物病院で相談したいこと</h3><ul>${r.vetConsult.map(x=>`<li>${x}</li>`).join('')}</ul></div>
       <div class="karte-section"><h3>この結果から深掘りする記事</h3><div class="article-cards mini">${r.related.map(a=>`<a class="article-card" href="/articles/${a.slug}/"><span>関連記事</span><strong>${a.title}</strong><small>${a.lead}</small></a>`).join('')}</div></div>
       <div class="pdf-cta"><p class="eyebrow">有料PDFで追加されること</p><h3>健診表・今のフード・おやつ量を、主治医に相談しやすい1枚へ</h3><p>無料診断は「方向性」まで。PDFカルテでは、検査値・体重・便・食べ方をまとめ、家族や病院で話しやすいメモにします。</p><div class="pdf-mini-grid"><span>健診数値の転記</span><span>相談ポイント整理</span><span>買う前の注意点</span></div><p class="helper"><strong>おすすめ：</strong>健診で指摘がある、療法食中、食べムラや体重変化を家族で共有したい子。<br><strong>不要：</strong>今すぐ症状が強い子は、申込みより先に受診してください。</p><a class="primary pdf-interest" data-price="980" href="/pdf-karute/">980円で相談用カルテを作る</a><small>決済後に入力フォームへ進み、2〜3営業日以内にPDFをお届けします。</small></div>
