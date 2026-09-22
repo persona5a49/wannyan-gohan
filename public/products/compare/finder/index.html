@@ -70,6 +70,11 @@ h2{margin-top:0}
   <h2 class="section-title">絞り込み条件</h2>
   <p class="small">チェックした特徴を<strong>すべて満たす</strong>商品だけを表示します。数値条件は空欄のままで構いません。</p>
   <div class="tag-grid" id="tagGrid"></div>
+  <label class="field" style="max-width:260px;margin:10px 0">主タンパク
+    <select id="mainProteinFilter">
+      <option value="">指定しない</option>
+    </select>
+  </label>
   <div class="range-grid">
     <div class="range-field">kcal/100g
       <div class="inputs"><input type="number" id="kcalMin" min="0" step="1" placeholder="最小"> 〜 <input type="number" id="kcalMax" min="0" step="1" placeholder="最大"></div>
@@ -96,6 +101,7 @@ h2{margin-top:0}
   <th data-field="protein">タンパク質</th>
   <th data-field="fat">脂質</th>
   <th data-field="priceKg">kg単価目安</th>
+  <th data-field="mainProtein">主タンパク</th>
   <th data-field="feedAmount">1日給与量</th>
   <th data-field="dailyCost">1日コスト</th>
   <th data-field="tags">タグ</th>
@@ -113,37 +119,41 @@ h2{margin-top:0}
   "use strict";
 
   var PRODUCTS = [
-    {name:'ニュートロ シュプレモ シニア犬用', maker:'Nutro', kcal:350, protein:26, fat:13, priceKg:1900, tags:['senior','coat','balanced','small'], slug:'nutro-supremo-senior'},
-    {name:'ヒルズ サイエンス・ダイエット シニア 小型犬用', maker:'Hill’s', kcal:365, protein:19, fat:14, priceKg:1300, tags:['senior','small','cost','balanced'], slug:'hills-senior-small'},
-    {name:'ロイヤルカナン ミニ エイジング12+', maker:'Royal Canin', kcal:383, protein:24, fat:14, priceKg:1700, tags:['senior','small','palatable'], slug:'royal-canin-mini-aging12'},
-    {name:'アカナ シニアドッグ', maker:'ACANA', kcal:332, protein:33, fat:14, priceKg:2300, tags:['senior','protein','weight'], slug:'acana-senior-dog'},
-    {name:'ピュリナ ワン 7歳以上 ほぐし粒入り', maker:'Purina', kcal:360, protein:27, fat:13, priceKg:900, tags:['senior','cost','palatable'], slug:'purina-one-senior7'},
-    {name:'このこのごはん', maker:'オモヤ', kcal:343, protein:20.9, fat:8.2, priceKg:3800, tags:['small','lowfat','japan','coat'], slug:'konokonogohan'},
-    {name:'モグワン ドッグフード', maker:'レティシアン', kcal:361, protein:27, fat:10, priceKg:2600, tags:['balanced','palatable','coat'], slug:'mogwan'},
-    {name:'犬猫生活 ドッグフード シニア', maker:'犬猫生活', kcal:347, protein:24, fat:10, priceKg:3200, tags:['senior','japan','lowfat'], slug:'inuneko-seikatsu-senior'},
-    {name:'セレクトバランス エイジングケア チキン', maker:'Select Balance', kcal:350, protein:20, fat:10, priceKg:1500, tags:['senior','lowfat','cost','small'], slug:'select-balance-agingcare-chicken'},
-    {name:'プロマネージ 7歳からの室内犬用', maker:'PROMANAGE', kcal:355, protein:24, fat:12, priceKg:1000, tags:['senior','cost','small'], slug:'promanage-senior7-indoor'},
-    {name:'アイムス 7歳以上 健康サポート', maker:'IAMS', kcal:365, protein:24, fat:11, priceKg:850, tags:['senior','cost'], slug:'iams-senior7-health'},
-    {name:'ユーカヌバ シニア 小型犬用', maker:'Eukanuba', kcal:376, protein:27, fat:15, priceKg:1500, tags:['senior','small','palatable'], slug:'eukanuba-senior-small'},
-    {name:'ナウフレッシュ スモールブリード シニア', maker:'NOW FRESH', kcal:341, protein:24, fat:12, priceKg:3100, tags:['senior','small','grainfree','weight'], slug:'nowfresh-smallbreed-senior'},
-    {name:'オリジン シニア', maker:'ORIJEN', kcal:371, protein:38, fat:15, priceKg:3200, tags:['senior','protein','ingredient'], slug:'orijen-senior'},
-    {name:'ソルビダ グレインフリー チキン 室内飼育7歳以上', maker:'SOLVIDA', kcal:350, protein:23, fat:10, priceKg:2600, tags:['senior','grainfree','lowfat','coat'], slug:'solvida-grainfree-chicken-senior7'},
-    {name:'アーテミス アガリクス I/S 小粒', maker:'Artemis', kcal:358, protein:24, fat:14, priceKg:2100, tags:['small','stomach','palatable'], slug:'artemis-agaricus-is-small'},
+    {name:'ニュートロ シュプレモ シニア犬用', maker:'Nutro', kcal:350, protein:26, fat:13, priceKg:1900, tags:['senior','coat','balanced','small'], mainProtein:'チキン', fiber:4.0, slug:'nutro-supremo-senior'},
+    {name:'ヒルズ サイエンス・ダイエット シニア 小型犬用', maker:'Hill’s', kcal:365, protein:19, fat:14, priceKg:1300, tags:['senior','small','cost','balanced'], mainProtein:'チキン', fiber:2.3, slug:'hills-senior-small'},
+    {name:'ロイヤルカナン ミニ エイジング12+', maker:'Royal Canin', kcal:383, protein:24, fat:14, priceKg:1700, tags:['senior','small','palatable'], mainProtein:'チキン', fiber:2.5, slug:'royal-canin-mini-aging12'},
+    {name:'アカナ シニアドッグ', maker:'ACANA', kcal:332, protein:33, fat:14, priceKg:2300, tags:['senior','protein','weight'], mainProtein:'チキン', fiber:6, slug:'acana-senior-dog'},
+    {name:'ピュリナ ワン 7歳以上 ほぐし粒入り', maker:'Purina', kcal:360, protein:27, fat:13, priceKg:900, tags:['senior','cost','palatable'], mainProtein:'チキン', fiber:4.5, slug:'purina-one-senior7'},
+    {name:'このこのごはん', maker:'オモヤ', kcal:343, protein:20.9, fat:8.2, priceKg:3800, tags:['small','lowfat','japan','coat'], mainProtein:'チキン', slug:'konokonogohan'},
+    {name:'モグワン ドッグフード', maker:'レティシアン', kcal:361, protein:27, fat:10, priceKg:2600, tags:['balanced','palatable','coat'], mainProtein:'チキン', fiber:4.75, slug:'mogwan'},
+    {name:'犬猫生活 ドッグフード シニア', maker:'犬猫生活', kcal:347, protein:24, fat:10, priceKg:3200, tags:['senior','japan','lowfat'], mainProtein:'チキン', fiber:3, slug:'inuneko-seikatsu-senior'},
+    {name:'セレクトバランス エイジングケア チキン', maker:'Select Balance', kcal:350, protein:20, fat:10, priceKg:1500, tags:['senior','lowfat','cost','small'], mainProtein:'チキン', fiber:5.5, kibbleSize:'小粒', slug:'select-balance-agingcare-chicken'},
+    {name:'プロマネージ 7歳からの室内犬用', maker:'PROMANAGE', kcal:355, protein:24, fat:12, priceKg:1000, tags:['senior','cost','small'], mainProtein:'チキン', fiber:5.0, slug:'promanage-senior7-indoor'},
+    {name:'アイムス 7歳以上 健康サポート', maker:'IAMS', kcal:365, protein:24, fat:11, priceKg:850, tags:['senior','cost'], mainProtein:'チキン', fiber:4.0, slug:'iams-senior7-health'},
+    {name:'ユーカヌバ シニア 小型犬用', maker:'Eukanuba', kcal:376, protein:27, fat:15, priceKg:1500, tags:['senior','small','palatable'], mainProtein:'チキン', fiber:2.7, slug:'eukanuba-senior-small'},
+    {name:'ナウフレッシュ スモールブリード シニア', maker:'NOW FRESH', kcal:341, protein:24, fat:12, priceKg:3100, tags:['senior','small','grainfree','weight'], mainProtein:'ターキー', fiber:5.5, slug:'nowfresh-smallbreed-senior'},
+    {name:'オリジン シニア', maker:'ORIJEN', kcal:371, protein:38, fat:15, priceKg:3200, tags:['senior','protein','ingredient'], mainProtein:'チキン', fiber:6, slug:'orijen-senior'},
+    {name:'ソルビダ グレインフリー チキン 室内飼育7歳以上', maker:'SOLVIDA', kcal:350, protein:23, fat:10, priceKg:2600, tags:['senior','grainfree','lowfat','coat'], mainProtein:'チキン', fiber:6, slug:'solvida-grainfree-chicken-senior7'},
+    {name:'アーテミス アガリクス I/S 小粒', maker:'Artemis', kcal:358, protein:24, fat:14, priceKg:2100, tags:['small','stomach','palatable'], mainProtein:'チキン', fiber:4.0, kibbleSize:'小粒', slug:'artemis-agaricus-is-small'},
     {name:'ナチュロル', maker:'楽しい製薬', kcal:400, protein:23, fat:10, priceKg:3600, tags:['japan','palatable','ingredient'], slug:'naturol'},
-    {name:'馬肉自然づくり', maker:'健康いぬ生活', kcal:399, protein:27, fat:11, priceKg:3300, tags:['japan','palatable','ingredient'], slug:'bameat-shizendukuri'},
-    {name:'Yum Yum Yum! シニア&ライト チキン', maker:'GREEN DOG', kcal:320, protein:20, fat:8.5, priceKg:4200, tags:['senior','japan','lowfat','weight','small'], slug:'yumyumyum-senior-light-chicken'},
-    {name:'ミシュワン シニア犬用', maker:'ミシュワン', kcal:332, protein:21.5, fat:9.5, priceKg:3800, tags:['senior','japan','small','lowfat'], slug:'mishone-senior'},
-    {name:'Dr.ケアワン', maker:'アニマルライフ研究所', kcal:347, protein:22.5, fat:7.5, priceKg:3900, tags:['japan','lowfat','coat','small'], slug:'dr-careone'},
-    {name:'ペトコトフーズ チキン', maker:'PETOKOTO', kcal:150, protein:13, fat:5.4, priceKg:5200, tags:['fresh','palatable','stomach'], slug:'petokoto-chicken'},
-    {name:'ブッチ ブラック・レーベル', maker:'Butch', kcal:116, protein:10.5, fat:8, priceKg:2600, tags:['wet','palatable','senior'], slug:'butch-black-label'},
-    {name:'カナガン ドッグフード チキン', maker:'レティシアン', kcal:376, protein:29, fat:15, priceKg:2600, tags:['grainfree','palatable','protein'], slug:'canagan-chicken'},
-    {name:'ネルソンズ ドッグフード', maker:'レティシアン', kcal:365, protein:28, fat:12, priceKg:2200, tags:['medium','ingredient','palatable'], slug:'nelsons-dogfood'},
-    {name:'POCHI ザ・ドッグフード エイジングケア', maker:'POCHI', kcal:315, protein:30, fat:10, priceKg:2400, tags:['senior','weight','lowfat','protein'], slug:'pochi-agingcare'},
-    {name:'ペロリコ ドッグフード ライト', maker:'レティシアン', kcal:326, protein:22.5, fat:8, priceKg:2600, tags:['weight','lowfat','senior'], slug:'perolico-light'},
-    {name:'ロイヤルカナン ミニ ライトウェイトケア', maker:'Royal Canin', kcal:319, protein:30, fat:11, priceKg:1700, tags:['weight','small','lowfat'], slug:'royal-canin-mini-lightweight-care'},
+    {name:'馬肉自然づくり', maker:'健康いぬ生活', kcal:399, protein:27, fat:11, priceKg:3300, tags:['japan','palatable','ingredient'], mainProtein:'馬肉', fiber:5.2, slug:'bameat-shizendukuri'},
+    {name:'Yum Yum Yum! シニア&ライト チキン', maker:'GREEN DOG', kcal:320, protein:20, fat:8.5, priceKg:4200, tags:['senior','japan','lowfat','weight','small'], mainProtein:'チキン', slug:'yumyumyum-senior-light-chicken'},
+    {name:'ミシュワン シニア犬用', maker:'ミシュワン', kcal:332, protein:21.5, fat:9.5, priceKg:3800, tags:['senior','japan','small','lowfat'], mainProtein:'チキン', kibbleSize:'小粒', slug:'mishone-senior'},
+    {name:'Dr.ケアワン', maker:'アニマルライフ研究所', kcal:347, protein:22.5, fat:7.5, priceKg:3900, tags:['japan','lowfat','coat','small'], mainProtein:'チキン', fiber:2.5, slug:'dr-careone'},
+    {name:'ペトコトフーズ チキン', maker:'PETOKOTO', kcal:150, protein:13, fat:5.4, priceKg:5200, tags:['fresh','palatable','stomach'], mainProtein:'チキン', slug:'petokoto-chicken'},
+    {name:'ブッチ ブラック・レーベル', maker:'Butch', kcal:116, protein:10.5, fat:8, priceKg:2600, tags:['wet','palatable','senior'], mainProtein:'ビーフ', fiber:1.0, slug:'butch-black-label'},
+    {name:'カナガン ドッグフード チキン', maker:'レティシアン', kcal:376, protein:29, fat:15, priceKg:2600, tags:['grainfree','palatable','protein'], mainProtein:'チキン', fiber:5.25, kibbleSize:'小粒', slug:'canagan-chicken'},
+    {name:'ネルソンズ ドッグフード', maker:'レティシアン', kcal:365, protein:28, fat:12, priceKg:2200, tags:['medium','ingredient','palatable'], mainProtein:'チキン', fiber:4, slug:'nelsons-dogfood'},
+    {name:'POCHI ザ・ドッグフード エイジングケア', maker:'POCHI', kcal:315, protein:30, fat:10, priceKg:2400, tags:['senior','weight','lowfat','protein'], fiber:9, slug:'pochi-agingcare'},
+    {name:'ペロリコ ドッグフード ライト', maker:'レティシアン', kcal:326, protein:22.5, fat:8, priceKg:2600, tags:['weight','lowfat','senior'], mainProtein:'チキン', fiber:8, slug:'perolico-light'},
+    {name:'ロイヤルカナン ミニ ライトウェイトケア', maker:'Royal Canin', kcal:319, protein:30, fat:11, priceKg:1700, tags:['weight','small','lowfat'], mainProtein:'チキン', slug:'royal-canin-mini-lightweight-care'},
     {name:'ヒルズ サイエンス・ダイエット 減量サポート 小型犬用', maker:'Hill’s', kcal:313, protein:24, fat:9, priceKg:1500, tags:['weight','small','lowfat','cost'], slug:'hills-weight-control-small'},
     {name:'VetSolution 犬用 胃腸サポート', maker:'Monge', kcal:383, protein:24, fat:15, priceKg:2400, tags:['stomach','senior'], slug:'vetsolution-stomach-support'}
   ];
+
+  var PROTEIN_LABELS = {};
+  PRODUCTS.forEach(function(p){ if (p.mainProtein) PROTEIN_LABELS[p.mainProtein] = p.mainProtein; });
+  var ALL_PROTEINS = Object.keys(PROTEIN_LABELS).sort();
 
   var TAG_LABELS = {
     senior:'シニア対応', small:'小粒/小型犬向け', cost:'コスパ重視', lowfat:'低脂肪',
@@ -201,6 +211,16 @@ h2{margin-top:0}
     label.appendChild(document.createTextNode(TAG_LABELS[tag]));
     tagGrid.appendChild(label);
   });
+
+  // --- populate the 主タンパク filter (only proteins actually present in the data) ---
+  var mainProteinFilterEl = document.getElementById('mainProteinFilter');
+  ALL_PROTEINS.forEach(function(protein){
+    var opt = document.createElement('option');
+    opt.value = protein;
+    opt.textContent = protein;
+    mainProteinFilterEl.appendChild(opt);
+  });
+  mainProteinFilterEl.addEventListener('change', render);
 
   // --- profile -> emphasized columns ---
   // Simple, legible lookup: the current "concern" gives the strongest signal,
@@ -376,6 +396,7 @@ h2{margin-top:0}
 
   function filterProducts(){
     var tags = Array.prototype.slice.call(document.querySelectorAll('.tag-check:checked')).map(function(cb){ return cb.value; });
+    var mainProtein = document.getElementById('mainProteinFilter').value;
     var kcalMin = numOrNull('kcalMin'), kcalMax = numOrNull('kcalMax');
     var proteinMin = numOrNull('proteinMin'), proteinMax = numOrNull('proteinMax');
     var fatMin = numOrNull('fatMin'), fatMax = numOrNull('fatMax');
@@ -383,6 +404,7 @@ h2{margin-top:0}
 
     return PRODUCTS.filter(function(p){
       if (tags.length && !tags.every(function(t){ return p.tags.indexOf(t) !== -1; })) return false;
+      if (mainProtein && p.mainProtein !== mainProtein) return false;
       if (kcalMin !== null && p.kcal < kcalMin) return false;
       if (kcalMax !== null && p.kcal > kcalMax) return false;
       if (proteinMin !== null && p.protein < proteinMin) return false;
@@ -418,7 +440,7 @@ h2{margin-top:0}
     countEl.textContent = list.length;
 
     if (!list.length){
-      tbody.innerHTML = '<tr><td colspan="10" class="small">条件に一致する商品がありません。チェックや数値条件を減らしてください。</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="11" class="small">条件に一致する商品がありません。チェックや数値条件を減らしてください。</td></tr>';
       return;
     }
 
@@ -439,6 +461,7 @@ h2{margin-top:0}
         '<td' + cls('protein') + '>' + p.protein + '%</td>' +
         '<td' + cls('fat') + '>' + p.fat + '%</td>' +
         '<td' + cls('priceKg') + '>約' + p.priceKg.toLocaleString('ja-JP') + '円</td>' +
+        '<td>' + (p.mainProtein ? escapeHtml(p.mainProtein) : '—') + '</td>' +
         '<td' + cls('feedAmount') + '>' + feedAmountText + '</td>' +
         '<td' + cls('dailyCost') + '>' + dailyCostText + '</td>' +
         '<td class="small">' + escapeHtml(tagText) + '</td>' +
@@ -461,6 +484,7 @@ h2{margin-top:0}
     document.getElementById('weightKg').value = '';
     document.getElementById('neuter').value = 'unknown';
     document.querySelectorAll('.tag-check').forEach(function(cb){ cb.checked = false; });
+    document.getElementById('mainProteinFilter').value = '';
     ['kcalMin','kcalMax','proteinMin','proteinMax','fatMin','fatMax','priceMin','priceMax'].forEach(function(id){
       document.getElementById(id).value = '';
     });
