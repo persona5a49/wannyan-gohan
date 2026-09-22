@@ -17,3 +17,12 @@ body{background:linear-gradient(180deg,#fbfaf6 0%,#f4efe5 100%)}
 
 /* deep karte redesign slice */
 .deep-summary p{font-size:1.02rem;color:#334238;line-height:1.95}.insight-grid,.condition-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:12px}.insight-card,.condition-grid article{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px}.insight-card h4,.condition-grid h4{margin:0 0 8px;color:#17211a;font-size:1.05rem}.insight-card p,.condition-grid p{margin:6px 0;color:#3f463d}.insight-card strong{display:block;margin-top:10px;color:var(--green)}.article-cards.mini{grid-template-columns:repeat(2,minmax(0,1fr))}.result.karte h3{letter-spacing:-.02em}.result.karte .helper{color:#62665b}@media(max-width:760px){.insight-grid,.condition-grid,.article-cards.mini{grid-template-columns:1fr}.insight-card,.condition-grid article{padding:15px}}
+
+/* diagnosis history */
+.history-hint{margin:14px 0}
+.history-section p{color:#3f463d}
+.history-list{list-style:none;padding:0;margin:12px 0 14px;display:flex;flex-direction:column;gap:6px}
+.history-list li{display:flex;gap:12px;align-items:center;padding:9px 12px;background:#fbfaf5;border:1px solid var(--line);border-radius:12px;font-size:.92rem;font-weight:700;color:#3f463d}
+.history-list li span:first-child{color:var(--muted);min-width:88px}
+.history-section .clear-history{font-size:.85rem;color:var(--muted);font-weight:800}
+@media(max-width:760px){.history-list li{flex-wrap:wrap}}
