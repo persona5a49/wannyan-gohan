@@ -32,7 +32,9 @@ const FOODS = [
   {name:'ヒルズ サイエンス・ダイエット 減量サポート 小型犬用', maker:'Hill’s', kcal:313, protein:24, fat:9, priceKg:1500, tags:['weight','small','lowfat','cost'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b41d3d.0196a071.57b41d3e.22d83eeb/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fsweet-pet%2Fset0096s%2F&link_type=picttext&ut=eyJwYW...NlfQ%3D%3D'},
   {name:'VetSolution 犬用 胃腸サポート', maker:'Monge', kcal:383, protein:24, fat:15, priceKg:2400, tags:['stomach','senior'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b84b87.2ec97563.57b84b88.333718c7/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fvetslabo%2Fdr000114%2F&link_type=picttext&ut=eyJwYW...NlfQ%3D%3D'},
   {name:'ロイヤルカナン サイズヘルス ニュートリション ミニ パピー', maker:'Royal Canin', kcal:408, protein:28.5, fat:18, priceKg:1785, tags:['puppy','small'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b41c22.08fe12c0.57b41c23.755a6e9f/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fnyanzaq%2F3182550793001%2F&link_type=hybrid_url&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJoeWJyaWRfdXJsIiwic2l6ZSI6IjI0MHgyNDAiLCJuYW0iOjEsIm5hbXAiOiJyaWdodCIsImNvbSI6MSwiY29tcCI6ImRvd24iLCJwcmljZSI6MSwiYm9yIjoxLCJjb2wiOjEsImJidG4iOjEsInByb2QiOjAsImFtcCI6ZmFsc2V9'},
-  {name:'ヒルズ サイエンス・ダイエット パピー 小粒', maker:'Hill’s', kcal:377, protein:25, fat:15.3, priceKg:1273, tags:['puppy','small'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b41d3d.0196a071.57b41d3e.22d83eeb/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fsweet-pet%2F118630123%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'}
+  {name:'ヒルズ サイエンス・ダイエット パピー 小粒', maker:'Hill’s', kcal:377, protein:25, fat:15.3, priceKg:1273, tags:['puppy','small'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b41d3d.0196a071.57b41d3e.22d83eeb/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fsweet-pet%2F118630123%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'},
+  {name:'ロイヤルカナン ミディアム アダルト', maker:'Royal Canin', kcal:385, protein:23, fat:12, priceKg:1075, tags:['adult','medium'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b41e37.7d60f1c7.57b41e38.dcb0788f/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2F1096dog%2Fw-1000475-00-00%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'},
+  {name:'ロイヤルカナン ミニ ステアライズド', maker:'Royal Canin', kcal:345, protein:28, fat:11, priceKg:1746, tags:['neutered','small'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b5a3b9.ecf57661.57b5a3ba.8d1f18b9/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fdog-penet%2Ff11240%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'}
 ]
 
 const PRODUCT_SLUGS = {
@@ -847,7 +849,11 @@ function calcResult(a){
       if((a.preference||[]).includes('cost') && f.priceKg<1600) {s+=3; reasons.push('続けやすい価格帯')}
       return {...f, score:s, reasons: reasons.slice(0,3)}
     }
-    if(f.tags.includes('senior')) {s+=2; reasons.push('シニア期向け')}
+    const isSenior = ['7-9','10-12','13+'].includes(a.age)
+    const isYoungAdult = a.age==='1-6'
+    if(isSenior && f.tags.includes('senior')) {s+=2; reasons.push('シニア期向け')}
+    if(isYoungAdult && f.tags.includes('adult')) {s+=2; reasons.push('成犬期向け')}
+    if(a.neuter==='yes' && f.tags.includes('neutered')) {s+=3; reasons.push('避妊・去勢後の体重管理を意識')}
     if(tags.includes('体重管理') && (f.kcal<355 || f.tags.includes('lowfat') || f.tags.includes('weight'))) {s+=5; reasons.push('カロリー/脂質を見直しやすい')}
     if(tags.includes('食べムラあり') && (f.tags.includes('palatable') || f.tags.includes('wet') || f.tags.includes('fresh'))) {s+=5; reasons.push('食いつき配慮')}
     if(tags.includes('お腹そっと派') && (f.tags.includes('stomach') || f.tags.includes('lowfat'))) {s+=4; reasons.push('お腹・便に配慮')}
