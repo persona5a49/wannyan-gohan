@@ -114,7 +114,7 @@
 
   <div class="panel">
     <h1>詳細ごはんカルテPDF 作成ツール</h1>
-    <p class="hint">Googleフォームの回答内容をここに入力すると、右側にPDF①（飼い主向け詳細カルテ・全10ページ）とPDF②（動物病院相談用サマリー・1ページ）のプレビューが生成されます。印刷ダイアログのページ範囲指定で2つのPDFとして別々に保存するか、まとめて1つのPDFとして保存してください（社内用・非公開ページ）。</p>
+    <p class="hint">Googleフォームの回答内容をここに入力すると、右側にPDF①（飼い主向け詳細カルテ・全12ページ）とPDF②（動物病院相談用サマリー・1ページ）のプレビューが生成されます。印刷ダイアログのページ範囲指定で2つのPDFとして別々に保存するか、まとめて1つのPDFとして保存してください（社内用・非公開ページ）。</p>
 
     <fieldset>
       <legend>基本情報</legend>
@@ -316,10 +316,35 @@
       </details>
     </fieldset>
 
+    <fieldset>
+      <legend>⑦前回来院時の記録（2回目以降のお客様向け・任意）</legend>
+      <p class="hint" style="margin:0 0 8px">前回のカルテ作成時の値を入力すると、PDF①に「前回との比較」ページが追加されます。初めてのお客様は空欄のままで構いません。</p>
+      <div class="row">
+        <div><label>前回のカルテ作成日</label><input type="date" id="prevVisitDate"></div>
+        <div><label>前回の体重（kg）</label><input type="number" id="prevWeight" step="0.1" min="0"></div>
+      </div>
+      <label>前回の体型スコア（BCS）の目安</label>
+      <select id="prevBcs">
+        <option value="">未回答</option>
+        <option value="thin">やせ気味</option>
+        <option value="ideal">適正</option>
+        <option value="heavy">やや肥満気味</option>
+      </select>
+      <label>前回の食欲の様子</label>
+      <select id="prevFoodDrive">
+        <option value="">未回答</option>
+        <option value="normal">普通</option>
+        <option value="high">ごほうび・おやつに強く反応する</option>
+        <option value="low">食べムラがある／関心が薄い</option>
+      </select>
+      <label>前回のおやつの内容と量</label><textarea id="prevSnackDetail"></textarea>
+      <label>前回健診メモ（任意・数値や気になった点など）</label><textarea id="prevHealthMemo"></textarea>
+    </fieldset>
+
     <div class="actions">
       <button class="btn-print" onclick="window.print()">印刷してPDF保存</button>
       <button class="btn-reset" onclick="if(confirm('入力内容をすべてクリアしますか？'))location.reload()">入力内容をクリア</button>
-      <p class="hint" style="font-size:11px">印刷ダイアログの「ページ」欄で 1-10 を指定するとPDF①、11 を指定するとPDF②として個別に保存できます。</p>
+      <p class="hint" style="font-size:11px">印刷ダイアログの「ページ」欄で 1-12 を指定するとPDF①、13 を指定するとPDF②として個別に保存できます。</p>
     </div>
   </div>
 
@@ -337,7 +362,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.1 / 10　総合サマリー</p>
+          <p class="pg-tag">P.1 / 12　総合サマリー</p>
           <div class="profile">
             <div class="lbl">対象のわんちゃん</div>
             <div class="val" id="pvProfile">（左のフォームに入力してください）</div>
@@ -372,7 +397,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.2 / 10　性格・行動分析</p>
+          <p class="pg-tag">P.2 / 12　性格・行動分析</p>
 
           <h2 class="sec"><span class="num">1</span>新しい環境への反応</h2>
           <div class="box beige"><p style="margin:0;font-size:13px;line-height:1.8" id="peNewEnv"></p></div>
@@ -407,7 +432,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.3 / 10　生活スタイル分析</p>
+          <p class="pg-tag">P.3 / 12　生活スタイル分析</p>
 
           <h2 class="sec"><span class="num">1</span>運動量</h2>
           <div class="box beige"><p style="margin:0;font-size:13px;line-height:1.8" id="liExercise"></p></div>
@@ -435,7 +460,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.4 / 10　食事分析</p>
+          <p class="pg-tag">P.4 / 12　食事分析</p>
 
           <h2 class="sec"><span class="num">1</span>現在のフード量とごはん量の目安</h2>
           <div class="metrics">
@@ -469,7 +494,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.5 / 10　すでに良い状態のポイント</p>
+          <p class="pg-tag">P.5 / 12　すでに良い状態のポイント</p>
           <p class="small" style="margin-bottom:10px">問題点だけでなく、今のままで大丈夫な部分もお伝えします。</p>
           <ul class="good-list" id="goodList"></ul>
         </div>
@@ -484,7 +509,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.6 / 10　見直すと良いポイント（優先度順）</p>
+          <p class="pg-tag">P.6 / 12　見直すと良いポイント（優先度順）</p>
           <div id="priList"></div>
           <p class="small" id="pvRefs" style="margin-top:6px"></p>
         </div>
@@ -499,7 +524,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.7 / 10　フード選びで大切にしたい条件</p>
+          <p class="pg-tag">P.7 / 12　フード選びで大切にしたい条件</p>
           <p class="small" style="margin-bottom:10px">具体的な商品名の前に、このコにとって重要な「見るべき条件」を整理します。</p>
           <div id="critList"></div>
         </div>
@@ -514,7 +539,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.8 / 10　候補フード（順位づけはしていません）</p>
+          <p class="pg-tag">P.8 / 12　候補フード（順位づけはしていません）</p>
           <div id="prodCards"></div>
         </div>
       </section>
@@ -528,7 +553,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.9 / 10　候補フード比較表</p>
+          <p class="pg-tag">P.9 / 12　候補フード比較表</p>
           <div style="overflow-x:auto">
             <table class="cmp">
               <thead>
@@ -553,7 +578,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.10 / 10　今後3〜6ヶ月の見守りポイント</p>
+          <p class="pg-tag">P.10 / 12　今後3〜6ヶ月の見守りポイント</p>
           <table class="watch">
             <thead><tr><th>項目</th><th>今回の状態（基準）</th><th class="chk-cell">1ヶ月後</th><th class="chk-cell">3ヶ月後</th><th class="chk-cell">6ヶ月後</th></tr></thead>
             <tbody id="watchBody"></tbody>
@@ -574,6 +599,36 @@
           <div class="disclaimer">
             本カルテは、ご入力いただいた内容をもとに食事量の目安を整理した参考資料であり、診断・治療・療法食の指示ではありません。持病がある、症状がある、服薬中、療法食を利用中、健診で異常があった場合は、内容の実行前に必ず主治医（かかりつけ獣医師）にご相談ください。ぐったりしている、嘔吐・下痢が続く、食欲がないなど、緊急性のある症状がある場合は、直ちに動物病院を受診してください。　© わんにゃんごはんカルテ
           </div>
+        </div>
+      </section>
+
+      <!-- Page 11: 前回との比較（リピーター向け） -->
+      <section class="pdf-page" id="pageHistory">
+        <div class="head">
+          <span class="date pv-date">2026/01/01 作成</span>
+          <div class="brand">わんにゃんごはんカルテ　PDF①　飼い主向け詳細カルテ</div>
+          <div class="title">前回との比較</div>
+          <div class="who pv-who"></div>
+        </div>
+        <div class="body">
+          <p class="pg-tag">P.11 / 12　前回との比較</p>
+          <p class="small" style="margin-bottom:10px">前回のカルテ作成時の値と、今回の値を比較します。継続してご利用いただく中での変化の把握にお役立てください。</p>
+          <div id="historyBody"></div>
+        </div>
+      </section>
+
+      <!-- Page 12: 3か月後に見る項目 -->
+      <section class="pdf-page" id="pageRecheck3mo">
+        <div class="head">
+          <span class="date pv-date">2026/01/01 作成</span>
+          <div class="brand">わんにゃんごはんカルテ　PDF①　飼い主向け詳細カルテ</div>
+          <div class="title">3か月後に見る項目</div>
+          <div class="who pv-who"></div>
+        </div>
+        <div class="body">
+          <p class="pg-tag">P.12 / 12　3か月後に見る項目</p>
+          <p class="small" style="margin-bottom:10px">今回の内容をもとに、次回（目安3か月後）のご来院・カルテ作成時に確認したい項目をまとめました。ここでの記録が、次回の「前回との比較」ページに活用されます。</p>
+          <div id="recheck3moList"></div>
         </div>
       </section>
 
@@ -655,6 +710,10 @@ const AXIS_LABEL = {
   friendly:'他の犬にも友好的', watchful:'様子を見てから近づく（対犬）', avoidant:'他の犬とは距離を置きたい'
 };
 
+const BCS_LABEL = {thin:'やせ気味', ideal:'適正', heavy:'やや肥満気味'};
+const BCS_ORDER = {thin:0, ideal:1, heavy:2};
+const FOOD_DRIVE_LABEL = {normal:'普通', high:'ごほうび・おやつに強く反応する', low:'食べムラがある／関心が薄い'};
+
 function render(){
   const dogName = $('dogName').value || '（未入力）';
   const breed = $('breed').value;
@@ -698,6 +757,15 @@ function render(){
   const walkDetail = $('walkDetail').value, aloneTime = $('aloneTime').value, livingEnv = $('livingEnv').value, sleepNote = $('sleepNote').value;
   const feedingEnv = $('feedingEnv').value;
   const currentIssues = $('currentIssues').value;
+  const snackDetail = $('snackDetail').value;
+
+  const prevVisitDate = $('prevVisitDate').value;
+  const prevWeight = $('prevWeight').value;
+  const prevBcs = $('prevBcs').value;
+  const prevBcsLabel = BCS_LABEL[prevBcs] || '';
+  const prevFoodDrive = $('prevFoodDrive').value;
+  const prevSnackDetail = $('prevSnackDetail').value;
+  const prevHealthMemo = $('prevHealthMemo').value;
 
   $('pvFeedNow').textContent = feedNowText;
   $('pvFeedNowLabel').textContent = '今あげている量（1日）' + ($('foodName').value ? '：' + $('foodName').value : '');
@@ -731,7 +799,8 @@ function render(){
     checked, labValues, onMeds, onTherapeutic, symptoms, feedGram, feedTimes,
     axisSocial, axisCaution, axisActivity, axisBond, axisDogDistance, foodDrive,
     walkDetail, aloneTime, livingEnv, sleepNote, feedingEnv, currentIssues,
-    typeName, hasFlag
+    typeName, hasFlag, snackDetail, createdDate: $('createdDate').value,
+    prevVisitDate, prevWeight, prevBcs, prevBcsLabel, prevFoodDrive, prevSnackDetail, prevHealthMemo
   };
 
   // ---- Page 1: 総合サマリー ----
@@ -833,7 +902,42 @@ function render(){
   $('watchBody').innerHTML = watchRows.map(([k,v]) => `<tr><td>${k}</td><td>${v}</td><td class="chk-cell">□</td><td class="chk-cell">□</td><td class="chk-cell">□</td></tr>`).join('');
   $('watchNotes').innerHTML = buildWatchNotes(ctx).map(n => `<li>${n}</li>`).join('');
 
-  // ---- Page 11: 動物病院相談用サマリー（PDF②） ----
+  // ---- Page 11: 前回との比較（リピーター向け） ----
+  const hist = buildHistoryComparison(ctx);
+  if (!hist.hasPrev) {
+    $('historyBody').innerHTML = `
+      <div class="box beige">
+        <p style="margin:0;font-size:14px;font-weight:800;color:#6b7d37">初回のため比較データなし</p>
+        <p class="small" style="margin-top:6px">今回のカルテが基準記録になります。左のフォーム「⑦前回来院時の記録」に前回の値を入力すると、このページに前回との比較が表示されます（2回目以降のお客様向け）。</p>
+      </div>`;
+  } else {
+    const tableRows = hist.rows.map(([k,p,n,d]) => `<tr><td>${k}</td><td>${p}</td><td>${n}</td><td>${d}</td></tr>`).join('');
+    const alertHtml = hist.alerts.length ? `
+      <div class="box amber" style="margin-top:14px">
+        <div class="small" style="font-weight:800;margin-bottom:4px">主治医に伝えるとよいポイント</div>
+        <ul class="plain">${hist.alerts.map(a => `<li>${a}</li>`).join('')}</ul>
+      </div>` : '';
+    const memoHtml = hist.prevHealthMemo ? `<p class="small" style="margin-top:10px">前回健診メモ：${hist.prevHealthMemo}</p>` : '';
+    $('historyBody').innerHTML = `
+      <table class="watch" style="font-size:12px">
+        <thead><tr><th>項目</th><th>前回</th><th>今回</th><th>変化</th></tr></thead>
+        <tbody>${tableRows}</tbody>
+      </table>
+      <div class="box beige" style="margin-top:14px">
+        <p style="margin:0;font-size:13.5px;line-height:1.9">${hist.narrative}</p>
+      </div>
+      ${alertHtml}${memoHtml}`;
+  }
+
+  // ---- Page 12: 3か月後に見る項目 ----
+  const recheck = buildRecheckItems(ctx);
+  $('recheck3moList').innerHTML = recheck.map((it,i) => `
+    <div class="priority-item">
+      <div class="priority-num">${i+1}</div>
+      <div class="priority-body"><strong>${it.title}</strong><p>${it.detail}</p></div>
+    </div>`).join('');
+
+  // ---- Page 13: 動物病院相談用サマリー（PDF②） ----
   const vetBasicItems = [
     ['名前', dogName], ['犬種', breed || '-'], ['年齢', age ? age + '歳' : '-'],
     ['性別／避妊去勢', [sex, neuter].filter(Boolean).join('／') || '-'],
@@ -1256,7 +1360,156 @@ function buildWatchNotes(ctx){
   return notes;
 }
 
-// ページ11：動物病院で相談したいこと（健診・症状フラグから該当する質問のみ抽出）
+// ページ11：前回との比較（リピーター向け・前回入力がある場合のみ本文を生成）
+function buildHistoryComparison(ctx){
+  const { weight, bcs, bcsLabel, snackDetail, foodDrive,
+          prevWeight, prevBcs, prevBcsLabel, prevSnackDetail, prevFoodDrive, prevHealthMemo,
+          prevVisitDate, createdDate } = ctx;
+
+  const hasPrev = !!(String(prevWeight || '').trim() || prevBcs || (prevSnackDetail || '').trim() || prevFoodDrive);
+  if (!hasPrev) return { hasPrev: false };
+
+  const rows = [];
+  const narrative = [];
+  const alerts = [];
+
+  if (prevVisitDate) {
+    const d1 = new Date(prevVisitDate);
+    const d2 = new Date(createdDate || todayISO);
+    const days = Math.round((d2 - d1) / 86400000);
+    if (!isNaN(days) && days >= 0) {
+      const months = Math.round(days / 30);
+      narrative.push(`前回のカルテ作成日（${fmtDate(prevVisitDate)}）から、今回（${fmtDate(createdDate || todayISO)}）まで約${months > 0 ? months + 'ヶ月' : days + '日'}が経過しています。`);
+    }
+  }
+
+  // 体重
+  if (weight && prevWeight) {
+    const w1 = Number(prevWeight), w2 = Number(weight);
+    const diffKg = w2 - w1;
+    const diffG = Math.round(diffKg * 1000);
+    const diffAbsTxt = Math.abs(diffG) < 1000 ? `${Math.abs(diffG)}g` : `${Math.abs(diffKg).toFixed(1)}kg`;
+    const diffTxt = diffG === 0 ? '変化なし' : `${diffG > 0 ? '+' : '-'}${diffAbsTxt}`;
+    rows.push(['体重', `${w1}kg`, `${w2}kg`, diffTxt]);
+    if (diffG === 0) narrative.push('前回から体重の変化はありません。');
+    else if (diffG > 0) narrative.push(`前回より体重が${diffAbsTxt}増えています。`);
+    else narrative.push(`前回より体重が${diffAbsTxt}減っています。`);
+  } else {
+    rows.push(['体重', prevWeight ? prevWeight + 'kg' : '記録なし', weight ? weight + 'kg' : '記録なし', '-']);
+  }
+
+  // 体型（BCS）
+  if (bcs && prevBcs) {
+    rows.push(['体型（BCS）', prevBcsLabel, bcsLabel, bcs === prevBcs ? '変化なし' : `${prevBcsLabel}→${bcsLabel}`]);
+    narrative.push(bcs === prevBcs
+      ? `体型スコア（BCS）の目安は「${bcsLabel}」から変化していません。`
+      : `体型スコア（BCS）の目安は「${prevBcsLabel}」から「${bcsLabel}」に変化しています。`);
+  } else {
+    rows.push(['体型（BCS）', prevBcsLabel || '記録なし', bcsLabel || '記録なし', '-']);
+  }
+
+  // おやつ
+  const snackNow = (snackDetail || '').trim();
+  const snackPrev = (prevSnackDetail || '').trim();
+  if (snackNow && snackPrev) {
+    rows.push(['おやつ', snackPrev, snackNow, snackNow === snackPrev ? '変化なし' : '内容・量が変化']);
+    narrative.push(snackNow === snackPrev
+      ? 'おやつの内容・量に大きな変化はありません。'
+      : `おやつの内容・量は「${snackPrev}」から「${snackNow}」に変化しています。`);
+  } else {
+    rows.push(['おやつ', snackPrev || '記録なし', snackNow || '記録なし', '-']);
+  }
+
+  // 食欲
+  const foodLabelNow = FOOD_DRIVE_LABEL[foodDrive] || '';
+  const foodLabelPrev = FOOD_DRIVE_LABEL[prevFoodDrive] || '';
+  if (foodDrive && prevFoodDrive) {
+    rows.push(['食欲', foodLabelPrev, foodLabelNow, foodDrive === prevFoodDrive ? '変化なし' : `${foodLabelPrev}→${foodLabelNow}`]);
+    narrative.push(foodDrive === prevFoodDrive
+      ? '食欲の傾向に変化はありません。'
+      : `食欲は「${foodLabelPrev}」から「${foodLabelNow}」に変化しています。`);
+  } else {
+    rows.push(['食欲', foodLabelPrev || '記録なし', foodLabelNow || '記録なし', '-']);
+  }
+
+  // 主治医に伝えるとよいポイント（悪化方向の変化のみ抽出。数値の捏造はしない）
+  if (weight && prevWeight) {
+    const diffKg = Number(weight) - Number(prevWeight);
+    if (diffKg > 0 && (bcs === 'heavy' || prevBcs === 'heavy')) {
+      alerts.push('体型がやや肥満気味の状態で、さらに体重が増えています。給与量・おやつ量の見直しについて主治医にご相談ください。');
+    }
+    if (diffKg < 0 && (bcs === 'thin' || prevBcs === 'thin')) {
+      alerts.push('体型がやせ気味の状態で、さらに体重が減っています。意図しない体重減少でないか、主治医にご確認ください。');
+    }
+  }
+  if (bcs && prevBcs && BCS_ORDER[bcs] > BCS_ORDER[prevBcs]) {
+    alerts.push('体型スコア（BCS）が肥満方向へ変化しています。');
+  }
+  if (foodDrive === 'low' && prevFoodDrive && prevFoodDrive !== 'low') {
+    alerts.push('以前は食べムラが少なかったのに対し、今回は食べムラが見られます。食欲低下の原因について主治医にご相談ください。');
+  }
+
+  return {
+    hasPrev: true,
+    rows,
+    narrative: narrative.join(''),
+    alerts,
+    prevHealthMemo: (prevHealthMemo || '').trim()
+  };
+}
+
+// ページ12：3か月後に見る項目（今回の回答から再確認したい項目のみを抽出。全員一律の文言にはしない）
+function buildRecheckItems(ctx){
+  const { weight, bcs, bcsLabel, body, labValues, foodDrive, symptoms,
+          onMeds, onTherapeutic, hasFlag, currentIssues } = ctx;
+  const bodyTxt = (body || '').trim();
+  const symTxt = (symptoms || '').trim();
+  const heavyish = /肥満|ぽっちゃり|obese|増加/i.test(bodyTxt) || bcs === 'heavy';
+  const thinnish = /痩せ|やせ|減少/i.test(bodyTxt) || bcs === 'thin' || hasFlag('体重減少');
+  const giSymptom = /軟便|下痢|嘔吐|お腹|吐/.test(symTxt);
+  const items = [];
+
+  items.push({
+    title: '体重・体型（BCS）の記録',
+    detail: `今回の体重（${weight ? weight + 'kg' : '未記入'}）・体型スコア（BCS）の目安（${bcsLabel || '未評価'}）を基準として、3か月後に同じ条件で測り直してください。この記録は次回のカルテ作成時に「前回との比較」ページで活用できます。`
+  });
+
+  if (heavyish) {
+    items.push({ title: '体重の増加傾向', detail: '体型がやや肥満気味とのことです。3か月後、体重が増加傾向のままか、横ばい〜緩やかな減少に向かっているかを確認してください。' });
+  }
+  if (thinnish) {
+    items.push({ title: '体重の減少傾向', detail: '体型がやせ気味、または体重減少の項目が気になるとのことです。3か月後、体重が引き続き減っていないか確認してください。減少が続く場合は早めの受診をおすすめします。' });
+  }
+
+  const labHint = labValues ? `今回の数値：${labValues}` : '今回、数値は未記入です';
+  if (hasFlag('腎臓系')) items.push({ title: '腎臓系の数値（BUN・Creなど）', detail: `今回の健診で腎臓系の項目が気になるとのことです（${labHint}）。3か月後の再検査で数値の推移を確認してください。` });
+  if (hasFlag('肝臓系')) items.push({ title: '肝臓系の数値（ALT・ALPなど）', detail: `今回の健診で肝臓系の項目が気になるとのことです（${labHint}）。3か月後の再検査で数値の推移を確認してください。` });
+  if (hasFlag('中性脂肪')) items.push({ title: '中性脂肪・コレステロール（TG・T-Choなど）', detail: `今回の健診で中性脂肪・コレステロールの項目が気になるとのことです（${labHint}）。3か月後の再検査で数値の推移を確認してください。` });
+  if (hasFlag('血糖')) items.push({ title: '血糖（GLU）', detail: `今回の健診で血糖の項目が気になるとのことです（${labHint}）。3か月後の再検査で数値の推移を確認してください。` });
+  if (hasFlag('尿検査')) items.push({ title: '尿の様子（回数・色・量）', detail: '尿検査の項目が気になるとのことです。3か月後、排尿の回数・色・量に変化がないか確認してください。' });
+
+  if (foodDrive === 'low' || /ムラ|食べない/.test(symTxt)) {
+    items.push({ title: '食欲・食べムラ', detail: '食べムラがある、または食への関心が薄い傾向があります。3か月後、食欲の波が落ち着いてきているか、完食率に変化があるかを確認してください。' });
+  }
+  if (giSymptom) {
+    items.push({ title: '便の状態', detail: '軟便・下痢・嘔吐などの症状が気になるとのことです。3か月後、便の状態が安定してきているかを確認してください。続くようであれば早めに受診してください。' });
+  }
+  if (onTherapeutic === 'はい' || onMeds === 'はい') {
+    items.push({ title: '療法食・服薬の効果', detail: '現在、療法食または投薬に対応中とのことです。3か月後、体調や数値に改善が見られているか、主治医と一緒に確認してください。' });
+  }
+  const issuesTxt = (currentIssues || '').trim();
+  if (issuesTxt) {
+    items.push({ title: '飼い主様が気になっていたこと', detail: `今回「${issuesTxt}」という点が挙げられていました。3か月後、この点に変化があったかどうかを振り返ってみてください。` });
+  }
+
+  if (items.length <= 1) {
+    items.push({ title: '全体の経過観察', detail: '現時点で特別な指摘はありませんが、体重・食欲・便の状態は日々の記録を続け、3か月後に大きな変化がないかを確認してください。' });
+  }
+
+  return items.slice(0, 8);
+}
+
+// ページ13：動物病院で相談したいこと（健診・症状フラグから該当する質問のみ抽出）
 function buildVetQuestions(ctx){
   const { weight, der, onMeds, onTherapeutic, checked, labValues, foodDrive, symptoms, hasFlag } = ctx;
   const symTxt = (symptoms || '').trim();
