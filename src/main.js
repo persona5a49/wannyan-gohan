@@ -187,8 +187,8 @@ function trackEvent(name, params = {}){
 
 const ARTICLES = [
   {
-    "slug": "senior-dog-food-choice",
-    "title": "10歳トイプードルが急にフードを残す。最初に見る順番",
+    "slug": "dog-leftover-food-checklist",
+    "title": "犬が急にフードを残す。最初に見る順番チェックリスト",
     "lead": "「飽きた」だけで片づけず、口・吐き気・便・体重・健診結果の順に見ます。フードを替える前の確認リストです。",
     "sections": [
       [
@@ -210,8 +210,8 @@ const ARTICLES = [
     ]
   },
   {
-    "slug": "senior-dog-feeding-calculator",
-    "title": "チワワの体重が200g増えた。ごはんはどのくらい減らす？",
+    "slug": "small-dog-feeding-gram-calculator",
+    "title": "小型犬の体重が少し増えた。ごはんは何グラム減らす？",
     "lead": "小型犬の200gは意外と大きい変化です。袋の給与量ではなく、体重記録とおやつ込みの総カロリーで調整します。",
     "sections": [
       [
@@ -233,8 +233,8 @@ const ARTICLES = [
     ]
   },
   {
-    "slug": "senior-dog-not-eating",
-    "title": "柴犬が新しいフードを食べない時の切り替え方",
+    "slug": "cautious-dog-food-transition",
+    "title": "慎重な性格の犬が新しいフードを食べない時の切り替え方",
     "lead": "慎重な子は、味よりも匂い・食器・場所・混ぜる割合で止まることがあります。焦らず戻せる切り替え方をまとめます。",
     "sections": [
       [
@@ -252,29 +252,6 @@ const ARTICLES = [
       [
         "「食いつき重視」でも、成分は確認する",
         "食べてくれることは大事です。ただ、脂質が高いもの、おやつ扱いに近いもの、持病と相性が悪いものもあります。食いつきだけで選ばず、体重・便・健診結果と一緒に見ます。"
-      ]
-    ]
-  },
-  {
-    "slug": "senior-dog-weight-control",
-    "title": "健診で中性脂肪が高いと言われた犬のおやつ管理",
-    "lead": "低脂肪フードを探す前に、まず家族全員のおやつ量・主食量・体型を揃えて見ます。",
-    "sections": [
-      [
-        "太ってきた子は、おやつと脂質から見る",
-        "活動量が落ちたのに、若い頃と同じ量を食べている。おやつが少しずつ増えている。脂質の高いフードに替えた。シニア期に太る時は、このあたりがよくあります。まずは1日の総カロリーを見ます。"
-      ],
-      [
-        "痩せてきた子は、単に高カロリーへ替えない",
-        "シニア犬の体重減少は、筋肉量の低下、歯や口の痛み、消化器、腎臓、内分泌、腫瘍など、いろいろな原因で起こります。高カロリーフードに替える前に、食欲、便、飲水量、尿量、健診結果を確認します。"
-      ],
-      [
-        "体重は同じ条件で記録する",
-        "抱っこして家庭用体重計で測る場合でも、同じ時間帯、同じ方法で続けると傾向が見えます。1回の数字より、2〜4週間の流れを見る方が役に立ちます。"
-      ],
-      [
-        "目標は「急に変えない」こと",
-        "減量も増量も、急ぎすぎると失敗しやすいです。食事量を少し調整し、便・食欲・体重を見ながら進めます。持病がある子は、必ず主治医と相談して決めます。"
       ]
     ]
   },
@@ -905,12 +882,12 @@ function vetConsultItems(a, r){
 function relatedArticlesFor(a, r){
   const picks=[]
   const add=slug=>{ const article=ARTICLES.find(x=>x.slug===slug); if(article && !picks.includes(article)) picks.push(article) }
-  if(r.tags.includes('食べムラあり')) { add('senior-dog-not-eating'); add('toy-poodle-senior-not-eating'); add('shiba-inu-not-eating') }
-  if(r.tags.includes('体重管理')) { add('senior-dog-feeding-calculator'); add('chihuahua-weight-gain'); add('senior-dog-triglyceride-treats') }
+  if(r.tags.includes('食べムラあり')) { add('cautious-dog-food-transition'); add('toy-poodle-senior-not-eating'); add('shiba-inu-not-eating') }
+  if(r.tags.includes('体重管理')) { add('small-dog-feeding-gram-calculator'); add('chihuahua-weight-gain'); add('senior-dog-triglyceride-treats') }
   if((a.checkup||[]).includes('kidney') || labNum('bun') || labNum('cre')) { add('dog-high-bun-food'); add('dog-high-cre-food') }
   if((a.checkup||[]).includes('liver') || labNum('alt') || labNum('alp')) { add('dog-high-alt-food'); add('dog-high-alp-food') }
   if((a.checkup||[]).includes('urine')) add('dog-urinalysis-food')
-  if(!picks.length) { add('senior-dog-food-choice'); add('prescription-diet-vs-regular-food') }
+  if(!picks.length) { add('dog-leftover-food-checklist'); add('prescription-diet-vs-regular-food') }
   return picks.slice(0,4)
 }
 function subTags(a, redFlags=[], watch=[]){
