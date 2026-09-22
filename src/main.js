@@ -132,6 +132,18 @@ function removeWeightEntry(idx){
   saveWeights(list)
 }
 
+const HISTORY_KEY = 'wannyan_diagnosis_history'
+function loadHistory(){
+  try{ return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]') }catch(e){ return [] }
+}
+function saveHistory(list){ localStorage.setItem(HISTORY_KEY, JSON.stringify(list)) }
+function addHistoryEntry(a, r){
+  const list = loadHistory()
+  list.push({date: new Date().toISOString().slice(0,10), dogName: a.dogName || null, type: r.type, weight: a.weight || null, body: a.body || null, tags: r.tags || []})
+  saveHistory(list.slice(-20))
+}
+function clearHistory(){ saveHistory([]) }
+
 function rer(weight){ return 70 * Math.pow(Number(weight || 0), 0.75) }
 function derMultiplier(a){
   if(a.age==='under1') return 2.0
@@ -860,15 +872,38 @@ function renderArticle(article){
   return `<article class="article-full" id="article-${article.slug}"><p class="eyebrow">読みもの</p><h2>${article.title}</h2><p class="lead small">${article.lead}</p>${article.sections.map(([h,b])=>`<section><h3>${h}</h3><p>${b}</p></section>`).join('')}<div class="article-cta"><a class="primary" href="#diagnosis">うちの子タイプ診断を試す</a><a class="secondary" href="#tracker">体重記録を使う</a></div></article>`
 }
 
+function formatDateJp(iso){ return (iso || '').replace(/-/g,'/') }
+function renderHistorySection(list){
+  if(list.length < 2){
+    if(list.length === 1) return `<p class="helper history-hint">次回の記録と比較できるようになります。</p>`
+    return ''
+  }
+  const current = list[list.length-1]
+  const previous = list[list.length-2]
+  const prevW = Number(previous.weight)
+  const curW = Number(current.weight)
+  const hasWeights = prevW > 0 && curW > 0
+  let compareNote = `前回（${formatDateJp(previous.date)}）は「${previous.type}」${hasWeights ? '・'+prevW+'kg' : ''}でした。今回は「${current.type}」${hasWeights ? '・'+curW+'kg' : ''}です。`
+  if(hasWeights){
+    const diffRatio = (curW - prevW) / prevW
+    if(diffRatio >= 0.05) compareNote += ' 体重が増えています。健診結果と合わせて確認いただくと安心です。'
+    else if(diffRatio <= -0.05) compareNote += ' 体重が減っています。健診結果と合わせて確認いただくと安心です。'
+  }
+  const recent = list.slice(-5).reverse()
+  return `<div class="karte-section history-section"><h3>これまでの記録</h3><p>${compareNote}</p><ul class="history-list">${recent.map(h=>`<li><span>${formatDateJp(h.date)}</span><span>${h.type}</span><span>${h.weight ? h.weight+'kg' : '—'}</span></li>`).join('')}</ul><button type="button" class="text-link clear-history">履歴を削除</button></div>`
+}
 function renderDiagnosis(){
   if(step >= QUESTIONS.length){
     const r = calcResult(answers)
     const name = answers.dogName ? `${answers.dogName}ちゃん` : 'うちの子'
     const shownTags = displayTags(r.tags, answers.breedGroup)
+    const historyAll = loadHistory()
+    const matchedHistory = answers.dogName ? historyAll.filter(h=>h.dogName===answers.dogName) : historyAll
     return `<div class="result karte"><p class="eyebrow">うちの子ごはん・暮らしカルテ</p><div class="type-card"><div><span class="type-code">16タイプ診断</span><h2>${name}は「${r.type}」</h2><p>${r.profile.lead}</p></div><div class="type-animal">${answers.breedGroup && BREED_GROUPS[answers.breedGroup] ? BREED_GROUPS[answers.breedGroup] : '暮らしタイプ'}</div></div><div class="trait-list">${shownTags.map(x=>`<span>${x}</span>`).join('')}</div>
       ${r.hasWeight ? `<div class="result-grid"><div class="metric"><strong>${Math.round(r.kcal)} kcal/日</strong><span>目安必要カロリー</span></div><div class="metric"><strong>${Math.round(r.snack)} kcal/日まで</strong><span>おやつ上限の目安</span></div></div>${r.isPuppy ? `<p class="helper">子犬期は成長段階によって必要カロリーが大きく変わるため、上の数字はあくまで簡易的な目安です。フードのパッケージ記載の給与量や、かかりつけの獣医師の指示を優先してください。</p>` : ''}` : `<div class="note"><h3>カロリー計算</h3><p>体重を入力すると、目安カロリーとおやつ上限を表示できます。今回はタイプ判定と注意点のみ表示します。</p></div>`}
       <div class="share-panel"><button class="primary save-share" type="button">結果画像を保存</button><button class="secondary native-share" type="button">LINE/Xで共有</button><canvas id="shareCanvas" width="1200" height="630" aria-label="診断結果シェア画像"></canvas><p class="helper">画像には医療情報や健診数値は入れず、タイプ名だけを共有します。</p></div>
       <div class="karte-section deep-summary"><h3>${name}の全体像</h3><p>${r.profile.lead}${r.breedNote ? ' '+r.breedNote : ''} ここでは回答を並べ直すのではなく、性格・活動量・食べ方・体型・健診メモの組み合わせから、暮らしで見たいポイントを整理します。</p></div>
+      ${renderHistorySection(matchedHistory)}
       <div class="karte-section"><h3>解釈カード</h3><div class="insight-grid">${r.insights.map(x=>`<article class="insight-card"><h4>${x.title}</h4><p>${x.body}</p><strong>実生活では：</strong><p>${x.action}</p></article>`).join('')}</div></div>
       <div class="karte-section"><h3>接し方のコツ</h3><ul>${r.profile.care.map(x=>`<li>${x}</li>`).join('')}</ul></div>
       ${r.redFlags.length ? `<div class="alert"><h3>フード変更前に主治医へ確認</h3><ul>${r.redFlags.map(x=>`<li>${x}</li>`).join('')}</ul></div>`:''}
@@ -993,6 +1028,8 @@ function bindEvents(){
     if(finishing){
       const r = calcResult(answers)
       trackEvent('diagnosis_complete', {result_type: r.type, sub_tags: r.tags.join(','), has_checkup_flags: (answers.checkup || []).filter(x=>x !== 'none').length > 0})
+      addHistoryEntry(answers, r)
+      trackEvent('diagnosis_history_save')
     }
     render(); location.hash='diagnosis'
   })
@@ -1014,5 +1051,11 @@ function bindEvents(){
     render()
     location.hash = 'tracker'
   }))
+  document.querySelector('.clear-history')?.addEventListener('click', ()=>{
+    clearHistory()
+    trackEvent('diagnosis_history_clear')
+    render()
+    location.hash = 'diagnosis'
+  })
 }
 render()
