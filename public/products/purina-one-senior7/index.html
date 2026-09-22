@@ -6,41 +6,96 @@
   var params = new URLSearchParams(location.search);
   var bcs = params.get('bcs'), activity = params.get('activity'), concern = params.get('concern');
   if(!bcs && !activity && !concern) return;
-  function buildNote(){
-    var kcalLow = kcal <= 330, kcalHigh = kcal >= 365;
-    var proteinHigh = protein >= 28;
-    if((bcs === 'chubby' || bcs === 'obese') && kcalLow){
-      return '体重が気になる状態には、100gあたり' + kcal + 'kcalと比較的カロリーを抑えやすい数値です。給与量は目安から少しずつ調整してみてください。';
-    }
-    if((bcs === 'chubby' || bcs === 'obese') && kcalHigh){
-      return '体重が気になる状態では、100gあたり' + kcal + 'kcalとやや高めなので、給与量を少なめに調整するか低カロリーの候補とも比べてみるのがおすすめです。';
-    }
-    if(bcs === 'thin' && kcalLow){
-      return 'やせ気味の子には、100gあたり' + kcal + 'kcalは控えめな数値です。必要量を満たせているか、給与量を見直すと安心です。';
-    }
+  var kcalLow = kcal <= 330, kcalHigh = kcal >= 365;
+  var proteinLow = protein <= 20, proteinHigh = protein >= 28;
+  var fatLow = fat <= 9, fatHigh = fat >= 15;
+  var bcsScoreMap = {thin:'2',normal:'3',chubby:'4',obese:'5'};
+  var bcsWordMap = {thin:'やせ気味',normal:'標準体型',chubby:'ぽっちゃり気味',obese:'肥満気味'};
+  var activityWordMap = {active:'活動量は多め',calm:'活動量は落ち着きめ'};
+  function buildLightNote(){
     if(activity === 'active' && kcalLow){
       return '活動量が多めの子には、100gあたり' + kcal + 'kcalはやや控えめなので、1日の給与量や回数を多めに調整した方が足りやすくなります。';
     }
     if(activity === 'active' && proteinHigh){
       return '活動量が多めの子には、粗タンパク質' + protein + '%という高たんぱくな設計が、筋肉量の維持を意識しやすいポイントです。';
     }
+    return '100gあたり' + kcal + 'kcal・タンパク質' + protein + '%・脂質' + fat + '%という数値を、うちの子の体型や活動量と照らし合わせて検討してみてください。';
+  }
+  function buildRichNote(){
+    var profileParts = [];
+    if(bcs && bcsWordMap[bcs]){ profileParts.push('BCS目安' + bcsScoreMap[bcs] + '/5(' + bcsWordMap[bcs] + ')'); }
+    if(activity && activityWordMap[activity]){ profileParts.push(activityWordMap[activity]); }
+    var profile = profileParts.length ? 'この子は' + profileParts.join('・') + 'とのことです。' : '';
+
+    var benefits = [];
+    if(bcs === 'chubby' || bcs === 'obese'){
+      if(kcalLow){ benefits.push('体重が気になる体型には、100gあたり' + kcal + 'kcalと比較的カロリーを抑えやすい数値です。'); }
+      else if(kcalHigh){ benefits.push('体重が気になる体型に対して、100gあたり' + kcal + 'kcalはややカロリー高めの設計です。'); }
+      else { benefits.push('100gあたり' + kcal + 'kcalは極端な高カロリーではなく、標準的な範囲です。'); }
+    } else if(bcs === 'thin'){
+      if(kcalHigh){ benefits.push('やせ気味の体型には、100gあたり' + kcal + 'kcalとエネルギー密度が高めで、必要量を確保しやすい数値です。'); }
+      else if(kcalLow){ benefits.push('やせ気味の体型に対して、100gあたり' + kcal + 'kcalは控えめな数値です。必要量を満たせているか給与量を見直すと安心です。'); }
+      else { benefits.push('100gあたり' + kcal + 'kcalは標準的な範囲です。'); }
+    } else if(bcs === 'normal'){
+      benefits.push('100gあたり' + kcal + 'kcal・タンパク質' + protein + '%・脂質' + fat + '%は、標準体型の子にとって大きな偏りのない数値です。');
+    }
+    if(activity === 'active'){
+      if(proteinHigh){ benefits.push('活動量が多めの子には、粗タンパク質' + protein + '%という高たんぱくな設計が筋肉量の維持を意識しやすいポイントです。'); }
+      if(kcalLow){ benefits.push('一方でカロリーは100gあたり' + kcal + 'kcalとやや控えめなため、活動量に対して給与量や回数を多めに調整した方が足りやすくなります。'); }
+    } else if(activity === 'calm' && kcalHigh){
+      benefits.push('落ち着きめの活動量に対して100gあたり' + kcal + 'kcalはやや高めなので、給与量は目安の範囲内で管理するのがおすすめです。');
+    }
     if(concern === 'weight'){
-      return '体重管理を意識するなら、カロリーだけでなく給与量とおやつの合計で見るのがポイントです。100gあたり' + kcal + 'kcalを目安に量を調整してください。';
+      benefits.push('体重管理を意識するなら、カロリーだけでなく給与量とおやつの合計で見るのがポイントです。100gあたり' + kcal + 'kcalを目安に量を調整してください。');
+    } else if(concern === 'picky'){
+      benefits.push('嗜好性は個体差が大きいため、この数値だけでは食べるかどうかは判断できません。少量から試すのがおすすめです。');
+    } else if(concern === 'coat'){
+      benefits.push(addressesCoat ? '毛づや・皮膚が気になる場合、上の「向いている子」の説明にある配合もあわせて参考にしてください。' : '毛づやや皮膚の状態は食事以外の要因も大きいため、この数値だけで断定はできません。');
+    } else if(concern === 'stomach'){
+      if(fatLow){ benefits.push('脂質' + fat + '%は控えめな範囲で、消化への負担を抑えやすい数値です。'); }
+      else if(fatHigh){ benefits.push('脂質' + fat + '%はやや高めの範囲です。'); }
+      else { benefits.push('脂質' + fat + '%は標準的な範囲です。'); }
+      if(addressesStomach){ benefits.push('上の説明にある消化面のポイントもあわせて確認してみてください。'); }
     }
-    if(concern === 'picky'){
-      return '嗜好性は個体差が大きいため、この数値だけでは食べるかどうかは判断できません。少量から試すのがおすすめです。';
+    if(!benefits.length){
+      benefits.push('100gあたり' + kcal + 'kcal・タンパク質' + protein + '%・脂質' + fat + '%という数値を、うちの子の体型や活動量と照らし合わせて検討してみてください。');
     }
-    if(concern === 'coat'){
-      return addressesCoat ? '毛づや・皮膚が気になる場合、上の「向いている子」の説明もあわせて参考にしつつ、変化があれば経過を見ていってください。' : '毛づやや皮膚の状態は食事以外の要因も大きいため、数値だけで断定せず、変化があれば獣医師にも相談してみてください。';
+
+    var cautions = [];
+    if((bcs === 'chubby' || bcs === 'obese') && kcalHigh){
+      cautions.push('カロリーがやや高めなぶん、体重が気になる状態では給与量の管理がより重要になります。');
+    }
+    if((bcs === 'chubby' || bcs === 'obese') && kcalLow){
+      cautions.push('給与量を減らしすぎると必要な栄養素が不足することがあるため、目安量を大きく下回らないようにしてください。');
+    }
+    if(bcs === 'thin' && concern !== 'weight'){
+      cautions.push('体重以外の相談であっても、やせ気味の子では今の給与量で足りているか、あわせて確認しておくと安心です。');
+    }
+    if(bcs === 'thin' && proteinLow){
+      cautions.push('タンパク質' + protein + '%も控えめな範囲のため、筋肉量の変化があわせて経過を見てください。');
     }
     if(concern === 'stomach'){
-      return addressesStomach ? 'お腹がデリケートな場合、上の説明にある消化面のポイントもあわせて確認してみてください。' : 'お腹の様子は脂質や食物繊維など複数の要因が関わるため、切り替えは少量からゆっくり進めるのが安心です。';
+      cautions.push(fatHigh ? '脂質がやや高めのため、お腹がデリケートな子は切り替え時に主治医へ相談しながら少量から進めてください。' : 'お腹の様子は脂質だけでなく食物繊維など複数の要因が関わるため、切り替えは少量からゆっくり進めてください。');
     }
-    return '100gあたり' + kcal + 'kcal・タンパク質' + protein + '%・脂質' + fat + '%という数値を、うちの子の体型や活動量と照らし合わせて検討してみてください。';
+    if(concern === 'coat'){
+      cautions.push('毛づやや皮膚の変化は食事以外の要因も大きいため、数値だけで判断せず、変化があれば獣医師にも相談してください。');
+    }
+    if(!cautions.length){
+      cautions.push('数値はあくまで目安です。体重や便の様子を見ながら、療法食中・服薬中の場合は必ず主治医に相談してください。');
+    }
+
+    var thisDog = profile + benefits.join('') + cautions.slice(0,3).join('');
+    var general = '一般情報：100gあたり' + kcal + 'kcal・タンパク質' + protein + '%・脂質' + fat + '%。';
+    return { general: general, thisDog: thisDog };
   }
   var mount = document.querySelector('.personalize-note-mount');
   if(!mount) return;
-  var text = buildNote();
-  mount.outerHTML = '<section class="card personalize-note"><h2>うちの子の場合</h2><p>' + text + '</p></section>';
+  if(!bcs && !concern){
+    var lightText = buildLightNote();
+    mount.outerHTML = '<section class="card personalize-note"><h2>うちの子の場合</h2><p>' + lightText + '</p></section>';
+  } else {
+    var note = buildRichNote();
+    mount.outerHTML = '<section class="card personalize-note"><h2>うちの子の場合</h2><p class="small">' + note.general + '</p><p><strong>この子の場合：</strong>' + note.thisDog + '</p></section>';
+  }
 })();</script>
 <section class="card"><h2>比較でチェックしたいポイント</h2><p><strong>向いている子：</strong>7歳以上でコストを抑えながら続けたい子、食感の変化で食いつきが良くなりやすい子。</p><p><strong>注意したい子：</strong>療法食中・服薬中・健診で数値が気になる子は、切り替え前に主治医へ確認してください。</p><p><strong>数値の目安：</strong>360kcal/100gは中程度のカロリーで、粗タンパク質27%は今回の比較の中でも高タンパク寄り、粗脂肪13%は標準的な範囲です。</p><p><strong>粒サイズの傾向：</strong>ほぐし粒が入っているとされていますが、正確な粒サイズは公式サイトで確認してください。</p><p><strong>価格帯：</strong>約900円/kgと今回の比較の中でも続けやすい価格帯です。</p><p><strong>食べムラ／体重管理：</strong>高タンパクな設計のため活動量がある子の筋肉量維持を意識しやすい一方、食感の変化で食べムラの緩和も期待できます。食いつきは個体差があるため、少量から試すと安心です。</p><p class="small">特にBUN/Cre、ALT/ALP、TG/T-Cho、尿検査、体重減少、服薬・療法食がある場合は、フード変更前に主治医へ確認してください。</p></section><section class="card"><h2>診断で相性を確認</h2><p>年齢・体型・活動量・健診で気になる項目を入れると、食事量とおやつ上限、候補フードを整理できます。</p><div class="actions"><a class="primary" href="/#diagnosis" onclick="gtag('event','diagnosis_start',{location:'product_detail',product:'ピュリナ ワン 7歳以上 ほぐし粒入り'})">無料診断で確認する</a><a class="secondary" href="/products/">商品一覧へ戻る</a></div></section><section class="notice"><strong>免責</strong><br>本ページは診断・治療・療法食の指示ではありません。持病、症状、療法食利用中の場合は必ず獣医師に相談してください。</section><section class="card"><h2>購入前に確認したいこと</h2><ul><li>療法食中・服薬中・健診異常がある場合は、購入前に主治医へ確認してください。</li><li>フード切り替えは少量から。便・吐き気・かゆみ・体重を見ながら進めます。</li><li>このページは商品選びの参考であり、診断・治療・療法食の指示ではありません。</li></ul><p><a class="secondary" href="/#diagnosis">うちの子タイプ診断で確認する</a> <a class="secondary" href="/pdf-karute/">健診ごはんカルテPDFを見る</a></p></section></article></main><footer>© わんにゃんごはんカルテ</footer></body></html>
