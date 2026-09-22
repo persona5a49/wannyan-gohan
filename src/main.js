@@ -652,9 +652,26 @@ function scoreAxes(a){
   return sc
 }
 function typeFor(a){ const sc=scoreAxes(a); const axes=[sc.open>=sc.watch?'open':'watch',sc.challenge>=sc.safe?'challenge':'safe',sc.active>=sc.calm?'active':'calm',sc.close>=sc.indie?'close':'indie']; return {name:TYPE_NAMES[axes.join('')]||'安心確認の寄り添いさん', axes} }
+const APPROACH_WHY = {
+  openchallenge:'人や新しい環境にも物怖じせず飛び込んでいけるタイプで、警戒よりも好奇心が先に立ちます。初対面の相手にもすぐ心を開きやすいぶん、飛び出しや誤飲などへの注意は飼い主側で意識して補う必要があります。',
+  opensafe:'人や犬には積極的に関心を向ける一方で、初めての物事には少し時間をかけて確かめたい面もあります。「人は平気だけど新しいモノは慎重」という組み合わせが、この子らしさの土台になっています。',
+  watchchallenge:'人や刺激的なものには慎重に距離を取る一方で、一度「これは大丈夫」と判断した新しいことには積極的に挑戦できる行動力があります。警戒心と好奇心が同居しているタイプです。',
+  watchsafe:'初対面の人や新しい環境どちらに対しても、まず様子を見てから動く慎重なタイプです。急かされるより、自分のペースで確認できる時間があるほど本来の落ち着きを発揮しやすくなります。'
+}
+const ENERGY_WHY = {
+  activeclose:'活動量が高く、それを飼い主と一緒に発散したいタイプです。ひとり遊びより、飼い主と関わる中でエネルギーを使うことで満足感を得やすい傾向があります。',
+  activeindie:'活動量は高いものの、自分の興味やペースを優先して動くタイプです。飼い主と一緒よりも、自分で探索したり遊んだりすることでエネルギーを発散しやすい面があります。',
+  calmclose:'普段は落ち着いていますが、飼い主のそばにいることを安心材料にしているタイプです。激しい運動より、そばで過ごす穏やかな時間の質が満足度に直結しやすいでしょう。',
+  calmindie:'活動量も控えめで、自分の時間やペースを大切にするタイプです。構われすぎるとかえって落ち着かなくなることがあり、そっとしておける環境が力を発揮する土台になります。'
+}
+function typeWhyNarrative(axes){
+  const approach = APPROACH_WHY[axes[0]+axes[1]] || ''
+  const energy = ENERGY_WHY[axes[2]+axes[3]] || ''
+  return `${approach}${energy}`
+}
 function profileFor(result){
   const axes = result.axes || ['watch','safe','calm','close']
-  const lead = axes.map(x=>AXIS_COPY[x]).join('、') + 'タイプです。性格の良し悪しではなく、暮らし方・ごはんの変え方を考えるための整理です。'
+  const lead = typeWhyNarrative(axes)
   const likely = axes.map(x=>AXIS_COPY[x])
   const care = []
   care.push(axes.includes('safe')?'変更は一つずつ、短い成功体験を積む':'新しい体験は安全を確保しながら楽しませる')
