@@ -1,0 +1,25 @@
+{
+  "id": "toy_poodle_v019",
+  "breed": "toy_poodle",
+  "variant": "v019",
+  "displayName": "メイ",
+  "visual": {
+    "coatColor": "white",
+    "furVolume": "light",
+    "faceShape": "round",
+    "eyeType": "droopy",
+    "earStyle": "drop_small",
+    "bodyType": "standard"
+  },
+  "personality": {
+    "activity": 59,
+    "sociability": 82,
+    "sensitivity": 10,
+    "foodMotivation": 33,
+    "independence": 98,
+    "curiosity": 39
+  },
+  "availableExpressions": [
+    "normal"
+  ]
+}

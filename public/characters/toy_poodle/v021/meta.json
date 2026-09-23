@@ -1,0 +1,25 @@
+{
+  "id": "toy_poodle_v021",
+  "breed": "toy_poodle",
+  "variant": "v021",
+  "displayName": "ひまり",
+  "visual": {
+    "coatColor": "brown",
+    "furVolume": "light",
+    "faceShape": "long",
+    "eyeType": "upturned",
+    "earStyle": "drop_medium",
+    "bodyType": "sturdy"
+  },
+  "personality": {
+    "activity": 75,
+    "sociability": 98,
+    "sensitivity": 13,
+    "foodMotivation": 36,
+    "independence": 100,
+    "curiosity": 55
+  },
+  "availableExpressions": [
+    "normal"
+  ]
+}

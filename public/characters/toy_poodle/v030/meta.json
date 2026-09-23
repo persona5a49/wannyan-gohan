@@ -1,0 +1,25 @@
+{
+  "id": "toy_poodle_v030",
+  "breed": "toy_poodle",
+  "variant": "v030",
+  "displayName": "はな",
+  "visual": {
+    "coatColor": "black",
+    "furVolume": "light",
+    "faceShape": "small",
+    "eyeType": "dot",
+    "earStyle": "drop_long",
+    "bodyType": "standard"
+  },
+  "personality": {
+    "activity": 100,
+    "sociability": 16,
+    "sensitivity": 39,
+    "foodMotivation": 75,
+    "independence": 32,
+    "curiosity": 81
+  },
+  "availableExpressions": [
+    "normal"
+  ]
+}

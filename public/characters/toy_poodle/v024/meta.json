@@ -1,0 +1,25 @@
+{
+  "id": "toy_poodle_v024",
+  "breed": "toy_poodle",
+  "variant": "v024",
+  "displayName": "ぷう",
+  "visual": {
+    "coatColor": "apricot_white",
+    "furVolume": "medium",
+    "faceShape": "small",
+    "eyeType": "dot",
+    "earStyle": "drop_medium",
+    "bodyType": "sturdy"
+  },
+  "personality": {
+    "activity": 79,
+    "sociability": 0,
+    "sensitivity": 30,
+    "foodMotivation": 53,
+    "independence": 10,
+    "curiosity": 59
+  },
+  "availableExpressions": [
+    "normal"
+  ]
+}

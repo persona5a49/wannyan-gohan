@@ -1,0 +1,25 @@
+{
+  "id": "toy_poodle_v005",
+  "breed": "toy_poodle",
+  "variant": "v005",
+  "displayName": "まる",
+  "visual": {
+    "coatColor": "brown",
+    "furVolume": "medium",
+    "faceShape": "small",
+    "eyeType": "egg",
+    "earStyle": "drop_small",
+    "bodyType": "standard"
+  },
+  "personality": {
+    "activity": 13,
+    "sociability": 36,
+    "sensitivity": 59,
+    "foodMotivation": 82,
+    "independence": 39,
+    "curiosity": 100
+  },
+  "availableExpressions": [
+    "normal"
+  ]
+}

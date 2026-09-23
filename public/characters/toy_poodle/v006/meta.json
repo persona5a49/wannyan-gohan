@@ -1,0 +1,25 @@
+{
+  "id": "toy_poodle_v006",
+  "breed": "toy_poodle",
+  "variant": "v006",
+  "displayName": "ソラ",
+  "visual": {
+    "coatColor": "black",
+    "furVolume": "medium",
+    "faceShape": "small",
+    "eyeType": "dot",
+    "earStyle": "drop_medium",
+    "bodyType": "standard"
+  },
+  "personality": {
+    "activity": 14,
+    "sociability": 37,
+    "sensitivity": 61,
+    "foodMotivation": 84,
+    "independence": 53,
+    "curiosity": 0
+  },
+  "availableExpressions": [
+    "normal"
+  ]
+}

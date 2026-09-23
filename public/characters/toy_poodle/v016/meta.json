@@ -1,0 +1,25 @@
+{
+  "id": "toy_poodle_v016",
+  "breed": "toy_poodle",
+  "variant": "v016",
+  "displayName": "ラテ",
+  "visual": {
+    "coatColor": "apricot_white",
+    "furVolume": "fluffy",
+    "faceShape": "long",
+    "eyeType": "narrow",
+    "earStyle": "drop_small",
+    "bodyType": "small"
+  },
+  "personality": {
+    "activity": 55,
+    "sociability": 78,
+    "sensitivity": 100,
+    "foodMotivation": 16,
+    "independence": 81,
+    "curiosity": 34
+  },
+  "availableExpressions": [
+    "normal"
+  ]
+}

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>うちの子キャラクター 個体レビュー（社内用）</title>
+<style>
+  :root{--green:#29543a;--line:#e7dece;--ink:#263028;--muted:#697064;--paper:#fffdf8}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;background:#faf7ef;color:var(--ink);padding:24px}
+  h1{font-size:22px;margin:0 0 4px}
+  .sub{color:var(--muted);margin:0 0 20px}
+  .toolbar{display:flex;gap:10px;align-items:center;margin-bottom:18px;flex-wrap:wrap}
+  select,input[type=text]{padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:14px}
+  .stat{font-size:13px;color:var(--muted)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px}
+  .thumb{width:100%;aspect-ratio:1/1;border-radius:12px;background:#f4f0e6;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+  .thumb img{width:100%;height:100%;object-fit:contain}
+  .thumb .placeholder{font-size:12px;color:var(--muted);text-align:center;padding:8px}
+  .badge{position:absolute;top:6px;left:6px;font-size:10px;font-weight:800;padding:3px 7px;border-radius:999px}
+  .badge.ok{background:#e8f3ea;color:var(--green)}
+  .badge.missing{background:#f4e9e0;color:#a15c2a}
+  .name{font-weight:900;font-size:15px}
+  .variant{font-size:11px;color:var(--muted);font-weight:800;letter-spacing:.04em}
+  .tags{display:flex;flex-wrap:wrap;gap:4px}
+  .tags span{background:#fff;border:1px solid var(--line);border-radius:999px;padding:3px 8px;font-size:11px;font-weight:700;color:#596358}
+  .pbars{display:flex;flex-direction:column;gap:3px;margin-top:2px}
+  .pbar-row{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--muted)}
+  .pbar-row .label{width:74px;flex-shrink:0}
+  .pbar-track{flex:1;height:6px;background:#eee6d6;border-radius:4px;overflow:hidden}
+  .pbar-fill{height:100%;background:var(--green)}
+  .card.selected{outline:2px solid var(--green)}
+  .checkbox-row{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+  <h1>うちの子キャラクター 個体レビュー</h1>
+  <p class="sub">toy_poodle × normal 30個体の確認用ページ（社内用・非公開）。画像はヘメが生成したものを public/characters/&lt;breed&gt;/&lt;variant&gt;/normal.webp に置くと自動で反映されます。</p>
+  <div class="toolbar">
+    <label class="stat">犬種:
+      <select id="breedSelect"><option value="toy_poodle">toy_poodle</option></select>
+    </label>
+    <span class="stat" id="statLine"></span>
+  </div>
+  <div class="grid" id="grid"></div>
+
+<script>
+const BASE = '../public/characters';
+
+async function loadBreed(breed){
+  const grid = document.getElementById('grid');
+  const statLine = document.getElementById('statLine');
+  grid.innerHTML = '読み込み中...';
+  let index;
+  try {
+    const res = await fetch(`${BASE}/${breed}/index.json`);
+    index = await res.json();
+  } catch(e) {
+    grid.innerHTML = `<p>index.jsonの読み込みに失敗しました: ${e}</p>`;
+    return;
+  }
+  const metas = [];
+  for (const variant of index.variants) {
+    try {
+      const res = await fetch(`${BASE}/${breed}/${variant}/meta.json`);
+      metas.push(await res.json());
+    } catch(e) {
+      metas.push({variant, id: `${breed}_${variant}`, displayName: '(meta.json読み込み失敗)', visual:{}, personality:{}});
+    }
+  }
+
+  let adoptedCount = 0;
+  grid.innerHTML = '';
+  metas.forEach(m => {
+    const imgPath = `${BASE}/${breed}/${m.variant}/normal.webp`;
+    const card = document.createElement('div');
+    card.className = 'card';
+    const p = m.personality || {};
+    const pRows = ['activity','sociability','sensitivity','foodMotivation','independence','curiosity']
+      .map(k => `<div class="pbar-row"><span class="label">${PLABEL[k]}</span><div class="pbar-track"><div class="pbar-fill" style="width:${p[k]||0}%"></div></div></div>`)
+      .join('');
+    const v = m.visual || {};
+    card.innerHTML = `
+      <div class="thumb">
+        <span class="badge missing" data-role="badge">未生成</span>
+        <img data-role="img" src="${imgPath}" alt="${m.displayName||''}" style="display:none">
+        <div class="placeholder" data-role="placeholder">画像未生成<br>${m.variant}</div>
+      </div>
+      <div class="variant">${m.variant} ／ ${m.id}</div>
+      <div class="name">${m.displayName || '(名称未設定)'}</div>
+      <div class="tags">
+        ${v.coatColor ? `<span>${v.coatColor}</span>` : ''}
+        ${v.faceShape ? `<span>${v.faceShape}</span>` : ''}
+        ${v.eyeType ? `<span>${v.eyeType}</span>` : ''}
+      </div>
+      <div class="pbars">${pRows}</div>
+    `;
+    const img = card.querySelector('[data-role=img]');
+    const badge = card.querySelector('[data-role=badge]');
+    const placeholder = card.querySelector('[data-role=placeholder]');
+    img.onload = () => {
+      img.style.display = 'block';
+      placeholder.style.display = 'none';
+      badge.textContent = '採用可';
+      badge.className = 'badge ok';
+      adoptedCount++;
+      statLine.textContent = `${metas.length}個体中 ${adoptedCount}枚 画像あり`;
+    };
+    img.onerror = () => { /* stays as placeholder/missing badge */ };
+    grid.appendChild(card);
+  });
+  statLine.textContent = `${metas.length}個体（画像読み込み中...）`;
+}
+
+const PLABEL = {
+  activity: '活動性', sociability: '社交性', sensitivity: '敏感さ',
+  foodMotivation: '食欲', independence: '独立心', curiosity: '好奇心'
+};
+
+document.getElementById('breedSelect').addEventListener('change', e => loadBreed(e.target.value));
+loadBreed('toy_poodle');
+</script>
+</body>
+</html>

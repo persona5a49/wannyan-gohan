@@ -1,0 +1,25 @@
+{
+  "id": "toy_poodle_v015",
+  "breed": "toy_poodle",
+  "variant": "v015",
+  "displayName": "レオ",
+  "visual": {
+    "coatColor": "gray",
+    "furVolume": "medium",
+    "faceShape": "long",
+    "eyeType": "upturned",
+    "earStyle": "drop_long",
+    "bodyType": "small"
+  },
+  "personality": {
+    "activity": 53,
+    "sociability": 76,
+    "sensitivity": 100,
+    "foodMotivation": 14,
+    "independence": 79,
+    "curiosity": 33
+  },
+  "availableExpressions": [
+    "normal"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "toy_poodle_v007",
+  "breed": "toy_poodle",
+  "variant": "v007",
+  "displayName": "ミルク",
+  "visual": {
+    "coatColor": "gray",
+    "furVolume": "fluffy",
+    "faceShape": "round",
+    "eyeType": "droopy",
+    "earStyle": "drop_medium",
+    "bodyType": "standard"
+  },
+  "personality": {
+    "activity": 16,
+    "sociability": 39,
+    "sensitivity": 75,
+    "foodMotivation": 98,
+    "independence": 55,
+    "curiosity": 8
+  },
+  "availableExpressions": [
+    "normal"
+  ]
+}

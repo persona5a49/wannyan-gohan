@@ -1,0 +1,25 @@
+{
+  "id": "toy_poodle_v020",
+  "breed": "toy_poodle",
+  "variant": "v020",
+  "displayName": "かい",
+  "visual": {
+    "coatColor": "red",
+    "furVolume": "light",
+    "faceShape": "round",
+    "eyeType": "round",
+    "earStyle": "drop_small",
+    "bodyType": "standard"
+  },
+  "personality": {
+    "activity": 61,
+    "sociability": 84,
+    "sensitivity": 11,
+    "foodMotivation": 34,
+    "independence": 100,
+    "curiosity": 53
+  },
+  "availableExpressions": [
+    "normal"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "toy_poodle_v004",
+  "breed": "toy_poodle",
+  "variant": "v004",
+  "displayName": "ハナ",
+  "visual": {
+    "coatColor": "red",
+    "furVolume": "medium",
+    "faceShape": "long",
+    "eyeType": "narrow",
+    "earStyle": "drop_small",
+    "bodyType": "small"
+  },
+  "personality": {
+    "activity": 11,
+    "sociability": 34,
+    "sensitivity": 58,
+    "foodMotivation": 81,
+    "independence": 37,
+    "curiosity": 100
+  },
+  "availableExpressions": [
+    "normal"
+  ]
+}
