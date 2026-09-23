@@ -54,6 +54,9 @@
   .profile{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:4px 14px 14px 4px;padding:16px 18px;margin-bottom:22px}
   .profile .lbl{font-size:12px;font-weight:800;color:var(--accent)}
   .profile .val{font-size:19px;font-weight:800;margin-top:4px}
+  .compat-row{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--green2);border-radius:4px 12px 12px 4px;padding:12px 16px;margin-bottom:12px}
+  .compat-row .compat-label{font-size:12px;font-weight:800;color:var(--green2);margin:0 0 5px}
+  .compat-row .small{margin:0}
   h2.sec{font-family:'Shippori Mincho B1',serif;font-size:17px;font-weight:800;margin:26px 0 12px;display:flex;align-items:center;gap:10px;color:var(--ink)}
   h2.sec:first-of-type{margin-top:0}
   h2.sec .num{background:var(--green);color:#fff;width:24px;height:24px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-family:'Noto Sans JP',sans-serif;font-weight:800;transform:rotate(-4deg)}
@@ -124,7 +127,7 @@
 
   <div class="panel">
     <h1>詳細ごはんカルテPDF 作成ツール</h1>
-    <p class="hint">Googleフォームの回答内容をここに入力すると、右側にPDF①（飼い主向け詳細カルテ・全12ページ）とPDF②（動物病院相談用サマリー・1ページ）のプレビューが生成されます。印刷ダイアログのページ範囲指定で2つのPDFとして別々に保存するか、まとめて1つのPDFとして保存してください（社内用・非公開ページ）。</p>
+    <p class="hint">Googleフォームの回答内容をここに入力すると、右側にPDF①（飼い主向け詳細カルテ・全13ページ）とPDF②（動物病院相談用サマリー・1ページ）のプレビューが生成されます。印刷ダイアログのページ範囲指定で2つのPDFとして別々に保存するか、まとめて1つのPDFとして保存してください（社内用・非公開ページ）。</p>
 
     <fieldset>
       <legend>基本情報</legend>
@@ -165,6 +168,14 @@
       </select>
       <label>食べ物への反応</label>
       <select id="foodDrive"><option value="normal">普通</option><option value="high">ごほうび・おやつに強く反応する</option><option value="low">食べムラがある／関心が薄い</option></select>
+      <label>飼い主様のMBTIタイプ（任意・分かれば）</label>
+      <select id="ownerMbti">
+        <option value="">未回答</option>
+        <option value="INTJ">INTJ</option><option value="INTP">INTP</option><option value="ENTJ">ENTJ</option><option value="ENTP">ENTP</option>
+        <option value="INFJ">INFJ</option><option value="INFP">INFP</option><option value="ENFJ">ENFJ</option><option value="ENFP">ENFP</option>
+        <option value="ISTJ">ISTJ</option><option value="ISFJ">ISFJ</option><option value="ESTJ">ESTJ</option><option value="ESFJ">ESFJ</option>
+        <option value="ISTP">ISTP</option><option value="ISFP">ISFP</option><option value="ESTP">ESTP</option><option value="ESFP">ESFP</option>
+      </select>
     </fieldset>
 
     <fieldset>
@@ -356,7 +367,7 @@
     <div class="actions">
       <button class="btn-print" onclick="window.print()">印刷してPDF保存</button>
       <button class="btn-reset" onclick="if(confirm('入力内容をすべてクリアしますか？'))location.reload()">入力内容をクリア</button>
-      <p class="hint" style="font-size:11px">印刷ダイアログの「ページ」欄で 1-12 を指定するとPDF①、13 を指定するとPDF②として個別に保存できます。</p>
+      <p class="hint" style="font-size:11px">印刷ダイアログの「ページ」欄で 1-13 を指定するとPDF①、14 を指定するとPDF②として個別に保存できます。</p>
     </div>
   </div>
 
@@ -374,7 +385,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.1 / 12　総合サマリー</p>
+          <p class="pg-tag">P.1 / 13　総合サマリー</p>
           <div class="pdf-mascot"><img src="../public/mascot/happy.png" width="44" alt=""><p>うちの子のこと、これから一緒に見ていこうね。</p></div>
           <div class="profile">
             <div class="lbl">対象のわんちゃん</div>
@@ -410,7 +421,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.2 / 12　性格・行動分析</p>
+          <p class="pg-tag">P.2 / 13　性格・行動分析</p>
 
           <h2 class="sec"><span class="num">1</span>新しい環境への反応</h2>
           <div class="box beige"><p style="margin:0;font-size:13px;line-height:1.8" id="peNewEnv"></p></div>
@@ -445,7 +456,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.3 / 12　生活スタイル分析</p>
+          <p class="pg-tag">P.3 / 13　生活スタイル分析</p>
 
           <h2 class="sec"><span class="num">1</span>運動量</h2>
           <div class="box beige"><p style="margin:0;font-size:13px;line-height:1.8" id="liExercise"></p></div>
@@ -473,7 +484,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.4 / 12　食事分析</p>
+          <p class="pg-tag">P.4 / 13　食事分析</p>
 
           <h2 class="sec"><span class="num">1</span>現在のフード量とごはん量の目安</h2>
           <div class="metrics">
@@ -507,7 +518,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.5 / 12　すでに良い状態のポイント</p>
+          <p class="pg-tag">P.5 / 13　すでに良い状態のポイント</p>
           <p class="small" style="margin-bottom:10px">問題点だけでなく、今のままで大丈夫な部分もお伝えします。</p>
           <ul class="good-list" id="goodList"></ul>
         </div>
@@ -522,7 +533,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.6 / 12　見直すと良いポイント（優先度順）</p>
+          <p class="pg-tag">P.6 / 13　見直すと良いポイント（優先度順）</p>
           <div id="priList"></div>
           <p class="small" id="pvRefs" style="margin-top:6px"></p>
         </div>
@@ -537,7 +548,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.7 / 12　フード選びで大切にしたい条件</p>
+          <p class="pg-tag">P.7 / 13　フード選びで大切にしたい条件</p>
           <p class="small" style="margin-bottom:10px">具体的な商品名の前に、このコにとって重要な「見るべき条件」を整理します。</p>
           <div id="critList"></div>
         </div>
@@ -552,7 +563,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.8 / 12　候補フード（順位づけはしていません）</p>
+          <p class="pg-tag">P.8 / 13　候補フード（順位づけはしていません）</p>
           <div id="prodCards"></div>
         </div>
       </section>
@@ -566,7 +577,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.9 / 12　候補フード比較表</p>
+          <p class="pg-tag">P.9 / 13　候補フード比較表</p>
           <div style="overflow-x:auto">
             <table class="cmp">
               <thead>
@@ -591,7 +602,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.10 / 12　今後3〜6ヶ月の見守りポイント</p>
+          <p class="pg-tag">P.10 / 13　今後3〜6ヶ月の見守りポイント</p>
           <table class="watch">
             <thead><tr><th>項目</th><th>今回の状態（基準）</th><th class="chk-cell">1ヶ月後</th><th class="chk-cell">3ヶ月後</th><th class="chk-cell">6ヶ月後</th></tr></thead>
             <tbody id="watchBody"></tbody>
@@ -625,7 +636,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.11 / 12　前回との比較</p>
+          <p class="pg-tag">P.11 / 13　前回との比較</p>
           <p class="small" style="margin-bottom:10px">前回のカルテ作成時の値と、今回の値を比較します。継続してご利用いただく中での変化の把握にお役立てください。</p>
           <div id="historyBody"></div>
         </div>
@@ -640,10 +651,26 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.12 / 12　3か月後に見る項目</p>
+          <p class="pg-tag">P.12 / 13　3か月後に見る項目</p>
           <div class="pdf-mascot"><img src="../public/mascot/cheer.png" width="40" alt=""><p>次に見るポイントはこれだよ。あせらず一緒に見ていこう。</p></div>
           <p class="small" style="margin-bottom:10px">今回の内容をもとに、次回（目安3か月後）のご来院・カルテ作成時に確認したい項目をまとめました。ここでの記録が、次回の「前回との比較」ページに活用されます。</p>
           <div id="recheck3moList"></div>
+        </div>
+      </section>
+
+      <!-- Page 13: 飼い主タイプとの相性 -->
+      <section class="pdf-page" id="pageOwnerCompat">
+        <div class="head">
+          <span class="date pv-date">2026/01/01 作成</span>
+          <div class="brand">わんにゃんごはんカルテ　PDF①　飼い主向け詳細カルテ</div>
+          <div class="title">飼い主タイプとの相性</div>
+          <div class="who pv-who"></div>
+        </div>
+        <div class="body">
+          <p class="pg-tag">P.13 / 13　飼い主タイプとの相性</p>
+          <div class="pdf-mascot"><img src="../public/mascot/happy.png" width="40" alt=""><p>飼い主様のタイプも教えてくれると、もっと詳しく分かるよ。</p></div>
+          <p class="small" style="margin-bottom:14px">このコの性格タイプと、飼い主様のMBTIタイプ（任意）を組み合わせて、日々の付き合い方のヒントをまとめます。MBTIは心理検査としての学術的裏付けが限定的な簡易フレームワークであり、本ページは診断ではなく、会話のきっかけとしてお楽しみください。</p>
+          <div id="ownerCompatBody"></div>
         </div>
       </section>
 
@@ -820,6 +847,7 @@ function render(){
   const symptoms = $('symptoms').value;
   const onMeds = $('onMeds').value, onTherapeutic = $('onTherapeutic').value;
   const hasFlag = k => checked.some(c => c.includes(k));
+  const ownerMbti = $('ownerMbti').value;
 
   const ctx = {
     dogName, age, weight, w, der, actualKcal, body: $('targetBody').value, bcs, bcsLabel,
@@ -827,7 +855,8 @@ function render(){
     axisSocial, axisCaution, axisActivity, axisBond, axisDogDistance, foodDrive,
     walkDetail, aloneTime, livingEnv, sleepNote, feedingEnv, currentIssues,
     typeName, hasFlag, snackDetail, createdDate: $('createdDate').value,
-    prevVisitDate, prevWeight, prevBcs, prevBcsLabel, prevFoodDrive, prevSnackDetail, prevHealthMemo
+    prevVisitDate, prevWeight, prevBcs, prevBcsLabel, prevFoodDrive, prevSnackDetail, prevHealthMemo,
+    ownerMbti
   };
 
   // ---- Page 1: 総合サマリー ----
@@ -965,7 +994,11 @@ function render(){
       <div class="priority-body"><strong>${it.title}</strong><p>${it.detail}</p></div>
     </div>`).join('');
 
-  // ---- Page 13: 動物病院相談用サマリー（PDF②） ----
+  // ---- Page 13: 飼い主タイプとの相性 ----
+  const compat = buildOwnerCompatibility(ctx);
+  $('ownerCompatBody').innerHTML = compat;
+
+  // ---- PDF②：動物病院相談用サマリー ----
   const vetBasicItems = [
     ['名前', dogName], ['犬種', breed || '-'], ['年齢', age ? age + '歳' : '-'],
     ['性別／避妊去勢', [sex, neuter].filter(Boolean).join('／') || '-'],
@@ -1539,7 +1572,95 @@ function buildRecheckItems(ctx){
   return items.slice(0, 8);
 }
 
-// ページ13：動物病院で相談したいこと（健診・症状フラグから該当する質問のみ抽出）
+const MBTI_AXIS = {
+  E:'E', I:'I', S:'S', N:'N', T:'T', F:'F', J:'J', P:'P'
+};
+function mbtiLetter(mbti, pos, a, b){
+  if (!mbti || mbti.length < 4) return '';
+  const c = mbti[pos];
+  if (c === a) return a;
+  if (c === b) return b;
+  return '';
+}
+
+// axisSocial(open/watch) × E/I
+const COMPAT_SOCIAL = {
+  open: {
+    E: '人にも犬にも積極的に関わるこの子と、外に出てエネルギーをもらうタイプの飼い主様は、お散歩や外出先での出会いを一緒に楽しめる好相性です。',
+    I: '人にも犬にも積極的に関わるこの子に対して、飼い主様は一人の時間で充電するタイプかもしれません。この子の社交性に無理に合わせすぎず、飼い主様ご自身のペースで外出の頻度を決めて大丈夫です。'
+  },
+  watch: {
+    E: '初対面には慎重なこの子に対して、飼い主様は外向的で人との交流を楽しむタイプかもしれません。この子のペースを飼い主様が代わりに守ってあげる（無理に挨拶させない、距離を確保するなど）意識を持つと、良いバランスになります。',
+    I: '初対面には慎重なこの子と、一人の時間を大切にするタイプの飼い主様は、静かな時間を一緒に楽しめる相性の良い組み合わせです。'
+  }
+};
+// axisCaution(challenge/safe) × S/N
+const COMPAT_CAUTION = {
+  safe: {
+    S: '安心できる手順を大事にするこの子と、具体的で着実な進め方を好む飼い主様は、一歩ずつ確実にトレーニングや生活の変化を進められる好相性です。',
+    N: '安心できる手順を大事にするこの子に対して、飼い主様はアイデアや可能性を重視するタイプかもしれません。新しいことを試す時は、この子のペースに合わせて具体的な手順に落とし込んであげると成功しやすくなります。'
+  },
+  challenge: {
+    S: '新しいことに物怖じしないこの子に対して、飼い主様は着実な進め方を好むタイプかもしれません。この子の好奇心を安全な範囲で存分に発揮させてあげられると、良い刺激になります。',
+    N: '新しいことに物怖じしないこの子と、新しい発想やアイデアを楽しむタイプの飼い主様は、一緒に新しい場所や遊びを開拓していける好相性です。'
+  }
+};
+// axisActivity(active/calm) × J/P
+const COMPAT_ACTIVITY = {
+  active: {
+    J: '活発でエネルギッシュなこの子と、計画的に物事を進めるタイプの飼い主様は、決まった時間に運動量をしっかり確保してあげることで、お互い安定したリズムを作りやすい組み合わせです。',
+    P: '活発でエネルギッシュなこの子と、その場の流れを楽しむタイプの飼い主様は、気ままにお出かけ先を変えたり、思いついた遊びを一緒に楽しめる相性です。'
+  },
+  calm: {
+    J: '落ち着いてマイペースなこの子と、計画的に物事を進めるタイプの飼い主様は、決まった生活リズムの中で安定した毎日を作りやすい組み合わせです。',
+    P: '落ち着いてマイペースなこの子と、柔軟にその場で決めるタイプの飼い主様は、お互いのんびりした時間を大切にできる好相性です。'
+  }
+};
+// axisBond(close/indie) × F/T
+const COMPAT_BOND = {
+  close: {
+    F: 'そばにいることを好むこの子と、気持ちに寄り添うことを大切にするタイプの飼い主様は、お互いの気持ちを深く通わせられる好相性です。',
+    T: 'そばにいることを好むこの子に対して、飼い主様は論理的に物事を判断するタイプかもしれません。感情表現が控えめでも、そばにいる時間そのものがこの子にとって大きな安心材料になっていることを意識してあげてください。'
+  },
+  indie: {
+    F: 'マイペースなこの子に対して、飼い主様は気持ちに寄り添うことを大切にするタイプかもしれません。構いすぎず見守る形の愛情表現も、この子にはしっかり伝わっています。',
+    T: 'マイペースなこの子と、物事を論理的に判断するタイプの飼い主様は、お互いの自立したペースを尊重し合える好相性です。'
+  }
+};
+
+// ページ13：MBTI（任意）× このコの性格タイプで、飼い主様との付き合い方のヒントを組み立てる
+function buildOwnerCompatibility(ctx){
+  const { dogName, axisSocial, axisCaution, axisActivity, axisBond, ownerMbti } = ctx;
+  const name = dogName && dogName !== '（未入力）' ? dogName : 'このコ';
+  const hasAxes = axisSocial || axisCaution || axisActivity || axisBond;
+
+  if (!ownerMbti) {
+    if (!hasAxes) {
+      return `<p class="small">現時点では、${name}の性格タイプと飼い主様のMBTIタイプの両方が未入力のため、相性コメントを作成できません。①のアンケートで性格の4項目と、任意でMBTIタイプをご記入いただくと、このページに付き合い方のヒントが表示されます。</p>`;
+    }
+    return `<p class="small">飼い主様のMBTIタイプが未入力です。①のフォームで「飼い主様のMBTIタイプ」を選択すると、${name}の性格タイプと組み合わせた付き合い方のヒントがここに表示されます。（MBTI診断は無料の簡易テストでも確認できます）</p>`;
+  }
+
+  const e = mbtiLetter(ownerMbti, 0, 'E', 'I');
+  const s = mbtiLetter(ownerMbti, 1, 'S', 'N');
+  const t = mbtiLetter(ownerMbti, 2, 'T', 'F');
+  const j = mbtiLetter(ownerMbti, 3, 'J', 'P');
+
+  const rows = [];
+  if (axisSocial && e) rows.push({ label: '人・犬との距離感', text: COMPAT_SOCIAL[axisSocial][e] });
+  if (axisCaution && s) rows.push({ label: '新しいことへの向き合い方', text: COMPAT_CAUTION[axisCaution][s] });
+  if (axisActivity && j) rows.push({ label: '活動量・生活リズム', text: COMPAT_ACTIVITY[axisActivity][j] });
+  if (axisBond && t) rows.push({ label: '甘え方・愛情表現', text: COMPAT_BOND[axisBond][t] });
+
+  if (!rows.length) {
+    return `<p class="small">${name}の性格タイプ（①のアンケート）が未入力のため、MBTI「${ownerMbti}」との相性コメントを作成できません。性格の4項目をご記入いただくと、このページにヒントが表示されます。</p>`;
+  }
+
+  const items = rows.map(r => `<div class="compat-row"><p class="compat-label">${r.label}</p><p class="small">${r.text}</p></div>`).join('');
+  return `<p class="small" style="margin-bottom:10px"><strong>${name}</strong>の性格タイプ × 飼い主様（MBTI: ${ownerMbti}）の組み合わせから見えるヒントです。</p>${items}`;
+}
+
+// PDF②：動物病院で相談したいこと（健診・症状フラグから該当する質問のみ抽出）
 function buildVetQuestions(ctx){
   const { weight, der, onMeds, onTherapeutic, checked, labValues, foodDrive, symptoms, hasFlag } = ctx;
   const symTxt = (symptoms || '').trim();
