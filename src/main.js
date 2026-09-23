@@ -209,7 +209,8 @@ const FOODS = [
   {name:'ロイヤルカナン ミニ ステアライズド', maker:'Royal Canin', kcal:345, protein:28, fat:11, priceKg:1746, tags:['neutered','small'], mainProtein:'チキン', fiber:7.6, url:'https://hb.afl.rakuten.co.jp/ichiba/57b5a3b9.ecf57661.57b5a3ba.8d1f18b9/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fdog-penet%2Ff11240%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'},
   {name:'カナガン ドッグフード チキン 大型犬用', maker:'レティシアン', kcal:391, protein:34, fat:17, priceKg:2459, tags:['grainfree','palatable','protein','large'], mainProtein:'チキン', kibbleSize:'大粒', url:'https://hb.afl.rakuten.co.jp/ichiba/57d0bda8.6669781c.57d0bda9.2e11d718/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Flaetitien%2Frakuten-cdfclb-01%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'},
   {name:'ブラバンソンヌ 大型犬・中型犬 成犬用 チキン', maker:'BRABANCONNE', kcal:346, protein:24, fat:14, priceKg:1540, tags:['grainfree','large','medium'], mainProtein:'チキン', url:'https://hb.afl.rakuten.co.jp/ichiba/57d0bfb1.8e204c36.57d0bfb2.847f0048/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fwepet%2F1746%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'},
-  {name:'ヒルズ サイエンス・ダイエット シニア 大型犬種用', maker:'Hill’s', kcal:363, protein:14.9, fat:11.4, priceKg:999, tags:['senior','large'], mainProtein:'チキン', url:'https://hb.afl.rakuten.co.jp/ichiba/57d6950a.8a7042ee.57d6950b.f4742820/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fhills-pet%2F52742015309%2F&link_type=hybrid_url&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJoeWJyaWRfdXJsIiwic2l6ZSI6IjI0MHgyNDAiLCJuYW0iOjEsIm5hbXAiOiJyaWdodCIsImNvbSI6MSwiY29tcCI6ImRvd24iLCJwcmljZSI6MSwiYm9yIjoxLCJjb2wiOjEsImJidG4iOjEsInByb2QiOjAsImFtcCI6ZmFsc2V9'}
+  {name:'ヒルズ サイエンス・ダイエット シニア 大型犬種用', maker:'Hill’s', kcal:363, protein:14.9, fat:11.4, priceKg:999, tags:['senior','large'], mainProtein:'チキン', url:'https://hb.afl.rakuten.co.jp/ichiba/57d6950a.8a7042ee.57d6950b.f4742820/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fhills-pet%2F52742015309%2F&link_type=hybrid_url&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJoeWJyaWRfdXJsIiwic2l6ZSI6IjI0MHgyNDAiLCJuYW0iOjEsIm5hbXAiOiJyaWdodCIsImNvbSI6MSwiY29tcCI6ImRvd24iLCJwcmljZSI6MSwiYm9yIjoxLCJjb2wiOjEsImJidG4iOjEsInByb2QiOjAsImFtcCI6ZmFsc2V9'},
+  {name:'ロイヤルカナン ミディアム ステアライズド', maker:'Royal Canin', kcal:348, protein:26, fat:11, priceKg:1848, tags:['neutered','medium'], mainProtein:'チキン', fiber:7.4, url:'https://hb.afl.rakuten.co.jp/ichiba/57b41d3d.0196a071.57b41d3e.22d83eeb/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fsweet-pet%2Fro0075si%2F&link_type=hybrid_url&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJoeWJyaWRfdXJsIiwic2l6ZSI6IjI0MHgyNDAiLCJuYW0iOjEsIm5hbXAiOiJyaWdodCIsImNvbSI6MSwiY29tcCI6ImRvd24iLCJwcmljZSI6MSwiYm9yIjoxLCJjb2wiOjEsImJidG4iOjEsInByb2QiOjAsImFtcCI6ZmFsc2V9'}
 ]
 
 const PRODUCT_SLUGS = {
@@ -227,7 +228,8 @@ const PRODUCT_SLUGS = {
   'ロイヤルカナン ミニ ステアライズド': 'royal-canin-mini-sterilised',
   'カナガン ドッグフード チキン 大型犬用': 'canagan-chicken-large',
   'ブラバンソンヌ 大型犬・中型犬 成犬用 チキン': 'brabanconne-large-medium',
-  'ヒルズ サイエンス・ダイエット シニア 大型犬種用': 'hills-senior-large'
+  'ヒルズ サイエンス・ダイエット シニア 大型犬種用': 'hills-senior-large',
+  'ロイヤルカナン ミディアム ステアライズド': 'royal-canin-medium-sterilised'
 }
 function productDetailUrl(name){ return PRODUCT_SLUGS[name] ? `/products/${PRODUCT_SLUGS[name]}/` : '#' }
 function productDetailHref(name, answers, r){
