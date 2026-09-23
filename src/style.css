@@ -63,6 +63,24 @@ body{background:linear-gradient(180deg,#fbfaf6 0%,#f4efe5 100%)}
 @media(max-width:760px){.timeline-list li{font-size:.82rem}}
 .pr-inline{display:block;margin-top:6px;font-size:.74rem;color:var(--muted)}
 
+/* mypage */
+.mypage{margin:40px 0}
+.mypage-card{display:flex;gap:24px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:24px;padding:24px;margin-top:14px}
+.mypage-photo{display:flex;flex-direction:column;align-items:center;gap:8px;width:140px;flex-shrink:0}
+.mypage-photo-img{width:140px;height:140px;object-fit:cover;border-radius:50%;border:3px solid #fff;box-shadow:0 8px 20px rgba(77,61,36,.15);background:#f4f0e6}
+.mypage-photo-upload{cursor:pointer;font-size:.85rem}
+.mypage-photo .remove-photo{background:none;border:0;font-size:.78rem;padding:0;cursor:pointer}
+.mypage-info{flex:1;min-width:220px}
+.mypage-info h3{margin:0;font-size:1.4rem}
+.mypage-type{color:var(--accent);font-weight:800;margin:4px 0 14px}
+.mypage-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.mypage-stats .stat{background:#f8f5ee;border-radius:14px;padding:10px 12px;text-align:center}
+.mypage-stats .stat strong{display:block;font-size:1.05rem;color:var(--green)}
+.mypage-stats .stat span{font-size:.74rem;color:var(--muted)}
+.mypage-actions{display:flex;gap:10px;flex-wrap:wrap}
+.mypage-actions .mypage-restart{border:0;font:inherit;cursor:pointer}
+@media(max-width:640px){.mypage-card{flex-direction:column;align-items:center;text-align:center}.mypage-stats{grid-template-columns:repeat(2,1fr)}.mypage-actions{justify-content:center}}
+
 /* brand refresh: mascot, hero, profile cover, breathing room */
 .mascot-img{flex-shrink:0;display:block;border-radius:14px}
 .mascot-line{display:flex;align-items:center;gap:10px;margin:0 0 12px}

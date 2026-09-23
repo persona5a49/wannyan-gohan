@@ -190,6 +190,28 @@ function addHistoryEntry(a, r){
 }
 function clearHistory(){ saveHistory([]) }
 
+const PHOTO_KEY = 'wannyan_dog_photo'
+function loadPhoto(){ try{ return localStorage.getItem(PHOTO_KEY) || null }catch(e){ return null } }
+function savePhoto(dataUrl){ localStorage.setItem(PHOTO_KEY, dataUrl) }
+function clearPhoto(){ localStorage.removeItem(PHOTO_KEY) }
+function readAndResizeImage(file, maxSize, cb){
+  const reader = new FileReader()
+  reader.onload = ()=>{
+    const img = new Image()
+    img.onload = ()=>{
+      let w = img.width, h = img.height
+      if(w > h && w > maxSize){ h = Math.round(h * maxSize / w); w = maxSize }
+      else if(h >= w && h > maxSize){ w = Math.round(w * maxSize / h); h = maxSize }
+      const canvas = document.createElement('canvas')
+      canvas.width = w; canvas.height = h
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h)
+      cb(canvas.toDataURL('image/jpeg', 0.85))
+    }
+    img.src = reader.result
+  }
+  reader.readAsDataURL(file)
+}
+
 const APPETITE_RANK = {good:0, uneven:1, picky:2, poor:3}
 const APPETITE_LABEL = {good:'安定して食べる', uneven:'食べムラがある', picky:'選り好みが出やすい', poor:'あまり食べない'}
 const TREAT_LABEL = {low:'ほとんどあげない', moderate:'少しあげる', high:'主食より多い', unknown:'家族分含め不明'}
@@ -1173,11 +1195,12 @@ function calcResult(a){
 
 function render(){
   document.querySelector('#app').innerHTML = `
-    <header class="site-header"><div class="brand">わんにゃんごはんカルテ</div><nav class="nav-links"><a href="/products/">商品一覧</a><a href="/products/compare/">比較</a><a href="#articles">記事</a><a href="/type-guides/">タイプ別ガイド</a><a href="#tracker">体重記録</a><a href="/pdf-karute/">詳細ごはんカルテPDF</a></nav><a href="#diagnosis" class="mini-cta js-diagnosis-start" data-location="header">無料でチェック</a></header>
+    <header class="site-header"><div class="brand">わんにゃんごはんカルテ</div><nav class="nav-links"><a href="#mypage">うちの子ホーム</a><a href="/products/">商品一覧</a><a href="/products/compare/">比較</a><a href="#articles">記事</a><a href="/type-guides/">タイプ別ガイド</a><a href="#tracker">体重記録</a><a href="/pdf-karute/">詳細ごはんカルテPDF</a></nav><a href="#diagnosis" class="mini-cta js-diagnosis-start" data-location="header">無料でチェック</a></header>
     <main>
       <section class="hero"><div class="hero-copy"><p class="eyebrow">うちの子の健康カルテ</p><h1>うちの子を、もっと知る。</h1><p class="lead">性格も、食事も、健診も。ひとつのカルテに。</p><p class="hero-explain">いくつか答えるだけで、この子に合うごはん量とフードの選び方が分かります。</p><div class="hero-actions"><a href="#diagnosis" class="primary js-diagnosis-start" data-location="hero">うちの子を見てみる</a><a href="/pdf-karute/" class="text-link hero-sub-link">くわしいPDFカルテもある →</a></div><div class="trust"><span>約3分</span><span>登録不要</span><span>医療判断ではなく相談前の整理</span></div></div><aside class="hero-mascot">${mascotBubble('happy', 'いっしょに、うちの子のことを見てみよう。', 120)}</aside></section>
       <section class="cards" id="why"><article><span>01</span><h2>16タイプ診断</h2><p>性格・行動の傾向を、覚えやすい「うちの子タイプ」で表示します。</p></article><article><span>02</span><h2>ごはん量とおやつ</h2><p>体重から目安カロリーと、おやつの上限をざっくり計算します。</p></article><article><span>03</span><h2>根拠と健診メモ</h2><p>研究用尺度とは区別したセルフチェックとして、腎臓・肝臓・尿検査など相談項目も整理します。</p></article></section>
       <section class="diagnosis" id="diagnosis">${renderDiagnosis()}</section>
+      <section class="mypage" id="mypage">${renderMyPage()}</section>
       <section class="tracker" id="tracker">${renderTracker()}</section>
       <section class="article-list" id="articles"><h2>シニア犬のごはん記事</h2><p class="helper">診察室でよく出る悩みを、できるだけ普通の言葉でまとめました。記事末に参考文献も載せています。</p><div class="article-cards">${ARTICLES.map(a=>`<a class="article-card js-article-click" data-article="${a.slug}" href="/articles/${a.slug}/"><span>記事</span><strong>${a.title}</strong><small>${a.lead}</small></a>`).join('')}</div><p><a class="secondary" href="/type-guides/">タイプ別ごはんガイドを見る</a></p></section>
       <section class="article-list" id="compare"><h2>条件から見るフード比較</h2><p class="helper">年齢・体型・活動量・食べ方・健診メモによって、見るべき成分やコストは変わります。まずは診断結果で重視条件を整理し、比較ページではkcal・脂質・粒サイズ・価格・1日コストを見比べます。</p><div class="article-cards"><a class="article-card" href="/products/compare/senior-dog-low-fat/"><span>比較</span><strong>低脂肪ドッグフード比較</strong><small>脂質や体重管理が気になる子向け。</small></a><a class="article-card" href="/products/compare/senior-dog-small-kibble/"><span>比較</span><strong>小粒ドッグフード比較</strong><small>口・歯・食べやすさが気になる小型犬向け。</small></a><a class="article-card" href="/products/compare/senior-dog-weight-control/"><span>比較</span><strong>体重管理ドッグフード比較</strong><small>太りやすくなった子の食事整理に。</small></a></div></section>
@@ -1269,6 +1292,48 @@ function renderDiagnosis(){
   if(step===0) introLine = mascotBubble('normal', '正解はないよ。いつもの様子を教えてね。', 56)
   else if(step === QUESTIONS.length-3) introLine = mascotBubble('cheer', 'あと少しだよ、がんばろう。', 56)
   return `<div class="question">${introLine}<p class="progress">${step+1} / ${QUESTIONS.length}</p><h2>${q.label}</h2>${q.cbarq ? `<p class="cbarq-hint">C-BARQを参考にした観察項目｜${q.cbarq}（公式尺度・診断ではありません）</p>` : ''}${renderInput(q)}<div class="nav"><button class="secondary back" ${step===0?'disabled':''}>戻る</button><button class="primary next">${step===QUESTIONS.length-1?'結果を見る':'次へ'}</button></div></div>`
+}
+function addMonthsToDate(iso, months){
+  const d = new Date(iso + 'T00:00:00')
+  d.setMonth(d.getMonth() + months)
+  return d.toISOString().slice(0,10)
+}
+function renderMyPage(){
+  const all = loadHistory()
+  const latest = all[all.length-1]
+  const photo = loadPhoto()
+  if(!latest){
+    return `<p class="eyebrow">うちの子ホーム</p><h2>マイページ</h2>
+      ${mascotBubble('empty', 'まだ記録がないみたい。まずは無料診断から始めてみよう。', 64)}
+      <a class="primary js-diagnosis-start js-mypage-start" href="#diagnosis" data-location="mypage_empty">うちの子タイプ診断をする</a>`
+  }
+  const name = latest.dogName ? `${latest.dogName}ちゃん` : 'うちの子'
+  const bl = bcsScore(latest.body)
+  const nextCheck = addMonthsToDate(latest.date, 3)
+  return `<p class="eyebrow">うちの子ホーム</p><h2>マイページ</h2><p class="helper">${name}の最新の記録をまとめています。写真はこの端末内にのみ保存されます。</p>
+    <div class="mypage-card">
+      <div class="mypage-photo">
+        <img class="mypage-photo-img" src="${photo || '/mascot/normal.png'}" alt="うちの子の写真">
+        <label class="mypage-photo-upload text-link">${photo ? '写真を変更する' : '写真を登録する'}<input type="file" accept="image/*" class="photo-input" hidden></label>
+        ${photo ? `<button type="button" class="text-link remove-photo">写真を削除</button>` : ''}
+      </div>
+      <div class="mypage-info">
+        <h3>${name}</h3>
+        <p class="mypage-type">${latest.type}</p>
+        <div class="mypage-stats">
+          <div class="stat"><strong>${latest.weight ? latest.weight+'kg' : '—'}</strong><span>最新体重</span></div>
+          <div class="stat"><strong>${bl ? 'BCS'+bl+'/5' : '—'}</strong><span>体型</span></div>
+          <div class="stat"><strong>${formatDateJp(latest.date)}</strong><span>最終診断日</span></div>
+          <div class="stat"><strong>${formatDateJp(nextCheck)}</strong><span>次のチェック目安</span></div>
+        </div>
+        <div class="mypage-actions">
+          <button type="button" class="primary mypage-restart">再診断する</button>
+          <a class="secondary" href="/pdf-karute/">PDFカルテを作る</a>
+          <a class="secondary" href="#tracker">体重を記録する</a>
+        </div>
+      </div>
+    </div>
+    ${renderHealthTimeline(all)}`
 }
 function renderTracker(){
   const list = loadWeights()
@@ -1404,6 +1469,26 @@ function bindEvents(){
     trackEvent('diagnosis_history_clear')
     render()
     location.hash = 'diagnosis'
+  })
+  document.querySelector('.photo-input')?.addEventListener('change', e=>{
+    const file = e.target.files && e.target.files[0]
+    if(!file) return
+    readAndResizeImage(file, 480, dataUrl=>{
+      savePhoto(dataUrl)
+      trackEvent('mypage_photo_save')
+      render()
+      location.hash = 'mypage'
+    })
+  })
+  document.querySelector('.remove-photo')?.addEventListener('click', ()=>{
+    clearPhoto()
+    trackEvent('mypage_photo_remove')
+    render()
+    location.hash = 'mypage'
+  })
+  document.querySelector('.mypage-restart')?.addEventListener('click', ()=>{
+    trackEvent('diagnosis_restart', {location:'mypage'})
+    answers={}; step=0; render(); location.hash='diagnosis'
   })
 }
 render()
