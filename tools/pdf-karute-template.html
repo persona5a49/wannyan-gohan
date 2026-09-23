@@ -176,8 +176,9 @@
       <select id="bcs">
         <option value="">未回答</option>
         <option value="thin">やせ気味</option>
-        <option value="ideal">適正</option>
-        <option value="heavy">やや肥満気味</option>
+        <option value="normal">適正</option>
+        <option value="chubby">やや丸め</option>
+        <option value="obese">ぽっちゃり</option>
       </select>
       <label>おやつの内容と量</label><textarea id="snackDetail"></textarea>
       <label>サプリメントの有無（内容も分かれば）</label><input type="text" id="supplement">
@@ -330,8 +331,9 @@
       <select id="prevBcs">
         <option value="">未回答</option>
         <option value="thin">やせ気味</option>
-        <option value="ideal">適正</option>
-        <option value="heavy">やや肥満気味</option>
+        <option value="normal">適正</option>
+        <option value="chubby">やや丸め</option>
+        <option value="obese">ぽっちゃり</option>
       </select>
       <label>前回の食欲の様子</label>
       <select id="prevFoodDrive">
@@ -716,17 +718,20 @@ const AXIS_LABEL = {
   friendly:'他の犬にも友好的', watchful:'様子を見てから近づく（対犬）', avoidant:'他の犬とは距離を置きたい'
 };
 
-const BCS_LABEL = {thin:'やせ気味', ideal:'適正', heavy:'やや肥満気味'};
-const BCS_ORDER = {thin:0, ideal:1, heavy:2};
+// サイト本体（src/main.js）のBCS_SCORE/bcsGaugeSvgと同じ5段階スケールに統一。
+// thin=2/normal=3/chubby=4/obese=5（本体のBCS目安X/5とキー・並びを揃えている）
+const BCS_LABEL = {thin:'やや細', normal:'適正', chubby:'やや丸', obese:'ぽっちゃり'};
+const BCS_ORDER = {thin:2, normal:3, chubby:4, obese:5};
 function bcsGaugeSvg(bcsKey){
   if (!bcsKey || !(bcsKey in BCS_ORDER)) return '';
-  const idx = BCS_ORDER[bcsKey];
-  const segW = 70;
-  const segs = [0,1,2].map(i => {
-    const active = i === idx;
+  const score = BCS_ORDER[bcsKey];
+  const labels = ['やせ','やや細','適正','やや丸','ぽっちゃり'];
+  const segW = 44;
+  const segs = [1,2,3,4,5].map((n,i) => {
+    const active = n === score;
     return `<rect x="${i*segW}" y="0" width="${segW-4}" height="14" rx="6" fill="${active ? '#244f35' : '#e4dccb'}"></rect>`;
   }).join('');
-  return `<svg viewBox="0 0 ${segW*3} 30" width="180" height="30" style="display:block;margin-top:8px">${segs}<text x="${idx*segW+(segW-4)/2}" y="27" font-size="9" font-weight="800" fill="#244f35" text-anchor="middle">${BCS_LABEL[bcsKey]}</text></svg>`;
+  return `<svg viewBox="0 0 ${segW*5} 30" width="220" height="30" style="display:block;margin-top:8px">${segs}<text x="${(score-1)*segW+(segW-4)/2}" y="27" font-size="9" font-weight="800" fill="#244f35" text-anchor="middle">${labels[score-1]}</text></svg>`;
 }
 const FOOD_DRIVE_LABEL = {normal:'普通', high:'ごほうび・おやつに強く反応する', low:'食べムラがある／関心が薄い'};
 
@@ -738,7 +743,7 @@ function render(){
   const neuter = $('neuter').value;
   const weight = $('weight').value;
   const bcs = $('bcs').value;
-  const bcsLabel = {thin:'やせ気味', ideal:'適正', heavy:'やや肥満気味'}[bcs] || '';
+  const bcsLabel = BCS_LABEL[bcs] || '';
 
   document.querySelectorAll('.pv-date').forEach(el => el.textContent = fmtDate($('createdDate').value) + ' 作成');
 
@@ -1057,8 +1062,8 @@ function buildInsights(ctx){
     pts.push('他の犬との接触は苦手・避けたい傾向があるタイプです。無理に慣れさせようとせず、距離を保てる環境を選んであげることが、日々のストレスを減らすことにつながります。');
   }
 
-  // H. 体型スコア（BCS）がやや肥満気味（新規追加・自由記述に依存しない体型判定）
-  if (bcs === 'heavy') {
+  // H. 体型スコア（BCS）がやや丸め〜ぽっちゃり（新規追加・自由記述に依存しない体型判定）
+  if (bcs === 'chubby' || bcs === 'obese') {
     pts.push('体型スコア（BCS）がやや肥満気味とのことです。体重の増減は数値だけでなく、実際に触って肋骨の触れ方を定期的に確認しながら、極端な減量ではなく緩やかな見直しを心がけてください。');
   }
 
@@ -1304,7 +1309,7 @@ function buildGoodPoints(ctx){
   const symTxt = (symptoms || '').trim();
   const out = [];
 
-  if (bcs === 'ideal') out.push('体型スコア（BCS）は適正範囲とのことです。今の給与量・運動量のバランスがうまく取れている証拠なので、この状態を維持していきましょう。');
+  if (bcs === 'normal') out.push('体型スコア（BCS）は適正範囲とのことです。今の給与量・運動量のバランスがうまく取れている証拠なので、この状態を維持していきましょう。');
   if (!checked.length) out.push('健診で気になる項目のチェックはありませんでした。今のところ大きな指摘はない状態です。');
   if (der > 0 && actualKcal > 0) {
     const ratio = actualKcal / der;
@@ -1329,7 +1334,7 @@ function buildFoodCriteria(ctx){
   const giSymptom = /軟便|下痢|嘔吐|お腹|吐/.test(symTxt);
   const out = [];
 
-  if (heavyish || bcs === 'heavy') out.push(['カロリー・脂質（体型管理）', 'kcal/100gと脂質量を、現在のフードと比べて確認しましょう。おやつ込みの総カロリーで判断することが大切です。']);
+  if (heavyish || bcs === 'chubby' || bcs === 'obese') out.push(['カロリー・脂質（体型管理）', 'kcal/100gと脂質量を、現在のフードと比べて確認しましょう。おやつ込みの総カロリーで判断することが大切です。']);
   if (foodDrive === 'low' || giSymptom) out.push(['粒サイズ・香り・食感（食べやすさ）', '小粒・香りの強さ・ふやかしやすさなど、食べムラのある子でも口にしやすい工夫があるかを見ます。']);
   if (cautious || giSymptom) out.push(['消化のよさ・切り替えやすさ', '食物繊維の量や脂質バランス、便の状態が安定しやすい設計かを確認します。切り替え時は必ず7〜10日以上かけてください。']);
   if (hasFlag('腎臓系') || hasFlag('肝臓系') || hasFlag('中性脂肪') || hasFlag('血糖')) out.push(['原材料・栄養バランス', '特定の栄養素を大きく制限・強化した設計になっていないか確認し、療法食が必要かどうかも含めて主治医に相談してください。']);
@@ -1452,8 +1457,10 @@ function buildHistoryComparison(ctx){
   // 主治医に伝えるとよいポイント（悪化方向の変化のみ抽出。数値の捏造はしない）
   if (weight && prevWeight) {
     const diffKg = Number(weight) - Number(prevWeight);
-    if (diffKg > 0 && (bcs === 'heavy' || prevBcs === 'heavy')) {
-      alerts.push('体型がやや肥満気味の状態で、さらに体重が増えています。給与量・おやつ量の見直しについて主治医にご相談ください。');
+    const bcsHeavyNow = bcs === 'chubby' || bcs === 'obese';
+    const bcsHeavyPrev = prevBcs === 'chubby' || prevBcs === 'obese';
+    if (diffKg > 0 && (bcsHeavyNow || bcsHeavyPrev)) {
+      alerts.push('体型がやや丸め〜ぽっちゃりの状態で、さらに体重が増えています。給与量・おやつ量の見直しについて主治医にご相談ください。');
     }
     if (diffKg < 0 && (bcs === 'thin' || prevBcs === 'thin')) {
       alerts.push('体型がやせ気味の状態で、さらに体重が減っています。意図しない体重減少でないか、主治医にご確認ください。');
@@ -1481,7 +1488,7 @@ function buildRecheckItems(ctx){
           onMeds, onTherapeutic, hasFlag, currentIssues } = ctx;
   const bodyTxt = (body || '').trim();
   const symTxt = (symptoms || '').trim();
-  const heavyish = /肥満|ぽっちゃり|obese|増加/i.test(bodyTxt) || bcs === 'heavy';
+  const heavyish = /肥満|ぽっちゃり|obese|増加/i.test(bodyTxt) || bcs === 'chubby' || bcs === 'obese';
   const thinnish = /痩せ|やせ|減少/i.test(bodyTxt) || bcs === 'thin' || hasFlag('体重減少');
   const giSymptom = /軟便|下痢|嘔吐|お腹|吐/.test(symTxt);
   const items = [];
