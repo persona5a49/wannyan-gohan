@@ -234,7 +234,7 @@ function therapeuticCandidates(a){
 }
 
 const BREED_GROUPS = {
-  toy:'超小型・小型犬', companion:'愛玩・家庭犬', retriever:'レトリーバー系', herding:'牧羊・作業犬系', terrier:'テリア系', hound:'猟犬・サイトハウンド系', spitz:'柴・スピッツ系', brachy:'短頭種', large:'大型・超大型犬', mix:'ミックス・不明'
+  toy:'超小型・小型犬', companion:'シーズー・マルチーズ・キャバリア系', retriever:'レトリーバー系', herding:'牧羊・作業犬系', terrier:'テリア系', hound:'猟犬・サイトハウンド系', spitz:'柴・スピッツ系', brachy:'短頭種', large:'大型・超大型犬', mix:'ミックス・不明'
 }
 const BREED_NOTES = {
   toy:'小さな体重変化でもカロリー差が出やすいので、おやつ量を数字で見ると調整しやすいです。',
@@ -251,7 +251,7 @@ const BREED_NOTES = {
 
 const QUESTIONS = [
   {key:'dogName', label:'まず、うちの子の名前を教えてください（任意）', type:'text', placeholder:'例：こむぎ'},
-  {key:'breedGroup', label:'体格や犬種の雰囲気で近いものは？', type:'choice', options:[['toy','超小型・小型犬'],['companion','愛玩・家庭犬'],['retriever','レトリーバー系'],['herding','牧羊・作業犬系'],['terrier','テリア系'],['hound','猟犬・サイトハウンド系'],['spitz','柴・スピッツ系'],['brachy','短頭種'],['large','大型・超大型犬'],['mix','ミックス・不明']]},
+  {key:'breedGroup', label:'体格や犬種の雰囲気で近いものは？', type:'choice', options:[['toy','超小型・小型犬'],['companion','シーズー・マルチーズ・キャバリア系'],['retriever','レトリーバー系'],['herding','牧羊・作業犬系'],['terrier','テリア系'],['hound','猟犬・サイトハウンド系'],['spitz','柴・スピッツ系'],['brachy','短頭種'],['large','大型・超大型犬'],['mix','ミックス・不明']]},
   {key:'age', label:'年齢はどのくらいですか？', type:'choice', options:[['under1','1歳未満（子犬期）'],['1-6','1〜6歳（成犬）'],['7-9','7〜9歳（中高齢）'],['10-12','10〜12歳（シニア）'],['13+','13歳以上（ハイシニア）']]},
   {key:'weight', label:'今の体重を入れてください', type:'number', suffix:'kg', placeholder:'例：5.2'},
   {key:'body', label:'上から見た体型・触った感じに近いのは？', type:'choice', options:[['thin','肋骨が目立つ・やせ気味'],['normal','くびれがあり、ちょうどよい'],['chubby','少し丸くなってきた'],['obese','明らかにぽっちゃり']]},
