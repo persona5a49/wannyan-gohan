@@ -1406,7 +1406,7 @@ function renderHistorySection(list){
   const moodLine = cmp.watchItems.length ? '少し気になるところがあるね。主治医にも伝えてみよう。' : (cmp.details.length ? '前回からの変化、一緒に見てみよう。' : '大きな変化はなさそう。安心だね。')
   const summary = `前回（${formatDateJp(previous.date)}）から今回（${formatDateJp(current.date)}）までの変化をまとめました。`
   const recent = list.slice(-5).reverse()
-  return `<div class="karte-section history-section"><h3>これまでの記録と変化</h3>${mascotBubble(mood, moodLine, 48)}<p>${summary}</p>
+  return `<div class="karte-section history-section"><h3>これまでの記録と変化</h3>${guideBubble(mood, moodLine, 48)}<p>${summary}</p>
     ${cmp.details.length ? `<ul class="history-detail-list">${cmp.details.map(x=>`<li>${x}</li>`).join('')}</ul>` : '<p class="helper">前回から大きな変化は見られません。</p>'}
     ${cmp.watchItems.length ? `<div class="note history-watch"><h4>主治医に伝えるとよいポイント</h4><ul>${cmp.watchItems.map(x=>`<li>${x}</li>`).join('')}</ul></div>` : ''}
     <details class="history-log"><summary>過去の記録一覧を見る</summary><ul class="history-list">${recent.map(h=>`<li><span>${formatDateJp(h.date)}</span><span>${h.type}</span><span>${h.weight ? h.weight+'kg' : '—'}</span></li>`).join('')}</ul></details>
@@ -1468,8 +1468,8 @@ function renderDiagnosis(){
   }
   const q = QUESTIONS[step]
   let introLine = ''
-  if(step===0) introLine = mascotBubble('normal', '正解はないよ。いつもの様子を教えてね。', 56)
-  else if(step === QUESTIONS.length-3) introLine = mascotBubble('cheer', 'あと少しだよ、がんばろう。', 56)
+  if(step===0) introLine = guideBubble('thinking', '正解はないよ。いつもの様子を教えてね。', 56)
+  else if(step === QUESTIONS.length-3) introLine = guideBubble('cheer', 'あと少しだよ、がんばろう。', 56)
   return `<div class="question">${introLine}<p class="progress">${step+1} / ${QUESTIONS.length}</p><h2>${q.label}</h2>${q.cbarq ? `<p class="cbarq-hint">C-BARQを参考にした観察項目｜${q.cbarq}（公式尺度・診断ではありません）</p>` : ''}${renderInput(q)}<div class="nav"><button class="secondary back" ${step===0?'disabled':''}>戻る</button><button class="primary next">${step===QUESTIONS.length-1?'結果を見る':'次へ'}</button></div></div>`
 }
 function addMonthsToDate(iso, months){
