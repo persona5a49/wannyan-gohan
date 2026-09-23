@@ -4,16 +4,22 @@
 <meta charset="UTF-8">
 <title>詳細ごはんカルテPDF 作成ツール（社内用）</title>
 <meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;800&family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;color:#20231f}
+  :root{
+    font-family:'Noto Sans JP',-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;color:#263028;
+    --green:#29543a;--green2:#6f8a55;--cream:#faf7ef;--paper:#fffdf8;--line:#e7dece;--ink:#263028;--muted:#697064;--accent:#b8834b;--mint:#edf6ed
+  }
   *{box-sizing:border-box}
   body{margin:0;background:#eef1ea}
   .app{display:grid;grid-template-columns:380px 1fr;min-height:100vh}
-  .panel{background:#fff;padding:20px;overflow-y:auto;border-right:1px solid #e0e0d8}
-  .panel h1{font-size:18px;margin:0 0 4px}
+  .panel{background:#fff;padding:20px;overflow-y:auto;border-right:1px solid var(--line)}
+  .panel h1{font-family:'Shippori Mincho B1',serif;font-size:19px;margin:0 0 4px}
   .panel .hint{color:#666;font-size:12px;margin:0 0 18px}
-  .panel fieldset{border:1px solid #e0e0d8;border-radius:10px;margin:0 0 14px;padding:10px 12px}
-  .panel legend{font-weight:700;font-size:13px;padding:0 6px;color:#244f35}
+  .panel fieldset{border:1px solid var(--line);border-radius:10px;margin:0 0 14px;padding:10px 12px}
+  .panel legend{font-weight:700;font-size:13px;padding:0 6px;color:var(--green)}
   .panel label{display:block;font-size:12px;color:#444;margin:8px 0 3px}
   .panel input[type=text],.panel input[type=number],.panel input[type=date],.panel select,.panel textarea{
     width:100%;padding:7px 8px;border:1px solid #ccc;border-radius:6px;font-size:13px;font-family:inherit}
@@ -23,62 +29,63 @@
   .chk{display:flex;align-items:center;gap:6px;font-size:12px;margin:4px 0}
   .chk input{width:auto}
   .panel details{border:1px dashed #dcdcd2;border-radius:8px;margin:8px 0;padding:6px 10px}
-  .panel details summary{font-size:12px;font-weight:700;color:#244f35;cursor:pointer;padding:4px 0}
-  .actions{position:sticky;bottom:0;background:#fff;padding:12px 0 0;margin-top:10px;border-top:1px solid #e0e0d8}
+  .panel details summary{font-size:12px;font-weight:700;color:var(--green);cursor:pointer;padding:4px 0}
+  .actions{position:sticky;bottom:0;background:#fff;padding:12px 0 0;margin-top:10px;border-top:1px solid var(--line)}
   .actions .hint{margin:8px 0 0}
   button{cursor:pointer;font-family:inherit}
-  .btn-print{width:100%;background:#244f35;color:#fff;border:0;border-radius:999px;padding:12px;font-size:14px;font-weight:800}
+  .btn-print{width:100%;background:var(--green);color:#fff;border:0;border-radius:999px;padding:12px;font-size:14px;font-weight:800}
   .btn-reset{width:100%;background:none;border:1px solid #ccc;color:#555;border-radius:999px;padding:8px;font-size:12px;margin-top:8px}
   .preview-wrap{padding:24px;display:flex;justify-content:center;overflow-y:auto}
   .sheet{width:794px}
-  .pdf-page{background:#fff;min-height:1123px;position:relative;box-shadow:0 4px 24px rgba(0,0,0,.12);margin-bottom:24px;page-break-after:always;break-after:page}
+  .pdf-page{background:var(--paper);min-height:1123px;position:relative;box-shadow:0 4px 24px rgba(0,0,0,.12);margin-bottom:24px;page-break-after:always;break-after:page;border-top:6px solid var(--accent)}
   .pdf-page:last-child{margin-bottom:0}
   .pdf2-divider{text-align:center;font-size:11px;color:#8a9284;margin:0 0 24px;letter-spacing:2px}
-  .head{background:#244f35;color:#fff;padding:22px 44px 18px}
-  .head .brand{font-size:12px;font-weight:800;color:#cfe1d1;letter-spacing:1px}
-  .head .title{font-size:21px;font-weight:800;margin-top:5px}
-  .head .who{font-size:12px;color:#cfe1d1;margin-top:3px}
-  .head .date{float:right;background:rgba(255,255,255,.15);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:700}
+  .head{background:var(--green);background-image:radial-gradient(circle at 100% 0%,rgba(255,255,255,.07),transparent 55%);color:#fff;padding:24px 44px 20px;position:relative}
+  .head:after{content:"";position:absolute;left:44px;right:44px;bottom:0;height:1px;background:rgba(255,255,255,.18)}
+  .head .brand{font-family:'Shippori Mincho B1',serif;font-size:13px;font-weight:600;color:#e3ead9;letter-spacing:2px}
+  .head .title{font-family:'Shippori Mincho B1',serif;font-size:23px;font-weight:800;margin-top:6px;letter-spacing:.02em}
+  .head .who{font-size:12px;color:#cfe1d1;margin-top:4px}
+  .head .date{float:right;background:var(--accent);color:#fff;border-radius:20px;padding:5px 14px;font-size:12px;font-weight:700}
   .pg-tag{font-size:11px;color:#98a094;margin:0 0 10px}
-  .pdf-mascot{display:flex;align-items:center;gap:12px;background:#fbfaf5;border:1px solid #e8e2d5;border-radius:14px;padding:12px 16px;margin-bottom:16px}
+  .pdf-mascot{display:flex;align-items:center;gap:12px;background:var(--mint);border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-bottom:16px}
   .pdf-mascot img{border-radius:10px;flex-shrink:0}
   .pdf-mascot p{margin:0;font-size:12.5px;font-weight:700;color:#3f463d}
-  .body{padding:26px 44px 46px}
-  .profile{background:#fbfaf5;border:1px solid #e8e2d5;border-radius:14px;padding:16px 18px;margin-bottom:22px}
-  .profile .lbl{font-size:12px;font-weight:800;color:#6b7d37}
+  .body{padding:28px 44px 46px}
+  .profile{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:4px 14px 14px 4px;padding:16px 18px;margin-bottom:22px}
+  .profile .lbl{font-size:12px;font-weight:800;color:var(--accent)}
   .profile .val{font-size:19px;font-weight:800;margin-top:4px}
-  h2.sec{font-size:16px;font-weight:800;margin:22px 0 10px;display:flex;align-items:center;gap:8px}
+  h2.sec{font-family:'Shippori Mincho B1',serif;font-size:17px;font-weight:800;margin:26px 0 12px;display:flex;align-items:center;gap:10px;color:var(--ink)}
   h2.sec:first-of-type{margin-top:0}
-  h2.sec .num{background:#244f35;color:#fff;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px}
+  h2.sec .num{background:var(--green);color:#fff;width:24px;height:24px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-family:'Noto Sans JP',sans-serif;font-weight:800;transform:rotate(-4deg)}
   .box{border-radius:12px;padding:14px 16px;margin-bottom:4px}
-  .box.green{background:#edf5ee}
-  .box.beige{background:#fbfaf5;border:1px solid #e8e2d5}
-  .box.amber{background:#fff7e6;border:1px solid #eed7b5}
+  .box.green{background:var(--mint)}
+  .box.beige{background:var(--paper);border:1px solid var(--line)}
+  .box.amber{background:#fdf3e4;border:1px solid #ecd3a8}
   .metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .metric strong{font-size:24px;display:block}
-  .metric span{font-size:12px;color:#667064}
+  .metric strong{font-family:'Shippori Mincho B1',serif;font-size:25px;display:block;color:var(--green)}
+  .metric span{font-size:12px;color:var(--muted)}
   ul.plain{margin:6px 0 0;padding-left:18px;font-size:13px;line-height:1.7}
-  p.small{font-size:12px;color:#667064;margin:4px 0 0}
+  p.small{font-size:12px;color:var(--muted);margin:4px 0 0}
   .disclaimer{margin-top:30px;font-size:11px;color:#98a094;border-top:1px solid #eee;padding-top:14px}
   .good-list{list-style:none;margin:6px 0 0;padding:0}
-  .good-list li{padding:9px 12px;margin-bottom:7px;background:#edf5ee;border-radius:8px;font-size:13px;line-height:1.7}
-  .good-list li:before{content:"✓ ";color:#244f35;font-weight:800}
+  .good-list li{padding:9px 12px;margin-bottom:7px;background:var(--mint);border-radius:8px;font-size:13px;line-height:1.7}
+  .good-list li:before{content:"✓ ";color:var(--green);font-weight:800}
   .priority-item{display:flex;gap:12px;margin-bottom:16px;align-items:flex-start}
-  .priority-num{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:#244f35;color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center}
-  .priority-body strong{display:block;font-size:12px;color:#6b7d37;margin-bottom:3px}
+  .priority-num{flex:0 0 auto;width:26px;height:26px;border-radius:7px;background:var(--accent);color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;transform:rotate(-4deg)}
+  .priority-body strong{display:block;font-size:12px;color:var(--accent);margin-bottom:3px}
   .priority-body p{margin:0;font-size:13px;line-height:1.8}
   .criteria-item{border-bottom:1px solid #eee;padding:10px 2px}
   .criteria-item:last-child{border-bottom:0}
-  .criteria-item .k{font-size:13px;font-weight:800;color:#244f35}
+  .criteria-item .k{font-size:13px;font-weight:800;color:var(--green)}
   .criteria-item .v{font-size:12.5px;color:#3c453e;margin-top:3px;line-height:1.75}
-  .product-card{border:1px solid #e8e2d5;border-radius:12px;padding:14px 16px;margin-bottom:12px;background:#fbfaf5}
-  .product-card .tag{display:inline-block;background:#244f35;color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;margin-bottom:7px}
+  .product-card{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:12px;background:var(--paper)}
+  .product-card .tag{display:inline-block;background:var(--green);color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;margin-bottom:7px}
   .product-card .pname{font-size:15px;font-weight:800}
-  .product-card .pstats{font-size:11.5px;color:#667064;margin:5px 0}
+  .product-card .pstats{font-size:11.5px;color:var(--muted);margin:5px 0}
   .product-card .preason{font-size:12.5px;line-height:1.75;margin-top:6px}
   table.cmp{width:100%;border-collapse:collapse;font-size:10px;table-layout:fixed}
-  table.cmp th,table.cmp td{border:1px solid #e0e0d8;padding:5px 5px;text-align:left;vertical-align:top;word-break:break-word;overflow-wrap:break-word}
-  table.cmp th{background:#edf5ee;font-weight:800;font-size:9.5px}
+  table.cmp th,table.cmp td{border:1px solid var(--line);padding:5px 5px;text-align:left;vertical-align:top;word-break:break-word;overflow-wrap:break-word}
+  table.cmp th{background:var(--mint);font-weight:800;font-size:9.5px}
   table.cmp th:nth-child(1),table.cmp td:nth-child(1){width:11%}
   table.cmp th:nth-child(2),table.cmp td:nth-child(2){width:6%}
   table.cmp th:nth-child(3),table.cmp td:nth-child(3){width:11%}
@@ -90,14 +97,14 @@
   table.cmp th:nth-child(9),table.cmp td:nth-child(9){width:8%}
   table.cmp th:nth-child(10),table.cmp td:nth-child(10){width:25%}
   table.watch{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
-  table.watch th,table.watch td{border:1px solid #e0e0d8;padding:9px 8px;text-align:left}
-  table.watch th{background:#fbfaf5}
+  table.watch th,table.watch td{border:1px solid var(--line);padding:9px 8px;text-align:left}
+  table.watch th{background:var(--paper)}
   table.watch td.chk-cell{width:64px;text-align:center}
   .vet-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;margin-bottom:16px}
   .vet-grid .f{font-size:11px;color:#8a9284}
   .vet-grid .v{font-size:13px;font-weight:700;margin-top:1px}
   .vet-section{margin-bottom:14px}
-  .vet-section h3{font-size:12px;font-weight:800;color:#6b7d37;margin:0 0 6px}
+  .vet-section h3{font-size:12px;font-weight:800;color:var(--accent);margin:0 0 6px}
   @media print{
     body{background:#fff}
     .panel{display:none}
@@ -648,7 +655,6 @@
         <div class="head">
           <span class="date pv-date">2026/01/01 作成</span>
           <div class="brand">わんにゃんごはんカルテ　PDF②　動物病院相談用サマリー</div>
-          <div class="title">診察にそのままお持ちください</div>
           <div class="who pv-who"></div>
         </div>
         <div class="body" style="padding:22px 40px 30px">
@@ -729,9 +735,9 @@ function bcsGaugeSvg(bcsKey){
   const segW = 44;
   const segs = [1,2,3,4,5].map((n,i) => {
     const active = n === score;
-    return `<rect x="${i*segW}" y="0" width="${segW-4}" height="14" rx="6" fill="${active ? '#244f35' : '#e4dccb'}"></rect>`;
+    return `<rect x="${i*segW}" y="0" width="${segW-4}" height="14" rx="6" fill="${active ? '#29543a' : '#e4dccb'}"></rect>`;
   }).join('');
-  return `<svg viewBox="0 0 ${segW*5} 30" width="220" height="30" style="display:block;margin-top:8px">${segs}<text x="${(score-1)*segW+(segW-4)/2}" y="27" font-size="9" font-weight="800" fill="#244f35" text-anchor="middle">${labels[score-1]}</text></svg>`;
+  return `<svg viewBox="0 0 ${segW*5} 30" width="220" height="30" style="display:block;margin-top:8px">${segs}<text x="${(score-1)*segW+(segW-4)/2}" y="27" font-size="9" font-weight="800" fill="#29543a" text-anchor="middle">${labels[score-1]}</text></svg>`;
 }
 const FOOD_DRIVE_LABEL = {normal:'普通', high:'ごほうび・おやつに強く反応する', low:'食べムラがある／関心が薄い'};
 
@@ -929,7 +935,7 @@ function render(){
   if (!hist.hasPrev) {
     $('historyBody').innerHTML = `
       <div class="box beige">
-        <p style="margin:0;font-size:14px;font-weight:800;color:#6b7d37">初回のため比較データなし</p>
+        <p style="margin:0;font-size:14px;font-weight:800;color:#b8834b">初回のため比較データなし</p>
         <p class="small" style="margin-top:6px">今回のカルテが基準記録になります。左のフォーム「⑦前回来院時の記録」に前回の値を入力すると、このページに前回との比較が表示されます（2回目以降のお客様向け）。</p>
       </div>`;
   } else {
