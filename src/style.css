@@ -81,6 +81,24 @@ body{background:linear-gradient(180deg,#fbfaf6 0%,#f4efe5 100%)}
 .mypage-actions .mypage-restart{border:0;font:inherit;cursor:pointer}
 @media(max-width:640px){.mypage-card{flex-direction:column;align-items:center;text-align:center}.mypage-stats{grid-template-columns:repeat(2,1fr)}.mypage-actions{justify-content:center}}
 
+/* charts */
+.bcs-gauge{display:block;margin-top:8px}
+.mypage-stats .stat .bcs-gauge{margin-top:6px}
+.weight-chart{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin:14px 0}
+
+/* micro-interactions */
+.primary,.secondary,.mini-cta{transition:transform .15s ease,box-shadow .15s ease,opacity .15s ease}
+.primary:hover,.mini-cta:hover{transform:translateY(-1px);box-shadow:0 10px 22px rgba(41,84,58,.22)}
+.secondary:hover{transform:translateY(-1px)}
+.primary:active,.secondary:active,.mini-cta:active{transform:translateY(0);opacity:.9}
+.insight-card,.food,.karte-section,.note,.alert,.condition-grid article,.mypage-card,.history-section,.health-timeline{transition:box-shadow .2s ease,transform .2s ease}
+.option{transition:border-color .15s ease,background .15s ease,transform .1s ease}
+.option:active{transform:scale(.98)}
+@keyframes fadeSlideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.result.karte>.type-card,.question{animation:fadeSlideIn .35s ease both}
+.mascot-img{transition:transform .2s ease}
+@media(prefers-reduced-motion:reduce){.primary,.secondary,.mini-cta,.insight-card,.food,.karte-section,.note,.alert,.option,.result.karte>.type-card,.question,.mascot-img{transition:none;animation:none}}
+
 /* brand refresh: mascot, hero, profile cover, breathing room */
 .mascot-img{flex-shrink:0;display:block;border-radius:14px}
 .mascot-line{display:flex;align-items:center;gap:10px;margin:0 0 12px}

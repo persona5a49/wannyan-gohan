@@ -291,6 +291,41 @@ function buildHistoryComparison(previous, current){
 const BCS_SCORE = {thin:2, normal:3, chubby:4, obese:5}
 function bcsScore(bodyKey){ return BCS_SCORE[bodyKey] || null }
 function bcsLabel(bodyKey){ const s=bcsScore(bodyKey); return s ? `BCS目安${s}/5` : null }
+function bcsGaugeSvg(score){
+  if(!score) return ''
+  const labels = ['やせ','やや細','適正','やや丸','ぽっちゃり']
+  const segW = 44
+  const segs = [1,2,3,4,5].map((n,i)=>{
+    const active = n===score
+    const fill = active ? 'var(--green)' : '#e8e2d5'
+    return `<rect x="${i*segW}" y="0" width="${segW-4}" height="16" rx="6" fill="${fill}"></rect>`
+  }).join('')
+  return `<svg class="bcs-gauge" viewBox="0 0 ${segW*5} 34" width="100%" height="34" role="img" aria-label="BCS目安${score}/5">
+    ${segs}
+    <text x="${(score-1)*segW+ (segW-4)/2}" y="30" font-size="10" font-weight="800" fill="var(--green)" text-anchor="middle">${labels[score-1]}</text>
+  </svg>`
+}
+function weightTrendSvg(list){
+  if(!list || list.length < 2) return ''
+  const w = 320, h = 90, pad = 10
+  const weights = list.map(x=>Number(x.weight))
+  const min = Math.min(...weights), max = Math.max(...weights)
+  const range = (max-min) || 1
+  const stepX = (w - pad*2) / (list.length-1)
+  const points = list.map((x,i)=>{
+    const px = pad + i*stepX
+    const py = h - pad - ((Number(x.weight)-min)/range) * (h-pad*2)
+    return `${px},${py}`
+  })
+  const path = 'M' + points.join(' L')
+  const last = points[points.length-1].split(',')
+  return `<svg class="weight-trend" viewBox="0 0 ${w} ${h}" width="100%" height="${h}" role="img" aria-label="体重推移グラフ">
+    <path d="${path}" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="${last[0]}" cy="${last[1]}" r="4" fill="var(--accent)"/>
+    <text x="${pad}" y="${h-2}" font-size="10" fill="var(--muted)">${list[0].date}</text>
+    <text x="${w-pad}" y="${h-2}" font-size="10" fill="var(--muted)" text-anchor="end">${list[list.length-1].date}</text>
+  </svg>`
+}
 
 const EVIDENCE_NOTES = {
   bcs: {label:'BCS評価について', text:'体型を5段階の目安で見る考え方は、WSAVA（世界小動物獣医師会）のボディコンディションスコアの考え方を参考にしています。回答からの簡易推定のため、実際の触診によるBCSとは異なることがあります。'},
@@ -1267,7 +1302,7 @@ function renderDiagnosis(){
     return `<div class="result karte"><p class="eyebrow">うちの子ごはん・暮らしカルテ</p><div class="type-card profile-cover"><div class="profile-top">${mascotImg('happy',72)}<p class="mascot-speech">${name}のこと、少し分かってきたよ。</p></div><span class="type-code">16タイプ診断</span><h2>${name}は「${r.type}」</h2><p class="profile-tagline">「${typeTagline(r.profile.axes)}」</p><div class="type-animal-row"><span class="type-animal">${answers.breedGroup && BREED_GROUPS[answers.breedGroup] ? BREED_GROUPS[answers.breedGroup] : '暮らしタイプ'}</span>${r.bcs ? `<span class="type-animal">${r.bcs}</span>` : ''}</div></div><div class="trait-list">${shownTags.map(x=>`<span>${x}</span>`).join('')}</div>
       ${r.hasWeight ? `<div class="result-grid"><div class="metric"><strong>${Math.round(r.kcal)} kcal/日</strong><span>目安必要カロリー</span></div><div class="metric"><strong>${Math.round(r.snack)} kcal/日まで</strong><span>おやつ上限の目安</span></div></div>${evidenceToggle('energy')}${r.isPuppy ? `<p class="helper">子犬期は成長段階によって必要カロリーが大きく変わるため、上の数字はあくまで簡易的な目安です。フードのパッケージ記載の給与量や、かかりつけの獣医師の指示を優先してください。</p>` : ''}` : `<div class="note"><h3>カロリー計算</h3><p>体重を入力すると、目安カロリーとおやつ上限を表示できます。今回はタイプ判定と注意点のみ表示します。</p></div>`}
       <div class="share-panel"><button class="primary save-share" type="button">結果画像を保存</button><button class="secondary native-share" type="button">LINE/Xで共有</button><canvas id="shareCanvas" width="1200" height="630" aria-label="診断結果シェア画像"></canvas><p class="helper">画像には医療情報や健診数値は入れず、タイプ名だけを共有します。</p></div>
-      <div class="karte-section deep-summary"><h3>${name}の全体像</h3><p>${r.profile.lead}${r.breedNote ? ' '+r.breedNote : ''}${r.bcs ? ` 体型は${r.bcs}です。` : ''} ここでは回答を並べ直すのではなく、性格・活動量・食べ方・体型（BCS）・健診メモの組み合わせから、暮らしで見たいポイントを整理します。</p>${r.bcs ? evidenceToggle('bcs') : ''}</div>
+      <div class="karte-section deep-summary"><h3>${name}の全体像</h3><p>${r.profile.lead}${r.breedNote ? ' '+r.breedNote : ''}${r.bcs ? ` 体型は${r.bcs}です。` : ''} ここでは回答を並べ直すのではなく、性格・活動量・食べ方・体型（BCS）・健診メモの組み合わせから、暮らしで見たいポイントを整理します。</p>${answers.body ? bcsGaugeSvg(bcsScore(answers.body)) : ''}${r.bcs ? evidenceToggle('bcs') : ''}</div>
       ${renderHistorySection(matchedHistory)}
       ${renderHealthTimeline(matchedHistory)}
       <div class="karte-section"><h3>解釈カード</h3>${evidenceToggle('behavior')}<div class="insight-grid">${r.insights.map(x=>`<article class="insight-card"><h4>${x.title}</h4><p>${x.body}</p><strong>実生活では：</strong><p>${x.action}</p></article>`).join('')}</div></div>
@@ -1322,7 +1357,7 @@ function renderMyPage(){
         <p class="mypage-type">${latest.type}</p>
         <div class="mypage-stats">
           <div class="stat"><strong>${latest.weight ? latest.weight+'kg' : '—'}</strong><span>最新体重</span></div>
-          <div class="stat"><strong>${bl ? 'BCS'+bl+'/5' : '—'}</strong><span>体型</span></div>
+          <div class="stat"><strong>${bl ? 'BCS'+bl+'/5' : '—'}</strong><span>体型</span>${bl ? bcsGaugeSvg(bl) : ''}</div>
           <div class="stat"><strong>${formatDateJp(latest.date)}</strong><span>最終診断日</span></div>
           <div class="stat"><strong>${formatDateJp(nextCheck)}</strong><span>次のチェック目安</span></div>
         </div>
@@ -1347,6 +1382,7 @@ function renderTracker(){
   return `<p class="eyebrow">継続して見守る</p><h2>体重記録</h2><p class="helper">日付と体重を記録すると、増減の傾向を確認できます。データはこの端末内にのみ保存されます。</p>
     <form class="weight-form"><input type="date" name="w-date" value="${new Date().toISOString().slice(0,10)}" required><input type="number" name="w-value" step="0.1" min="0" placeholder="例：5.2" required><span>kg</span><button type="submit" class="primary">記録する</button></form>
     ${latest ? `<div class="metric"><strong>${latest.weight}kg</strong><span>${latest.date}時点${trend ? '・'+trend : ''}</span></div>` : ''}
+    ${list.length >= 2 ? `<div class="weight-chart">${weightTrendSvg(list)}</div>` : ''}
     ${list.length ? `<ul class="weight-list">${list.slice().reverse().map((e,i)=>`<li><span>${e.date}</span><span>${e.weight}kg</span><button type="button" class="text-link del-weight" data-idx="${list.length-1-i}">削除</button></li>`).join('')}</ul>` : '<p class="helper">まだ記録がありません。</p>'}`
 }
 function renderInput(q){
