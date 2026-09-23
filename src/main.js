@@ -12,7 +12,7 @@ function mascotBubble(expr, text, size=56){
 // 診断未実施（保存済みappearanceなし）の間は、これまで通りころてが案内する。
 // expr（気分）ごとに犬種別の絵が用意されているものだけ /character-parts/<mood>/<breed>.png を使い、
 // 未対応の気分・万一そのファイルがない場合はonerrorで通常ポーズにフォールバックする。
-const CHAR_MOOD_FOLDERS = { thinking: 'thinking', worried: 'worried' }
+const CHAR_MOOD_FOLDERS = { thinking: 'thinking', worried: 'worried', relief: 'relief' }
 function guideBubble(expr, text, size=56){
   const appearance = loadCharacterAppearance()
   if(!appearance) return mascotBubble(expr, text, size)
