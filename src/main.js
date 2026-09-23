@@ -1,5 +1,14 @@
 import './style.css'
 
+const MASCOT_IMG = { normal:'normal', happy:'happy', thinking:'thinking', worried:'worried', relief:'relief', cheer:'cheer', heart:'complete', start:'start', empty:'empty', insight:'insight' }
+function mascotImg(expr='normal', size=64){
+  const file = MASCOT_IMG[expr] || 'normal'
+  return `<img class="mascot-img" src="/mascot/${file}.png" width="${size}" alt="" loading="lazy">`
+}
+function mascotBubble(expr, text, size=56){
+  return `<div class="mascot-line">${mascotImg(expr, size)}<p class="mascot-speech">${text}</p></div>`
+}
+
 const FOODS = [
   {name:'ニュートロ シュプレモ シニア犬用', maker:'Nutro', kcal:350, protein:26, fat:13, priceKg:1900, tags:['senior','coat','balanced','small'], mainProtein:'チキン', fiber:4.0, url:'https://hb.afl.rakuten.co.jp/ichiba/57b41c22.08fe12c0.57b41c23.755a6e9f/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fnyanzaq%2F4562358781827%2F&link_type=hybrid_url&ut=eyJwYW...c2V9'},
   {name:'ヒルズ サイエンス・ダイエット シニア 小型犬用', maker:'Hill’s', kcal:365, protein:19, fat:14, priceKg:1300, tags:['senior','small','cost','balanced'], mainProtein:'チキン', fiber:2.3, url:'https://hb.afl.rakuten.co.jp/ichiba/57b41d3d.0196a071.57b41d3e.22d83eeb/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fsweet-pet%2F118579662%2F&link_type=picttext&ut=eyJwYW...NlfQ%3D%3D'},
@@ -880,6 +889,13 @@ const TYPE_NAMES = {
   watchchallengeactiveclose:'飼い主と動きたい集中ランナータイプ', watchchallengeactiveindie:'自分の世界を持つ探検家タイプ', watchchallengecalmclose:'信頼相手に寄り添う静かな相棒タイプ', watchchallengecalmindie:'こだわりを大切にする職人タイプ',
   watchsafeactiveclose:'慎重に確認する甘えんぼアクティブタイプ', watchsafeactiveindie:'そっと確かめる自立探検家タイプ', watchsafecalmclose:'安心重視の寄り添いタイプ', watchsafecalmindie:'自分のペースを守る安心職人タイプ'
 }
+const TYPE_TAGLINE = {
+  openchallengeactiveclose:'誰とでも仲良し、そばにいるのが一番好き。', openchallengeactiveindie:'フレンドリーだけど、自分の足で前に進むタイプ。', openchallengecalmclose:'社交的なのに落ち着いてる、ちょうどいい距離感。', openchallengecalmindie:'誰とでも仲良し、でも気分屋さんなマイペース派。',
+  opensafeactiveclose:'少し確認してから、思いきり甘える。', opensafeactiveindie:'慎重だけど、好奇心はちゃんとある。', opensafecalmclose:'安心できたら、そっと寄り添うタイプ。', opensafecalmindie:'急がず、じっくり見てから動くタイプ。',
+  watchchallengeactiveclose:'外は少し苦手、でも飼い主となら頑張れる。', watchchallengeactiveindie:'自分のタイミングで、世界を広げるタイプ。', watchchallengecalmclose:'信頼できる人のそばで、静かに落ち着くタイプ。', watchchallengecalmindie:'自分のこだわりを大事にする、職人気質。',
+  watchsafeactiveclose:'慎重だけど、甘えたい気持ちも大きいタイプ。', watchsafeactiveindie:'そっと確かめながら、自分のペースで進むタイプ。', watchsafecalmclose:'安心が一番、そばにいることが好きなタイプ。', watchsafecalmindie:'自分のペースを守る、静かな職人タイプ。'
+}
+function typeTagline(axes){ return TYPE_TAGLINE[(axes||[]).join('')] || 'この子には、この子のペースがある。' }
 const AXIS_COPY = {
   open:'人や犬、新しい場所に関心を向けやすい', watch:'外の刺激は少し距離を取って確認したい', challenge:'新しいことを試す力がある', safe:'安心できる手順があると動きやすい', active:'遊び・散歩・反応の熱量が高め', calm:'落ち着いた環境で安定しやすい', close:'飼い主とのつながりが安心材料', indie:'自分のペースや居場所を大切にする'
 }
@@ -1159,7 +1175,7 @@ function render(){
   document.querySelector('#app').innerHTML = `
     <header class="site-header"><div class="brand">わんにゃんごはんカルテ</div><nav class="nav-links"><a href="/products/">商品一覧</a><a href="/products/compare/">比較</a><a href="#articles">記事</a><a href="/type-guides/">タイプ別ガイド</a><a href="#tracker">体重記録</a><a href="/pdf-karute/">詳細ごはんカルテPDF</a></nav><a href="#diagnosis" class="mini-cta js-diagnosis-start" data-location="header">無料でチェック</a></header>
     <main>
-      <section class="hero"><div class="hero-copy"><p class="eyebrow">うちの子の性格・食べ方・健診結果を、ひとつのカルテに</p><h1>性格だけでも、フードだけでもわからない。暮らし・食事・体型・健診まで、まるごと知る。</h1><p class="lead">犬の行動評価で使われる考え方を参考に、社交性・慎重さ・活動性・飼い主との距離感を家庭向けに整理。単独の回答ではなく組み合わせで解釈し、健診で気になる項目があれば主治医への相談ポイントまでつなげます。研究用尺度そのものではなく、暮らしと食事相談のためのセルフチェックです。</p><div class="hero-actions"><a href="#diagnosis" class="primary js-diagnosis-start" data-location="hero">うちの子のタイプを見る</a><a href="/pdf-karute/" class="secondary">PDFカルテを見る</a></div><div class="trust"><span>約3分</span><span>登録不要</span><span>医療判断ではなく相談前の整理</span></div></div><aside class="hero-karute"><span class="karte-label">KARTE SAMPLE</span><strong>16</strong><p>うちの子タイプ診断</p><small>行動・食べ方・健診メモを一緒に整理</small></aside></section>
+      <section class="hero"><div class="hero-copy"><p class="eyebrow">うちの子の健康カルテ</p><h1>うちの子を、もっと知る。</h1><p class="lead">性格も、食事も、健診も。ひとつのカルテに。</p><p class="hero-explain">いくつか答えるだけで、この子に合うごはん量とフードの選び方が分かります。</p><div class="hero-actions"><a href="#diagnosis" class="primary js-diagnosis-start" data-location="hero">うちの子を見てみる</a><a href="/pdf-karute/" class="text-link hero-sub-link">くわしいPDFカルテもある →</a></div><div class="trust"><span>約3分</span><span>登録不要</span><span>医療判断ではなく相談前の整理</span></div></div><aside class="hero-mascot">${mascotBubble('happy', 'いっしょに、うちの子のことを見てみよう。', 120)}</aside></section>
       <section class="cards" id="why"><article><span>01</span><h2>16タイプ診断</h2><p>性格・行動の傾向を、覚えやすい「うちの子タイプ」で表示します。</p></article><article><span>02</span><h2>ごはん量とおやつ</h2><p>体重から目安カロリーと、おやつの上限をざっくり計算します。</p></article><article><span>03</span><h2>根拠と健診メモ</h2><p>研究用尺度とは区別したセルフチェックとして、腎臓・肝臓・尿検査など相談項目も整理します。</p></article></section>
       <section class="diagnosis" id="diagnosis">${renderDiagnosis()}</section>
       <section class="tracker" id="tracker">${renderTracker()}</section>
@@ -1184,9 +1200,11 @@ function renderHistorySection(list){
   const current = list[list.length-1]
   const previous = list[list.length-2]
   const cmp = buildHistoryComparison(previous, current)
+  const mood = cmp.watchItems.length ? 'worried' : (cmp.details.length ? 'relief' : 'normal')
+  const moodLine = cmp.watchItems.length ? '少し気になるところがあるね。主治医にも伝えてみよう。' : (cmp.details.length ? '前回からの変化、一緒に見てみよう。' : '大きな変化はなさそう。安心だね。')
   const summary = `前回（${formatDateJp(previous.date)}）から今回（${formatDateJp(current.date)}）までの変化をまとめました。`
   const recent = list.slice(-5).reverse()
-  return `<div class="karte-section history-section"><h3>これまでの記録と変化</h3><p>${summary}</p>
+  return `<div class="karte-section history-section"><h3>これまでの記録と変化</h3>${mascotBubble(mood, moodLine, 48)}<p>${summary}</p>
     ${cmp.details.length ? `<ul class="history-detail-list">${cmp.details.map(x=>`<li>${x}</li>`).join('')}</ul>` : '<p class="helper">前回から大きな変化は見られません。</p>'}
     ${cmp.watchItems.length ? `<div class="note history-watch"><h4>主治医に伝えるとよいポイント</h4><ul>${cmp.watchItems.map(x=>`<li>${x}</li>`).join('')}</ul></div>` : ''}
     <details class="history-log"><summary>過去の記録一覧を見る</summary><ul class="history-list">${recent.map(h=>`<li><span>${formatDateJp(h.date)}</span><span>${h.type}</span><span>${h.weight ? h.weight+'kg' : '—'}</span></li>`).join('')}</ul></details>
@@ -1223,7 +1241,7 @@ function renderDiagnosis(){
     const shownTags = displayTags(r.tags, answers.breedGroup)
     const historyAll = loadHistory()
     const matchedHistory = answers.dogName ? historyAll.filter(h=>h.dogName===answers.dogName) : historyAll
-    return `<div class="result karte"><p class="eyebrow">うちの子ごはん・暮らしカルテ</p><div class="type-card"><div><span class="type-code">16タイプ診断</span><h2>${name}は「${r.type}」</h2><p>${r.profile.lead}</p></div><div class="type-animal">${answers.breedGroup && BREED_GROUPS[answers.breedGroup] ? BREED_GROUPS[answers.breedGroup] : '暮らしタイプ'}</div></div><div class="trait-list">${shownTags.map(x=>`<span>${x}</span>`).join('')}${r.bcs ? `<span>${r.bcs}</span>`:''}</div>
+    return `<div class="result karte"><p class="eyebrow">うちの子ごはん・暮らしカルテ</p><div class="type-card profile-cover"><div class="profile-top">${mascotImg('happy',72)}<p class="mascot-speech">${name}のこと、少し分かってきたよ。</p></div><span class="type-code">16タイプ診断</span><h2>${name}は「${r.type}」</h2><p class="profile-tagline">「${typeTagline(r.profile.axes)}」</p><div class="type-animal-row"><span class="type-animal">${answers.breedGroup && BREED_GROUPS[answers.breedGroup] ? BREED_GROUPS[answers.breedGroup] : '暮らしタイプ'}</span>${r.bcs ? `<span class="type-animal">${r.bcs}</span>` : ''}</div></div><div class="trait-list">${shownTags.map(x=>`<span>${x}</span>`).join('')}</div>
       ${r.hasWeight ? `<div class="result-grid"><div class="metric"><strong>${Math.round(r.kcal)} kcal/日</strong><span>目安必要カロリー</span></div><div class="metric"><strong>${Math.round(r.snack)} kcal/日まで</strong><span>おやつ上限の目安</span></div></div>${evidenceToggle('energy')}${r.isPuppy ? `<p class="helper">子犬期は成長段階によって必要カロリーが大きく変わるため、上の数字はあくまで簡易的な目安です。フードのパッケージ記載の給与量や、かかりつけの獣医師の指示を優先してください。</p>` : ''}` : `<div class="note"><h3>カロリー計算</h3><p>体重を入力すると、目安カロリーとおやつ上限を表示できます。今回はタイプ判定と注意点のみ表示します。</p></div>`}
       <div class="share-panel"><button class="primary save-share" type="button">結果画像を保存</button><button class="secondary native-share" type="button">LINE/Xで共有</button><canvas id="shareCanvas" width="1200" height="630" aria-label="診断結果シェア画像"></canvas><p class="helper">画像には医療情報や健診数値は入れず、タイプ名だけを共有します。</p></div>
       <div class="karte-section deep-summary"><h3>${name}の全体像</h3><p>${r.profile.lead}${r.breedNote ? ' '+r.breedNote : ''}${r.bcs ? ` 体型は${r.bcs}です。` : ''} ここでは回答を並べ直すのではなく、性格・活動量・食べ方・体型（BCS）・健診メモの組み合わせから、暮らしで見たいポイントを整理します。</p>${r.bcs ? evidenceToggle('bcs') : ''}</div>
@@ -1247,7 +1265,10 @@ function renderDiagnosis(){
       <button class="secondary reset">もう一度診断</button></div>`
   }
   const q = QUESTIONS[step]
-  return `<div class="question"><p class="progress">${step+1} / ${QUESTIONS.length}</p><h2>${q.label}</h2>${q.cbarq ? `<p class="cbarq-hint">C-BARQを参考にした観察項目｜${q.cbarq}（公式尺度・診断ではありません）</p>` : ''}${renderInput(q)}<div class="nav"><button class="secondary back" ${step===0?'disabled':''}>戻る</button><button class="primary next">${step===QUESTIONS.length-1?'結果を見る':'次へ'}</button></div></div>`
+  let introLine = ''
+  if(step===0) introLine = mascotBubble('normal', '正解はないよ。いつもの様子を教えてね。', 56)
+  else if(step === QUESTIONS.length-3) introLine = mascotBubble('cheer', 'あと少しだよ、がんばろう。', 56)
+  return `<div class="question">${introLine}<p class="progress">${step+1} / ${QUESTIONS.length}</p><h2>${q.label}</h2>${q.cbarq ? `<p class="cbarq-hint">C-BARQを参考にした観察項目｜${q.cbarq}（公式尺度・診断ではありません）</p>` : ''}${renderInput(q)}<div class="nav"><button class="secondary back" ${step===0?'disabled':''}>戻る</button><button class="primary next">${step===QUESTIONS.length-1?'結果を見る':'次へ'}</button></div></div>`
 }
 function renderTracker(){
   const list = loadWeights()
