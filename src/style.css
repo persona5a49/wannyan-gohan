@@ -61,3 +61,4 @@ body{background:linear-gradient(180deg,#fbfaf6 0%,#f4efe5 100%)}
 .food-change-item p{margin:0 0 6px}
 .food-change-item ul{margin:0;padding-left:20px}
 @media(max-width:760px){.timeline-list li{font-size:.82rem}}
+.pr-inline{display:block;margin-top:6px;font-size:.74rem;color:var(--muted)}
