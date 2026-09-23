@@ -40,6 +40,9 @@
   .head .who{font-size:12px;color:#cfe1d1;margin-top:3px}
   .head .date{float:right;background:rgba(255,255,255,.15);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:700}
   .pg-tag{font-size:11px;color:#98a094;margin:0 0 10px}
+  .pdf-mascot{display:flex;align-items:center;gap:12px;background:#fbfaf5;border:1px solid #e8e2d5;border-radius:14px;padding:12px 16px;margin-bottom:16px}
+  .pdf-mascot img{border-radius:10px;flex-shrink:0}
+  .pdf-mascot p{margin:0;font-size:12.5px;font-weight:700;color:#3f463d}
   .body{padding:26px 44px 46px}
   .profile{background:#fbfaf5;border:1px solid #e8e2d5;border-radius:14px;padding:16px 18px;margin-bottom:22px}
   .profile .lbl{font-size:12px;font-weight:800;color:#6b7d37}
@@ -363,6 +366,7 @@
         </div>
         <div class="body">
           <p class="pg-tag">P.1 / 12　総合サマリー</p>
+          <div class="pdf-mascot"><img src="../public/mascot/happy.png" width="44" alt=""><p>うちの子のこと、これから一緒に見ていこうね。</p></div>
           <div class="profile">
             <div class="lbl">対象のわんちゃん</div>
             <div class="val" id="pvProfile">（左のフォームに入力してください）</div>
@@ -583,6 +587,7 @@
             <thead><tr><th>項目</th><th>今回の状態（基準）</th><th class="chk-cell">1ヶ月後</th><th class="chk-cell">3ヶ月後</th><th class="chk-cell">6ヶ月後</th></tr></thead>
             <tbody id="watchBody"></tbody>
           </table>
+          <div class="pdf-mascot"><img src="../public/mascot/thinking.png" width="40" alt=""><p>ここから先、一緒に見ていきたいポイントだよ。</p></div>
           <div class="box amber" style="margin-top:16px">
             <div class="small" style="font-weight:800;margin-bottom:4px">特に注意して見ていただきたい点</div>
             <ul class="plain" id="watchNotes"></ul>
@@ -627,6 +632,7 @@
         </div>
         <div class="body">
           <p class="pg-tag">P.12 / 12　3か月後に見る項目</p>
+          <div class="pdf-mascot"><img src="../public/mascot/cheer.png" width="40" alt=""><p>次に見るポイントはこれだよ。あせらず一緒に見ていこう。</p></div>
           <p class="small" style="margin-bottom:10px">今回の内容をもとに、次回（目安3か月後）のご来院・カルテ作成時に確認したい項目をまとめました。ここでの記録が、次回の「前回との比較」ページに活用されます。</p>
           <div id="recheck3moList"></div>
         </div>
