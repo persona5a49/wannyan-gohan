@@ -381,7 +381,7 @@
           <div class="metrics" style="margin-top:14px">
             <div class="box beige metric"><strong id="ovWeight">-</strong><span>現在の体重</span></div>
             <div class="box beige metric"><strong id="ovDER">-</strong><span>1日の目安カロリー（RER/DER）</span></div>
-            <div class="box beige metric"><strong id="ovBcs">-</strong><span>体型スコア（BCS）の目安</span></div>
+            <div class="box beige metric"><strong id="ovBcs">-</strong><span>体型スコア（BCS）の目安</span><div id="ovBcsGauge"></div></div>
             <div class="box beige metric"><strong id="ovFood">-</strong><span>現在のフード</span></div>
           </div>
 
@@ -718,6 +718,16 @@ const AXIS_LABEL = {
 
 const BCS_LABEL = {thin:'やせ気味', ideal:'適正', heavy:'やや肥満気味'};
 const BCS_ORDER = {thin:0, ideal:1, heavy:2};
+function bcsGaugeSvg(bcsKey){
+  if (!bcsKey || !(bcsKey in BCS_ORDER)) return '';
+  const idx = BCS_ORDER[bcsKey];
+  const segW = 70;
+  const segs = [0,1,2].map(i => {
+    const active = i === idx;
+    return `<rect x="${i*segW}" y="0" width="${segW-4}" height="14" rx="6" fill="${active ? '#244f35' : '#e4dccb'}"></rect>`;
+  }).join('');
+  return `<svg viewBox="0 0 ${segW*3} 30" width="180" height="30" style="display:block;margin-top:8px">${segs}<text x="${idx*segW+(segW-4)/2}" y="27" font-size="9" font-weight="800" fill="#244f35" text-anchor="middle">${BCS_LABEL[bcsKey]}</text></svg>`;
+}
 const FOOD_DRIVE_LABEL = {normal:'普通', high:'ごほうび・おやつに強く反応する', low:'食べムラがある／関心が薄い'};
 
 function render(){
@@ -816,6 +826,7 @@ function render(){
   $('ovWeight').textContent = weight ? weight + 'kg' : '-';
   $('ovDER').textContent = der > 0 ? `約${Math.round(der)}kcal` : '-';
   $('ovBcs').textContent = bcsLabel || '-';
+  $('ovBcsGauge').innerHTML = bcsGaugeSvg(bcs);
   $('ovFood').textContent = $('foodName').value || '-';
   $('ovSummary').textContent = buildOverview(ctx);
 
