@@ -10,10 +10,16 @@ function mascotBubble(expr, text, size=56){
 }
 // 診断が一度でも完了していれば、以降はころての代わりにその子の犬種キャラクターが案内役になる。
 // 診断未実施（保存済みappearanceなし）の間は、これまで通りころてが案内する。
+// expr（気分）ごとに犬種別の絵が用意されているものだけ /character-parts/<mood>/<breed>.png を使い、
+// 未対応の気分・万一そのファイルがない場合はonerrorで通常ポーズにフォールバックする。
+const CHAR_MOOD_FOLDERS = { thinking: 'thinking' }
 function guideBubble(expr, text, size=56){
   const appearance = loadCharacterAppearance()
   if(!appearance) return mascotBubble(expr, text, size)
-  const img = `<img class="mascot-img char-guide-img" src="/character-parts/breed/${appearance.breed}.png" width="${size}" alt="" loading="lazy">`
+  const fallbackSrc = `/character-parts/breed/${appearance.breed}.png`
+  const folder = CHAR_MOOD_FOLDERS[expr]
+  const primarySrc = folder ? `/character-parts/${folder}/${appearance.breed}.png` : fallbackSrc
+  const img = `<img class="mascot-img char-guide-img" src="${primarySrc}" width="${size}" alt="" loading="lazy" onerror="this.onerror=null;this.src='${fallbackSrc}'">`
   return `<div class="mascot-line">${img}<p class="mascot-speech">${text}</p></div>`
 }
 
