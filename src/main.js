@@ -1429,7 +1429,8 @@ function renderDiagnosis(){
     const shownTags = displayTags(r.tags, answers.breedGroup)
     const historyAll = loadHistory()
     const matchedHistory = answers.dogName ? historyAll.filter(h=>h.dogName===answers.dogName) : historyAll
-    return `<div class="result karte"><p class="eyebrow">うちの子ごはん・暮らしカルテ</p><div class="type-card profile-cover"><div class="profile-top">${mascotImg('happy',72)}<p class="mascot-speech">${name}のこと、少し分かってきたよ。</p></div><span class="type-code">16タイプ診断</span><h2>${name}は「${r.type}」</h2><p class="profile-tagline">「${typeTagline(r.profile.axes)}」</p><div class="type-animal-row"><span class="type-animal">${answers.breedGroup && BREED_GROUPS[answers.breedGroup] ? BREED_GROUPS[answers.breedGroup] : '暮らしタイプ'}</span>${r.bcs ? `<span class="type-animal">${r.bcs}</span>` : ''}</div></div><div class="trait-list">${shownTags.map(x=>`<span>${x}</span>`).join('')}</div>
+    const charAppearance = loadCharacterAppearance()
+    return `<div class="result karte"><p class="eyebrow">うちの子ごはん・暮らしカルテ</p><div class="type-card profile-cover">${charAppearance ? `<div class="profile-character">${renderCharacterHtml(charAppearance, characterScene('happy','sit','none'), 108)}<span class="profile-character-caption">${name}のイメージキャラクター</span></div>` : ''}<div class="profile-top">${mascotImg('happy',72)}<p class="mascot-speech">${name}のこと、少し分かってきたよ。</p></div><span class="type-code">16タイプ診断</span><h2>${name}は「${r.type}」</h2><p class="profile-tagline">「${typeTagline(r.profile.axes)}」</p><div class="type-animal-row"><span class="type-animal">${answers.breedGroup && BREED_GROUPS[answers.breedGroup] ? BREED_GROUPS[answers.breedGroup] : '暮らしタイプ'}</span>${r.bcs ? `<span class="type-animal">${r.bcs}</span>` : ''}</div></div><div class="trait-list">${shownTags.map(x=>`<span>${x}</span>`).join('')}</div>
       ${r.hasWeight ? `<div class="result-grid"><div class="metric"><strong>${Math.round(r.kcal)} kcal/日</strong><span>目安必要カロリー</span></div><div class="metric"><strong>${Math.round(r.snack)} kcal/日まで</strong><span>おやつ上限の目安</span></div></div>${evidenceToggle('energy')}${r.isPuppy ? `<p class="helper">子犬期は成長段階によって必要カロリーが大きく変わるため、上の数字はあくまで簡易的な目安です。フードのパッケージ記載の給与量や、かかりつけの獣医師の指示を優先してください。</p>` : ''}` : `<div class="note"><h3>カロリー計算</h3><p>体重を入力すると、目安カロリーとおやつ上限を表示できます。今回はタイプ判定と注意点のみ表示します。</p></div>`}
       <div class="share-panel"><button class="primary save-share" type="button">結果画像を保存</button><button class="secondary native-share" type="button">LINE/Xで共有</button><canvas id="shareCanvas" width="1200" height="630" aria-label="診断結果シェア画像"></canvas><p class="helper">画像には医療情報や健診数値は入れず、タイプ名だけを共有します。</p></div>
       <div class="karte-section deep-summary"><h3>${name}の全体像</h3><p>${r.profile.lead}${r.breedNote ? ' '+r.breedNote : ''}${r.bcs ? ` 体型は${r.bcs}です。` : ''} ここでは回答を並べ直すのではなく、性格・活動量・食べ方・体型（BCS）・健診メモの組み合わせから、暮らしで見たいポイントを整理します。</p>${answers.body ? bcsGaugeSvg(bcsScore(answers.body)) : ''}${r.bcs ? evidenceToggle('bcs') : ''}</div>
@@ -1475,10 +1476,12 @@ function renderMyPage(){
   const name = latest.dogName ? `${latest.dogName}ちゃん` : 'うちの子'
   const bl = bcsScore(latest.body)
   const nextCheck = addMonthsToDate(latest.date, 3)
+  const charAppearance = loadCharacterAppearance()
+  const fallbackImg = charAppearance ? `/character-parts/breed/${charAppearance.breed}.png` : '/mascot/normal.png'
   return `<p class="eyebrow">うちの子ホーム</p><h2>マイページ</h2><p class="helper">${name}の最新の記録をまとめています。写真はこの端末内にのみ保存されます。</p>
     <div class="mypage-card">
       <div class="mypage-photo">
-        <img class="mypage-photo-img" src="${photo || '/mascot/normal.png'}" alt="うちの子の写真">
+        <img class="mypage-photo-img" src="${photo || fallbackImg}" alt="うちの子の写真">
         <label class="mypage-photo-upload text-link">${photo ? '写真を変更する' : '写真を登録する'}<input type="file" accept="image/*" class="photo-input" hidden></label>
         ${photo ? `<button type="button" class="text-link remove-photo">写真を削除</button>` : ''}
       </div>
