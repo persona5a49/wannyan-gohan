@@ -9,6 +9,127 @@ function mascotBubble(expr, text, size=56){
   return `<div class="mascot-line">${mascotImg(expr, size)}<p class="mascot-speech">${text}</p></div>`
 }
 
+/* ==== うちの子キャラクター生成エンジン ====
+   役割分担: ChatGPT側が全パーツ素材(PNG/SVG、共通キャンバス・共通アンカーで書き出し)を作り、
+   Claude側(このファイル)は「診断回答→パーツ選択→保存→合成表示」だけを担当する。
+   ここでは画像は一切描画せず、/character-parts/<カテゴリ>/<キー>.png を重ねて表示するだけ。
+   実素材が届くまでは呼び出し側で「存在チェック→なければ何も出さない」扱いにすること。 */
+const CHAR_KEY = 'wannyan_character_appearance'
+const CHAR_PARTS_BASE = '/character-parts'
+
+// カテゴリごとのキー一覧（ChatGPT側への書き出し依頼と1:1で対応させること）
+const CHAR_BREED_FORMS = ['toy_poodle','chihuahua','miniature_dachshund','pomeranian','shiba_inu','miniature_schnauzer','french_bulldog','shih_tzu','maltese','yorkshire_terrier','pug','corgi','golden_retriever','labrador_retriever','border_collie','shetland_sheepdog','italian_greyhound','cavalier','beagle','siberian_husky']
+const CHAR_FACES = ['round','long','small','short_nose','long_muzzle']
+const CHAR_EYES = ['droopy','round','upturned','narrow','egg','dot']
+const CHAR_EARS = ['drop_small','drop_medium','drop_long','prick','semi_prick','terrier']
+const CHAR_FURS = ['short','medium','curly','double_coat']
+const CHAR_COLORS = ['white','cream','beige','red','brown','black','gray','apricot']
+const CHAR_PATTERNS = ['solid','chest_white','face_mask','bicolor','tan','hachiware','brindle','merle']
+const CHAR_EXPRESSIONS = ['normal','nikkori','ehe','ureshii','tehe','bikkuri','shonbori','osumashi','gussuri']
+const CHAR_POSES = ['sit','fuse','hashiru','dakko','gohanmachi','yorisou','nozokikomu']
+const CHAR_ACCESSORIES = ['oyatsu','gohanzara','karute','clover','leash','none']
+
+// breedGroup(診断の10分類) → 具体的な犬種フォルム候補（この中からseedで1つ選ぶ）
+const CHAR_BREEDGROUP_FORMS = {
+  toy:      ['toy_poodle','chihuahua','pomeranian','yorkshire_terrier','maltese'],
+  companion:['shih_tzu','maltese','cavalier','pug'],
+  retriever:['golden_retriever','labrador_retriever'],
+  herding:  ['border_collie','shetland_sheepdog'],
+  terrier:  ['yorkshire_terrier','miniature_schnauzer'],
+  hound:    ['italian_greyhound','beagle'],
+  spitz:    ['shiba_inu','pomeranian','siberian_husky'],
+  brachy:   ['french_bulldog','pug'],
+  large:    ['golden_retriever','labrador_retriever','siberian_husky'],
+  mix:      ['toy_poodle','shiba_inu','corgi','miniature_dachshund']
+}
+
+function charHash(str){
+  let h = 0
+  for(let i=0;i<str.length;i++){ h = (h*31 + str.charCodeAt(i)) >>> 0 }
+  return h
+}
+function charPick(list, seed, salt){
+  const h = charHash(seed + '|' + salt)
+  return list[h % list.length]
+}
+
+// 性格4軸(open/watch, challenge/safe, active/calm, close/indie)から、目の形だけ傾向づける。
+// それ以外の見た目パーツ(顔型/耳/毛質/毛色/模様)は診断で直接聞いていないため、
+// 個体差seedで決定論的に(=同じ子なら毎回同じに)決める。
+function charEyesFromAxes(axes){
+  if(axes.includes('open') && axes.includes('active')) return 'round'   // 好奇心旺盛
+  if(axes.includes('watch')) return 'droopy'                             // 慎重
+  if(axes.includes('active') && axes.includes('challenge')) return 'upturned' // 活発
+  if(axes.includes('indie')) return 'narrow'                             // マイペース
+  return null // 該当なし→seedに任せる
+}
+
+// 診断回答から「固定特徴」（breed/face/eyes/ears/fur/color/pattern）を算出。
+// 同じ名前・犬種グループ・年齢の組み合わせなら常に同じ結果になる（決定論的）。
+// これをlocalStorageに保存し、再診断のたびに作り直さない。
+function buildCharacterAppearance(a, result){
+  const seed = [a.dogName||'', a.breedGroup||'', a.age||''].join('|') || 'default'
+  const forms = CHAR_BREEDGROUP_FORMS[a.breedGroup] || CHAR_BREEDGROUP_FORMS.mix
+  const axes = (result && result.profile && result.profile.axes) || []
+  return {
+    seed,
+    breed: charPick(forms, seed, 'breed'),
+    face: charPick(CHAR_FACES, seed, 'face'),
+    eyes: charEyesFromAxes(axes) || charPick(CHAR_EYES, seed, 'eyes'),
+    ears: charPick(CHAR_EARS, seed, 'ears'),
+    fur: charPick(CHAR_FURS, seed, 'fur'),
+    color: charPick(CHAR_COLORS, seed, 'color'),
+    pattern: charPick(CHAR_PATTERNS, seed, 'pattern')
+  }
+}
+function loadCharacterAppearance(){ try{ return JSON.parse(localStorage.getItem(CHAR_KEY) || 'null') }catch(e){ return null } }
+function saveCharacterAppearance(spec){ localStorage.setItem(CHAR_KEY, JSON.stringify(spec)) }
+// 既存の見た目がある場合は上書きしない（=同じ子は同じ顔のまま）。犬種・名前を変えて
+// 再診断した場合のみ、新しいseedで作り直す。
+function ensureCharacterAppearance(a, result){
+  const seed = [a.dogName||'', a.breedGroup||'', a.age||''].join('|') || 'default'
+  const existing = loadCharacterAppearance()
+  if(existing && existing.seed === seed) return existing
+  const fresh = buildCharacterAppearance(a, result)
+  saveCharacterAppearance(fresh)
+  return fresh
+}
+
+// 状況によって変わる「変動特徴」。ムードのボキャブラリーはマスコット(ころて)と揃えてある。
+const CHAR_MOOD_TO_EXPRESSION = { normal:'normal', happy:'ureshii', thinking:'osumashi', worried:'shonbori', relief:'nikkori', cheer:'ehe', sleep:'gussuri', surprised:'bikkuri' }
+function characterScene(mood, pose, accessory){
+  return {
+    expression: CHAR_MOOD_TO_EXPRESSION[mood] || 'normal',
+    pose: CHAR_POSES.includes(pose) ? pose : 'sit',
+    accessory: CHAR_ACCESSORIES.includes(accessory) ? accessory : 'none'
+  }
+}
+
+// 実素材(ChatGPT書き出し分)が /character-parts/ 配下に揃うまでは呼ばない。
+// 揃ったら、この関数が breed/face/eyes/ears/fur/pattern を重ね合わせ、
+// 毛色はCSS filterではなくパーツ自体の色違い書き出しをそのまま使う想定。
+function renderCharacterHtml(appearance, scene, size){
+  size = size || 120
+  const layers = [
+    ['breed', appearance.breed],
+    ['face', appearance.face],
+    ['fur', appearance.fur],
+    ['pattern', appearance.pattern],
+    ['color', appearance.color],
+    ['ears', appearance.ears],
+    ['eyes', appearance.eyes],
+    ['expression', scene.expression],
+    ['pose', scene.pose]
+  ]
+  const imgs = layers.map(([cat,key])=>
+    `<img class="char-layer char-layer-${cat}" src="${CHAR_PARTS_BASE}/${cat}/${key}.png" alt="" loading="lazy" onerror="this.style.display='none'">`
+  ).join('')
+  const accessoryImg = scene.accessory !== 'none'
+    ? `<img class="char-layer char-layer-accessory" src="${CHAR_PARTS_BASE}/accessory/${scene.accessory}.png" alt="" loading="lazy" onerror="this.style.display='none'">`
+    : ''
+  return `<div class="character-stage" style="width:${size}px;height:${size}px">${imgs}${accessoryImg}</div>`
+}
+
 const FOODS = [
   {name:'ニュートロ シュプレモ シニア犬用', maker:'Nutro', kcal:350, protein:26, fat:13, priceKg:1900, tags:['senior','coat','balanced','small'], mainProtein:'チキン', fiber:4.0, url:'https://hb.afl.rakuten.co.jp/ichiba/57b41c22.08fe12c0.57b41c23.755a6e9f/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fnyanzaq%2F4562358781827%2F&link_type=hybrid_url&ut=eyJwYW...c2V9'},
   {name:'ヒルズ サイエンス・ダイエット シニア 小型犬用', maker:'Hill’s', kcal:365, protein:19, fat:14, priceKg:1300, tags:['senior','small','cost','balanced'], mainProtein:'チキン', fiber:2.3, url:'https://hb.afl.rakuten.co.jp/ichiba/57b41d3d.0196a071.57b41d3e.22d83eeb/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fsweet-pet%2F118579662%2F&link_type=picttext&ut=eyJwYW...NlfQ%3D%3D'},
@@ -1488,6 +1609,7 @@ function bindEvents(){
       trackEvent('diagnosis_complete', {result_type: r.type, sub_tags: r.tags.join(','), has_checkup_flags: (answers.checkup || []).filter(x=>x !== 'none').length > 0})
       addHistoryEntry(answers, r)
       trackEvent('diagnosis_history_save')
+      ensureCharacterAppearance(answers, r)
     }
     render(); location.hash='diagnosis'
   })
