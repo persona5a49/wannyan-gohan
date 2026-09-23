@@ -13,8 +13,8 @@ function mascotBubble(expr, text, size=56){
 // expr（気分）ごとに犬種別の絵が用意されているものだけ /character-parts/<mood>/<breed>.png を使い、
 // 未対応の気分・万一そのファイルがない場合はonerrorで通常ポーズにフォールバックする。
 const CHAR_MOOD_FOLDERS = { thinking: 'thinking', worried: 'worried', relief: 'relief', cheer: 'cheer', surprised: 'surprised', sleep: 'sleep' }
-function guideBubble(expr, text, size=56){
-  const appearance = loadCharacterAppearance()
+function guideBubble(expr, text, size=56, dogName){
+  const appearance = loadCharacterAppearance(dogName)
   if(!appearance) return mascotBubble(expr, text, size)
   const fallbackSrc = `/character-parts/breed/${appearance.breed}.png`
   const folder = CHAR_MOOD_FOLDERS[expr]
@@ -96,16 +96,44 @@ function buildCharacterAppearance(a, result){
     pattern: charPick(CHAR_PATTERNS, seed, 'pattern')
   }
 }
-function loadCharacterAppearance(){ try{ return JSON.parse(localStorage.getItem(CHAR_KEY) || 'null') }catch(e){ return null } }
-function saveCharacterAppearance(spec){ localStorage.setItem(CHAR_KEY, JSON.stringify(spec)) }
+// 子ごとに見た目を分けて保存する（{ [犬の名前 or '_default']: appearance }の辞書）。
+// 旧バージョンは1匹分しか保存できない形式だったため、初回読み込み時に自動移行する。
+function loadCharacterAppearanceMap(){
+  try{
+    const v = JSON.parse(localStorage.getItem(CHAR_KEY) || 'null')
+    if(!v) return {}
+    if(v.seed){ // 旧形式（単一オブジェクト）→ 自分のseedからdogNameを復元して移行
+      const dogKey = (v.seed.split('|')[0]) || '_default'
+      return { [dogKey]: v }
+    }
+    return v
+  }catch(e){ return {} }
+}
+function saveCharacterAppearanceMap(map){ localStorage.setItem(CHAR_KEY, JSON.stringify(map)) }
+// dogName省略時は「直近で診断した子」の見た目を返す（ホーム画面の案内など、特定の子に絞らない場面用）。
+function loadCharacterAppearance(dogName){
+  const map = loadCharacterAppearanceMap()
+  let key = dogName
+  if(!key){
+    const hist = loadHistory()
+    key = hist.length ? (hist[hist.length-1].dogName || '_default') : '_default'
+  }
+  return map[key] || map['_default'] || null
+}
+function saveCharacterAppearance(dogName, spec){
+  const map = loadCharacterAppearanceMap()
+  map[dogName || '_default'] = spec
+  saveCharacterAppearanceMap(map)
+}
 // 既存の見た目がある場合は上書きしない（=同じ子は同じ顔のまま）。犬種・名前を変えて
-// 再診断した場合のみ、新しいseedで作り直す。
+// 再診断した場合のみ、新しいseedで作り直す。他の子の見た目は別キーなので影響しない。
 function ensureCharacterAppearance(a, result){
   const seed = [a.dogName||'', a.breedGroup||'', a.age||''].join('|') || 'default'
-  const existing = loadCharacterAppearance()
+  const dogKey = a.dogName || '_default'
+  const existing = loadCharacterAppearance(dogKey)
   if(existing && existing.seed === seed) return existing
   const fresh = buildCharacterAppearance(a, result)
-  saveCharacterAppearance(fresh)
+  saveCharacterAppearance(dogKey, fresh)
   return fresh
 }
 
@@ -287,6 +315,7 @@ const QUESTIONS = [
 
 let answers = {}
 let step = 0
+let mypageSelectedDog = null // マイページで選択中の子（null=直近の子）
 
 const WEIGHT_KEY = 'wannyan_weight_log'
 function loadWeights(){
@@ -1408,7 +1437,7 @@ function renderHistorySection(list){
   const moodLine = cmp.watchItems.length ? '少し気になるところがあるね。主治医にも伝えてみよう。' : (cmp.details.length ? '前回からの変化、一緒に見てみよう。' : '大きな変化はなさそう。安心だね。')
   const summary = `前回（${formatDateJp(previous.date)}）から今回（${formatDateJp(current.date)}）までの変化をまとめました。`
   const recent = list.slice(-5).reverse()
-  return `<div class="karte-section history-section"><h3>これまでの記録と変化</h3>${guideBubble(mood, moodLine, 48)}<p>${summary}</p>
+  return `<div class="karte-section history-section"><h3>これまでの記録と変化</h3>${guideBubble(mood, moodLine, 48, current.dogName)}<p>${summary}</p>
     ${cmp.details.length ? `<ul class="history-detail-list">${cmp.details.map(x=>`<li>${x}</li>`).join('')}</ul>` : '<p class="helper">前回から大きな変化は見られません。</p>'}
     ${cmp.watchItems.length ? `<div class="note history-watch"><h4>主治医に伝えるとよいポイント</h4><ul>${cmp.watchItems.map(x=>`<li>${x}</li>`).join('')}</ul></div>` : ''}
     <details class="history-log"><summary>過去の記録一覧を見る</summary><ul class="history-list">${recent.map(h=>`<li><span>${formatDateJp(h.date)}</span><span>${h.type}</span><span>${h.weight ? h.weight+'kg' : '—'}</span></li>`).join('')}</ul></details>
@@ -1445,7 +1474,7 @@ function renderDiagnosis(){
     const shownTags = displayTags(r.tags, answers.breedGroup)
     const historyAll = loadHistory()
     const matchedHistory = answers.dogName ? historyAll.filter(h=>h.dogName===answers.dogName) : historyAll
-    return `<div class="result karte"><p class="eyebrow">うちの子ごはん・暮らしカルテ</p><div class="type-card profile-cover"><div class="profile-top">${guideBubble('happy', `${name}のこと、少し分かってきたよ。`, 72)}</div><span class="type-code">16タイプ診断</span><h2>${name}は「${r.type}」</h2><p class="profile-tagline">「${typeTagline(r.profile.axes)}」</p><div class="type-animal-row"><span class="type-animal">${answers.breedGroup && BREED_GROUPS[answers.breedGroup] ? BREED_GROUPS[answers.breedGroup] : '暮らしタイプ'}</span>${r.bcs ? `<span class="type-animal">${r.bcs}</span>` : ''}</div></div><div class="trait-list">${shownTags.map(x=>`<span>${x}</span>`).join('')}</div>
+    return `<div class="result karte"><p class="eyebrow">うちの子ごはん・暮らしカルテ</p><div class="type-card profile-cover"><div class="profile-top">${guideBubble('happy', `${name}のこと、少し分かってきたよ。`, 72, answers.dogName)}</div><span class="type-code">16タイプ診断</span><h2>${name}は「${r.type}」</h2><p class="profile-tagline">「${typeTagline(r.profile.axes)}」</p><div class="type-animal-row"><span class="type-animal">${answers.breedGroup && BREED_GROUPS[answers.breedGroup] ? BREED_GROUPS[answers.breedGroup] : '暮らしタイプ'}</span>${r.bcs ? `<span class="type-animal">${r.bcs}</span>` : ''}</div></div><div class="trait-list">${shownTags.map(x=>`<span>${x}</span>`).join('')}</div>
       ${r.hasWeight ? `<div class="result-grid"><div class="metric"><strong>${Math.round(r.kcal)} kcal/日</strong><span>目安必要カロリー</span></div><div class="metric"><strong>${Math.round(r.snack)} kcal/日まで</strong><span>おやつ上限の目安</span></div></div>${evidenceToggle('energy')}${r.isPuppy ? `<p class="helper">子犬期は成長段階によって必要カロリーが大きく変わるため、上の数字はあくまで簡易的な目安です。フードのパッケージ記載の給与量や、かかりつけの獣医師の指示を優先してください。</p>` : ''}` : `<div class="note"><h3>カロリー計算</h3><p>体重を入力すると、目安カロリーとおやつ上限を表示できます。今回はタイプ判定と注意点のみ表示します。</p></div>`}
       <div class="share-panel"><button class="primary save-share" type="button">結果画像を保存</button><button class="secondary native-share" type="button">LINE/Xで共有</button><canvas id="shareCanvas" width="1200" height="630" aria-label="診断結果シェア画像"></canvas><p class="helper">画像には医療情報や健診数値は入れず、タイプ名だけを共有します。</p></div>
       <div class="karte-section deep-summary"><h3>${name}の全体像</h3><p>${r.profile.lead}${r.breedNote ? ' '+r.breedNote : ''}${r.bcs ? ` 体型は${r.bcs}です。` : ''} ここでは回答を並べ直すのではなく、性格・活動量・食べ方・体型（BCS）・健診メモの組み合わせから、暮らしで見たいポイントを整理します。</p>${answers.body ? bcsGaugeSvg(bcsScore(answers.body)) : ''}${r.bcs ? evidenceToggle('bcs') : ''}</div>
@@ -1479,21 +1508,39 @@ function addMonthsToDate(iso, months){
   d.setMonth(d.getMonth() + months)
   return d.toISOString().slice(0,10)
 }
+// 履歴全体から「登録されている子」の一覧を、直近に診断した順で返す。
+function listDogNames(all){
+  const seen = []
+  for(let i=all.length-1;i>=0;i--){
+    const n = all[i].dogName || null
+    if(!seen.includes(n)) seen.push(n)
+  }
+  return seen
+}
 function renderMyPage(){
   const all = loadHistory()
-  const latest = all[all.length-1]
-  const photo = loadPhoto()
-  if(!latest){
+  if(!all.length){
     return `<p class="eyebrow">うちの子ホーム</p><h2>マイページ</h2>
       ${mascotBubble('empty', 'まだ記録がないみたい。まずは無料診断から始めてみよう。', 64)}
       <a class="primary js-diagnosis-start js-mypage-start" href="#diagnosis" data-location="mypage_empty">うちの子タイプ診断をする</a>`
   }
+  const dogNames = listDogNames(all)
+  // 選択中の子が履歴から消えていたら（=削除等）直近の子に戻す
+  if(!dogNames.includes(mypageSelectedDog)) mypageSelectedDog = dogNames[0]
+  const selected = mypageSelectedDog
+  const matched = all.filter(h => (h.dogName || null) === selected)
+  const latest = matched[matched.length-1]
+  const photo = loadPhoto()
   const name = latest.dogName ? `${latest.dogName}ちゃん` : 'うちの子'
   const bl = bcsScore(latest.body)
   const nextCheck = addMonthsToDate(latest.date, 3)
-  const charAppearance = loadCharacterAppearance()
+  const charAppearance = loadCharacterAppearance(selected)
   const fallbackImg = charAppearance ? `/character-parts/breed/${charAppearance.breed}.png` : '/mascot/normal.png'
+  const switcher = dogNames.length > 1
+    ? `<div class="dog-switcher">${dogNames.map(n => `<button type="button" class="dog-switcher-pill${n===selected?' active':''}" data-dog="${n===null?'':n}">${n ? n+'ちゃん' : 'うちの子'}</button>`).join('')}</div>`
+    : ''
   return `<p class="eyebrow">うちの子ホーム</p><h2>マイページ</h2><p class="helper">${name}の最新の記録をまとめています。写真はこの端末内にのみ保存されます。</p>
+    ${switcher}
     <div class="mypage-card">
       <div class="mypage-photo">
         <img class="mypage-photo-img" src="${photo || fallbackImg}" alt="うちの子の写真">
@@ -1516,7 +1563,7 @@ function renderMyPage(){
         </div>
       </div>
     </div>
-    ${renderHealthTimeline(all)}`
+    ${renderHealthTimeline(matched)}`
 }
 function renderTracker(){
   const list = loadWeights()
@@ -1675,5 +1722,9 @@ function bindEvents(){
     trackEvent('diagnosis_restart', {location:'mypage'})
     answers={}; step=0; render(); location.hash='diagnosis'
   })
+  document.querySelectorAll('.dog-switcher-pill').forEach(el=>el.addEventListener('click', e=>{
+    mypageSelectedDog = e.currentTarget.dataset.dog || null
+    render()
+  }))
 }
 render()
