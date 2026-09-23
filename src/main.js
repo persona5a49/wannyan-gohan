@@ -8,6 +8,14 @@ function mascotImg(expr='normal', size=64){
 function mascotBubble(expr, text, size=56){
   return `<div class="mascot-line">${mascotImg(expr, size)}<p class="mascot-speech">${text}</p></div>`
 }
+// 診断が一度でも完了していれば、以降はころての代わりにその子の犬種キャラクターが案内役になる。
+// 診断未実施（保存済みappearanceなし）の間は、これまで通りころてが案内する。
+function guideBubble(expr, text, size=56){
+  const appearance = loadCharacterAppearance()
+  if(!appearance) return mascotBubble(expr, text, size)
+  const img = `<img class="mascot-img char-guide-img" src="/character-parts/breed/${appearance.breed}.png" width="${size}" alt="" loading="lazy">`
+  return `<div class="mascot-line">${img}<p class="mascot-speech">${text}</p></div>`
+}
 
 /* ==== うちの子キャラクター生成エンジン ====
    役割分担: ChatGPT側が全パーツ素材(PNG/SVG、共通キャンバス・共通アンカーで書き出し)を作り、
@@ -1362,7 +1370,7 @@ function render(){
   document.querySelector('#app').innerHTML = `
     <header class="site-header"><div class="brand">わんにゃんごはんカルテ</div><nav class="nav-links"><a href="#mypage">うちの子ホーム</a><a href="/products/">商品一覧</a><a href="/products/compare/">比較</a><a href="#articles">記事</a><a href="/type-guides/">タイプ別ガイド</a><a href="#tracker">体重記録</a><a href="/pdf-karute/">詳細ごはんカルテPDF</a></nav><a href="#diagnosis" class="mini-cta js-diagnosis-start" data-location="header">無料でチェック</a></header>
     <main>
-      <section class="hero"><div class="hero-copy"><p class="eyebrow">うちの子の健康カルテ</p><h1>うちの子を、もっと知る。</h1><p class="lead">性格も、食事も、健診も。ひとつのカルテに。</p><p class="hero-explain">いくつか答えるだけで、この子に合うごはん量とフードの選び方が分かります。</p><div class="hero-actions"><a href="#diagnosis" class="primary js-diagnosis-start" data-location="hero">うちの子を見てみる</a><a href="/pdf-karute/" class="text-link hero-sub-link">くわしいPDFカルテもある →</a></div><div class="trust"><span>約3分</span><span>登録不要</span><span>医療判断ではなく相談前の整理</span></div></div><aside class="hero-mascot">${mascotBubble('happy', 'いっしょに、うちの子のことを見てみよう。', 120)}</aside></section>
+      <section class="hero"><div class="hero-copy"><p class="eyebrow">うちの子の健康カルテ</p><h1>うちの子を、もっと知る。</h1><p class="lead">性格も、食事も、健診も。ひとつのカルテに。</p><p class="hero-explain">いくつか答えるだけで、この子に合うごはん量とフードの選び方が分かります。</p><div class="hero-actions"><a href="#diagnosis" class="primary js-diagnosis-start" data-location="hero">うちの子を見てみる</a><a href="/pdf-karute/" class="text-link hero-sub-link">くわしいPDFカルテもある →</a></div><div class="trust"><span>約3分</span><span>登録不要</span><span>医療判断ではなく相談前の整理</span></div></div><aside class="hero-mascot">${loadCharacterAppearance() ? guideBubble('happy', 'また来てくれたんだね。今日の様子はどう？', 120) : mascotBubble('happy', 'いっしょに、うちの子のことを見てみよう。', 120)}</aside></section>
       <section class="cards" id="why"><article><span>01</span><h2>16タイプ診断</h2><p>性格・行動の傾向を、覚えやすい「うちの子タイプ」で表示します。</p></article><article><span>02</span><h2>ごはん量とおやつ</h2><p>体重から目安カロリーと、おやつの上限をざっくり計算します。</p></article><article><span>03</span><h2>根拠と健診メモ</h2><p>研究用尺度とは区別したセルフチェックとして、腎臓・肝臓・尿検査など相談項目も整理します。</p></article></section>
       <section class="diagnosis" id="diagnosis">${renderDiagnosis()}</section>
       <section class="mypage" id="mypage">${renderMyPage()}</section>
@@ -1429,8 +1437,7 @@ function renderDiagnosis(){
     const shownTags = displayTags(r.tags, answers.breedGroup)
     const historyAll = loadHistory()
     const matchedHistory = answers.dogName ? historyAll.filter(h=>h.dogName===answers.dogName) : historyAll
-    const charAppearance = loadCharacterAppearance()
-    return `<div class="result karte"><p class="eyebrow">うちの子ごはん・暮らしカルテ</p><div class="type-card profile-cover">${charAppearance ? `<div class="profile-character">${renderCharacterHtml(charAppearance, characterScene('happy','sit','none'), 108)}<span class="profile-character-caption">${name}のイメージキャラクター</span></div>` : ''}<div class="profile-top">${mascotImg('happy',72)}<p class="mascot-speech">${name}のこと、少し分かってきたよ。</p></div><span class="type-code">16タイプ診断</span><h2>${name}は「${r.type}」</h2><p class="profile-tagline">「${typeTagline(r.profile.axes)}」</p><div class="type-animal-row"><span class="type-animal">${answers.breedGroup && BREED_GROUPS[answers.breedGroup] ? BREED_GROUPS[answers.breedGroup] : '暮らしタイプ'}</span>${r.bcs ? `<span class="type-animal">${r.bcs}</span>` : ''}</div></div><div class="trait-list">${shownTags.map(x=>`<span>${x}</span>`).join('')}</div>
+    return `<div class="result karte"><p class="eyebrow">うちの子ごはん・暮らしカルテ</p><div class="type-card profile-cover"><div class="profile-top">${guideBubble('happy', `${name}のこと、少し分かってきたよ。`, 72)}</div><span class="type-code">16タイプ診断</span><h2>${name}は「${r.type}」</h2><p class="profile-tagline">「${typeTagline(r.profile.axes)}」</p><div class="type-animal-row"><span class="type-animal">${answers.breedGroup && BREED_GROUPS[answers.breedGroup] ? BREED_GROUPS[answers.breedGroup] : '暮らしタイプ'}</span>${r.bcs ? `<span class="type-animal">${r.bcs}</span>` : ''}</div></div><div class="trait-list">${shownTags.map(x=>`<span>${x}</span>`).join('')}</div>
       ${r.hasWeight ? `<div class="result-grid"><div class="metric"><strong>${Math.round(r.kcal)} kcal/日</strong><span>目安必要カロリー</span></div><div class="metric"><strong>${Math.round(r.snack)} kcal/日まで</strong><span>おやつ上限の目安</span></div></div>${evidenceToggle('energy')}${r.isPuppy ? `<p class="helper">子犬期は成長段階によって必要カロリーが大きく変わるため、上の数字はあくまで簡易的な目安です。フードのパッケージ記載の給与量や、かかりつけの獣医師の指示を優先してください。</p>` : ''}` : `<div class="note"><h3>カロリー計算</h3><p>体重を入力すると、目安カロリーとおやつ上限を表示できます。今回はタイプ判定と注意点のみ表示します。</p></div>`}
       <div class="share-panel"><button class="primary save-share" type="button">結果画像を保存</button><button class="secondary native-share" type="button">LINE/Xで共有</button><canvas id="shareCanvas" width="1200" height="630" aria-label="診断結果シェア画像"></canvas><p class="helper">画像には医療情報や健診数値は入れず、タイプ名だけを共有します。</p></div>
       <div class="karte-section deep-summary"><h3>${name}の全体像</h3><p>${r.profile.lead}${r.breedNote ? ' '+r.breedNote : ''}${r.bcs ? ` 体型は${r.bcs}です。` : ''} ここでは回答を並べ直すのではなく、性格・活動量・食べ方・体型（BCS）・健診メモの組み合わせから、暮らしで見たいポイントを整理します。</p>${answers.body ? bcsGaugeSvg(bcsScore(answers.body)) : ''}${r.bcs ? evidenceToggle('bcs') : ''}</div>
