@@ -1463,8 +1463,39 @@ function render(){
   document.querySelector('#app').innerHTML = `
     <header class="site-header"><div class="brand">わんにゃんごはんカルテ</div><nav class="nav-links"><a href="#mypage">うちの子ホーム</a><a href="/products/">商品一覧</a><a href="/products/compare/">比較</a><a href="#articles">記事</a><a href="/type-guides/">タイプ別ガイド</a><a href="#tracker">体重記録</a><a href="/pdf-karute/">詳細ごはんカルテPDF</a></nav><a href="#diagnosis" class="mini-cta js-diagnosis-start" data-location="header">無料でチェック</a></header>
     <main>
-      <section class="hero"><div class="hero-copy"><p class="eyebrow">うちの子の健康カルテ</p><h1>うちの子を、もっと知る。</h1><p class="lead">性格も、食事も、健診も。ひとつのカルテに。</p><p class="hero-explain">いくつか答えるだけで、この子に合うごはん量とフードの選び方が分かります。</p><div class="hero-actions"><a href="#diagnosis" class="primary js-diagnosis-start" data-location="hero">うちの子を見てみる</a><a href="/pdf-karute/" class="text-link hero-sub-link">くわしいPDFカルテもある →</a></div><div class="trust"><span>約3分</span><span>登録不要</span><span>医療判断ではなく相談前の整理</span></div></div><aside class="hero-mascot">${loadCharacterAppearance() ? guideBubble('happy', 'また来てくれたんだね。今日の様子はどう？', 120) : mascotBubble('happy', 'いっしょに、うちの子のことを見てみよう。', 120)}</aside></section>
-      <section class="cards" id="why"><article><span>01</span><h2>16タイプ診断</h2><p>性格・行動の傾向を、覚えやすい「うちの子タイプ」で表示します。</p></article><article><span>02</span><h2>ごはん量とおやつ</h2><p>体重から目安カロリーと、おやつの上限をざっくり計算します。</p></article><article><span>03</span><h2>根拠と健診メモ</h2><p>研究用尺度とは区別したセルフチェックとして、腎臓・肝臓・尿検査など相談項目も整理します。</p></article></section>
+      <section class="hero-v2">
+        <div class="hero-v2-copy">
+          <p class="eyebrow-v2">うちの子の健康カルテ</p>
+          <h1 class="hero-v2-title">うちの子の<br>ごはんと健康を、<br>ずっといっしょに。</h1>
+          <p class="hero-v2-lead">性格や体型、健診結果から、うちの子にぴったりのごはん量・おやつ・フード選びをわかりやすく整理します。</p>
+          <div class="hero-v2-actions">
+            <a href="#diagnosis" class="cta-coral js-diagnosis-start" data-location="hero">うちの子タイプ診断をはじめる →</a>
+            <a href="/pdf-karute/" class="text-link hero-sub-link">くわしいPDFカルテもある →</a>
+          </div>
+          <div class="trust-v2"><span>約3分でできる</span><span>無料で診断</span><span>登録不要</span></div>
+        </div>
+        <div class="hero-v2-visual">
+          <div class="hero-v2-blob" aria-hidden="true"></div>
+          <div class="hero-v2-shadow" aria-hidden="true"></div>
+          <img class="decor decor-paw1" src="/assets/decor/paw-01.png" alt="" aria-hidden="true">
+          <img class="decor decor-paw2" src="/assets/decor/paw-02.png" alt="" aria-hidden="true">
+          <img class="hero-v2-korote hero-v2-korote-solo" src="/assets/korote/cheer.png" alt="わんにゃんごはんカルテのキャラクター、ころて">
+        </div>
+      </section>
+      <section class="cards-v2" id="why">
+        <article><img src="/assets/icons/food.png" alt=""><h2>1日のごはん量がわかる</h2><p>体重・年齢・体型から、目安の量を計算します。</p></article>
+        <article><img src="/assets/icons/treat.png" alt=""><h2>おやつの上限がわかる</h2><p>あげすぎていないか、上限の目安を示します。</p></article>
+        <article><img src="/assets/icons/checkup.png" alt=""><h2>健診結果からのヒント</h2><p>気になる項目を、次の相談に活かせる形で整理します。</p></article>
+      </section>
+      <section class="worry-v2">
+        <h2 class="worry-v2-title">こんなお悩みありませんか？</h2>
+        <div class="worry-v2-grid">
+          <div class="worry-v2-item"><img src="/assets/korote/think.png" alt=""><span>ごはんの量がこれでいいのか不安</span></div>
+          <div class="worry-v2-item"><img src="/assets/korote/sad.png" alt=""><span>おやつをあげすぎていないか心配</span></div>
+          <div class="worry-v2-item"><img src="/assets/korote/think.png" alt=""><span>うちの子に合うフードがわからない</span></div>
+          <div class="worry-v2-item"><img src="/assets/korote/cheer.png" alt=""><span>健診結果をうまく活かしたい</span></div>
+        </div>
+      </section>
       <section class="diagnosis" id="diagnosis">${renderDiagnosis()}</section>
       <section class="mypage" id="mypage">${renderMyPage()}</section>
       <section class="tracker" id="tracker">${renderTracker()}</section>
