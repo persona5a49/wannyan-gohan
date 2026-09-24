@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "npm run check:products && vite build",
+    "preview": "vite preview",
+    "check:products": "node scripts/check-product-consistency.js"
   },
   "devDependencies": {
     "vite": "^8.3.0"

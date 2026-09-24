@@ -231,7 +231,29 @@ const PRODUCT_SLUGS = {
   'ブラバンソンヌ 大型犬・中型犬 成犬用 チキン': 'brabanconne-large-medium',
   'ヒルズ サイエンス・ダイエット シニア 大型犬種用': 'hills-senior-large',
   'ロイヤルカナン ミディアム ステアライズド': 'royal-canin-medium-sterilised',
-  'デビフ シニア犬の食事 ささみ＆軟骨': 'devif-senior-sasami-nankotsu'
+  'デビフ シニア犬の食事 ささみ＆軟骨': 'devif-senior-sasami-nankotsu',
+  'ヒルズ サイエンス・ダイエット シニア 小型犬用': 'hills-senior-small',
+  'ロイヤルカナン ミニ エイジング12+': 'royal-canin-mini-aging12',
+  'ピュリナ ワン 7歳以上 ほぐし粒入り': 'purina-one-senior7',
+  'このこのごはん': 'konokonogohan',
+  '犬猫生活 ドッグフード シニア': 'inuneko-seikatsu-senior',
+  'セレクトバランス エイジングケア チキン': 'select-balance-agingcare-chicken',
+  'プロマネージ 7歳からの室内犬用': 'promanage-senior7-indoor',
+  'アイムス 7歳以上 健康サポート': 'iams-senior7-health',
+  'ユーカヌバ シニア 小型犬用': 'eukanuba-senior-small',
+  'ナウフレッシュ スモールブリード シニア': 'nowfresh-smallbreed-senior',
+  'ソルビダ グレインフリー チキン 室内飼育7歳以上': 'solvida-grainfree-chicken-senior7',
+  'アーテミス アガリクス I/S 小粒': 'artemis-agaricus-is-small',
+  'ナチュロル': 'naturol',
+  '馬肉自然づくり': 'bameat-shizendukuri',
+  'Yum Yum Yum! シニア&ライト チキン': 'yumyumyum-senior-light-chicken',
+  'Dr.ケアワン': 'dr-careone',
+  'ペトコトフーズ チキン': 'petokoto-chicken',
+  'ブッチ ブラック・レーベル': 'butch-black-label',
+  'ネルソンズ ドッグフード': 'nelsons-dogfood',
+  'POCHI ザ・ドッグフード エイジングケア': 'pochi-agingcare',
+  'ペロリコ ドッグフード ライト': 'perolico-light',
+  'VetSolution 犬用 胃腸サポート': 'vetsolution-stomach-support'
 }
 function productDetailUrl(name){ return PRODUCT_SLUGS[name] ? `/products/${PRODUCT_SLUGS[name]}/` : '#' }
 function productDetailHref(name, answers, r){
