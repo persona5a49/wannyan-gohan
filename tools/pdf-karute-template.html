@@ -44,7 +44,9 @@
   .head:after{content:"";position:absolute;left:44px;right:44px;bottom:0;height:1px;background:rgba(255,255,255,.18)}
   .head .brand{font-family:'Shippori Mincho B1',serif;font-size:13px;font-weight:600;color:#e3ead9;letter-spacing:.02em}
   .head .title{font-family:'Shippori Mincho B1',serif;font-size:23px;font-weight:800;margin-top:6px;letter-spacing:.02em}
-  .head .who{font-size:12px;color:#cfe1d1;margin-top:4px}
+  .head .who{margin-top:6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .head .who-name{font-size:14px;font-weight:800;color:#fff;margin-right:2px}
+  .head .who-chip{font-size:11px;color:#e3ead9;background:rgba(255,255,255,.14);border-radius:999px;padding:3px 10px}
   .head .date{float:right;background:var(--accent);color:#fff;border-radius:20px;padding:5px 14px;font-size:12px;font-weight:700}
   .pg-tag{font-size:11px;color:#98a094;margin:0 0 10px}
   .pdf-mascot{display:flex;align-items:center;gap:12px;background:var(--mint);border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-bottom:16px}
@@ -380,43 +382,7 @@
 
       <!-- ============ PDF① 飼い主向け詳細カルテ ============ -->
 
-      <!-- Page 1: 総合サマリー -->
-      <section class="pdf-page" id="page1">
-        <div class="head">
-          <span class="date pv-date">2026/01/01 作成</span>
-          <div class="brand">わんにゃんごはんカルテ　PDF①　飼い主向け詳細カルテ</div>
-          <div class="title">総合サマリー</div>
-          <div class="who pv-who"></div>
-        </div>
-        <div class="body">
-          <p class="pg-tag">P.1 / 13　総合サマリー</p>
-          <div class="pdf-mascot"><img src="../public/mascot/happy.png" width="44" alt=""><p>うちの子のこと、これから一緒に見ていこうね。</p></div>
-          <div class="profile">
-            <div class="lbl">対象のわんちゃん</div>
-            <div class="val" id="pvProfile">（左のフォームに入力してください）</div>
-          </div>
-
-          <h2 class="sec"><span class="num">1</span>タイプ・現在の状態</h2>
-          <div class="box green">
-            <div class="val" id="ovTypeName" style="font-size:19px;font-weight:800">（左のフォームにタイプ名を入力してください）</div>
-            <p class="small" id="ovTypeAxes" style="margin-top:6px"></p>
-          </div>
-
-          <div class="metrics" style="margin-top:14px">
-            <div class="box beige metric"><strong id="ovWeight">-</strong><span>現在の体重</span></div>
-            <div class="box beige metric"><strong id="ovDER">-</strong><span>1日の目安カロリー（RER/DER）</span></div>
-            <div class="box beige metric"><strong id="ovBcs">-</strong><span>体型スコア（BCS）の目安</span><div id="ovBcsGauge"></div></div>
-            <div class="box beige metric"><strong id="ovFood">-</strong><span>現在のフード</span></div>
-          </div>
-
-          <h2 class="sec"><span class="num">2</span>総合アセスメント</h2>
-          <div class="box beige">
-            <p style="margin:0;font-size:13.5px;line-height:1.9" id="ovSummary"></p>
-          </div>
-        </div>
-      </section>
-
-      <!-- Page 2: 性格・行動分析 -->
+      <!-- Page 1: 性格・行動分析 -->
       <section class="pdf-page" id="page2">
         <div class="head">
           <span class="date pv-date">2026/01/01 作成</span>
@@ -425,7 +391,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.2 / 13　性格・行動分析</p>
+          <p class="pg-tag">P.1 / 13　性格・行動分析</p>
 
           <h2 class="sec"><span class="num">1</span>新しい環境への反応</h2>
           <div class="box beige"><p style="margin:0;font-size:13px;line-height:1.8" id="peNewEnv"></p></div>
@@ -460,7 +426,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.3 / 13　生活スタイル分析</p>
+          <p class="pg-tag">P.2 / 13　生活スタイル分析</p>
 
           <h2 class="sec"><span class="num">1</span>運動量</h2>
           <div class="box beige"><p style="margin:0;font-size:13px;line-height:1.8" id="liExercise"></p></div>
@@ -488,7 +454,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.4 / 13　食事分析</p>
+          <p class="pg-tag">P.3 / 13　食事分析</p>
 
           <h2 class="sec"><span class="num">1</span>現在のフード量とごはん量の目安</h2>
           <div class="metrics">
@@ -508,6 +474,7 @@
           <div class="box beige">
             <p style="margin:0 0 8px;font-size:13px;line-height:1.8" id="dietEnv"></p>
             <p style="margin:0 0 8px;font-size:13px;line-height:1.8" id="dietBcs"></p>
+            <div id="dietBcsGauge"></div>
             <div id="pvBodyMemo"></div>
           </div>
         </div>
@@ -522,7 +489,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.5 / 13　すでに良い状態のポイント</p>
+          <p class="pg-tag">P.4 / 13　すでに良い状態のポイント</p>
           <p class="small" style="margin-bottom:10px">問題点だけでなく、今のままで大丈夫な部分もお伝えします。</p>
           <ul class="good-list" id="goodList"></ul>
         </div>
@@ -537,7 +504,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.6 / 13　見直すと良いポイント（優先度順）</p>
+          <p class="pg-tag">P.5 / 13　見直すと良いポイント（優先度順）</p>
           <div id="priList"></div>
           <p class="small" id="pvRefs" style="margin-top:6px"></p>
         </div>
@@ -552,7 +519,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.7 / 13　フード選びで大切にしたい条件</p>
+          <p class="pg-tag">P.6 / 13　フード選びで大切にしたい条件</p>
           <p class="small" style="margin-bottom:10px">具体的な商品名の前に、このコにとって重要な「見るべき条件」を整理します。</p>
           <div id="critList"></div>
         </div>
@@ -567,7 +534,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.8 / 13　候補フード（順位づけはしていません）</p>
+          <p class="pg-tag">P.7 / 13　候補フード（順位づけはしていません）</p>
           <div id="prodCards"></div>
         </div>
       </section>
@@ -581,7 +548,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.9 / 13　候補フード比較表</p>
+          <p class="pg-tag">P.8 / 13　候補フード比較表</p>
           <div style="overflow-x:auto">
             <table class="cmp">
               <thead>
@@ -606,7 +573,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.10 / 13　今後3〜6ヶ月の見守りポイント</p>
+          <p class="pg-tag">P.9 / 13　今後3〜6ヶ月の見守りポイント</p>
           <table class="watch">
             <thead><tr><th>項目</th><th>今回の状態（基準）</th><th class="chk-cell">1ヶ月後</th><th class="chk-cell">3ヶ月後</th><th class="chk-cell">6ヶ月後</th></tr></thead>
             <tbody id="watchBody"></tbody>
@@ -640,7 +607,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.11 / 13　前回との比較</p>
+          <p class="pg-tag">P.10 / 13　前回との比較</p>
           <p class="small" style="margin-bottom:10px">前回のカルテ作成時の値と、今回の値を比較します。継続してご利用いただく中での変化の把握にお役立てください。</p>
           <div id="historyBody"></div>
         </div>
@@ -655,7 +622,7 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.12 / 13　3か月後に見る項目</p>
+          <p class="pg-tag">P.11 / 13　3か月後に見る項目</p>
           <div class="pdf-mascot"><img src="../public/mascot/cheer.png" width="40" alt=""><p>次に見るポイントはこれだよ。あせらず一緒に見ていこう。</p></div>
           <p class="small" style="margin-bottom:10px">今回の内容をもとに、次回（目安3か月後）のご来院・カルテ作成時に確認したい項目をまとめました。ここでの記録が、次回の「前回との比較」ページに活用されます。</p>
           <div id="recheck3moList"></div>
@@ -671,10 +638,25 @@
           <div class="who pv-who"></div>
         </div>
         <div class="body">
-          <p class="pg-tag">P.13 / 13　飼い主タイプとの相性</p>
+          <p class="pg-tag">P.12 / 13　飼い主タイプとの相性</p>
           <div class="pdf-mascot"><img src="../public/mascot/happy.png" width="40" alt=""><p>飼い主様のタイプも教えてくれると、もっと詳しく分かるよ。</p></div>
           <p class="small" style="margin-bottom:14px">このコの性格タイプと、飼い主様のMBTIタイプ（任意）を組み合わせて、日々の付き合い方のヒントをまとめます。MBTIは心理検査としての学術的裏付けが限定的な簡易フレームワークであり、本ページは診断ではなく、会話のきっかけとしてお楽しみください。</p>
           <div id="ownerCompatBody"></div>
+        </div>
+      </section>
+
+      <!-- Page 13: 飼い主タイプとの相性（シーン別） -->
+      <section class="pdf-page" id="pageOwnerCompatScenes">
+        <div class="head">
+          <span class="date pv-date">2026/01/01 作成</span>
+          <div class="brand">わんにゃんごはんカルテ　PDF①　飼い主向け詳細カルテ</div>
+          <div class="title">飼い主タイプとの相性（シーン別）</div>
+          <div class="who pv-who"></div>
+        </div>
+        <div class="body">
+          <p class="pg-tag">P.13 / 13　飼い主タイプとの相性（シーン別）</p>
+          <p class="small" style="margin-bottom:14px">前のページの4項目を、実際の生活シーンに当てはめるとどうなるかをまとめました。留守番・しつけ・外出・体調管理の4場面での付き合い方のヒントです。</p>
+          <div id="ownerCompatScenesBody"></div>
         </div>
       </section>
 
@@ -747,14 +729,6 @@ function fmtDate(iso){
   return `${y}/${m}/${d}`;
 }
 
-const AXIS_LABEL = {
-  open:'人や犬に積極的', watch:'様子を見てから近づく',
-  challenge:'新しいことに強い', safe:'安心できる手順が必要',
-  active:'活発・興奮しやすい', calm:'落ち着いている',
-  close:'そばにいたい', indie:'マイペース',
-  friendly:'他の犬にも友好的', watchful:'様子を見てから近づく（対犬）', avoidant:'他の犬とは距離を置きたい'
-};
-
 // サイト本体（src/main.js）のBCS_SCORE/bcsGaugeSvgと同じ5段階スケールに統一。
 // thin=2/normal=3/chubby=4/obese=5（本体のBCS目安X/5とキー・並びを揃えている）
 const BCS_LABEL = {thin:'やや細', normal:'適正', chubby:'やや丸', obese:'ぽっちゃり'};
@@ -784,15 +758,15 @@ function render(){
 
   document.querySelectorAll('.pv-date').forEach(el => el.textContent = fmtDate($('createdDate').value) + ' 作成');
 
-  const profileParts = [dogName];
-  if (age) profileParts.push(age + '歳');
-  if (weight) profileParts.push(weight + 'kg');
-  if (sex) profileParts.push(sex);
-  if (neuter) profileParts.push('避妊・去勢：' + neuter);
-  if (breed) profileParts.push(breed);
-  const profileText = profileParts.join('　・　');
-  $('pvProfile').textContent = profileText;
-  document.querySelectorAll('.pv-who').forEach(el => el.textContent = '対象：' + profileText);
+  const whoChips = [];
+  if (age) whoChips.push(age + '歳');
+  if (weight) whoChips.push(weight + 'kg');
+  if (sex && neuter) whoChips.push(sex + '・避妊去勢' + neuter);
+  else if (sex) whoChips.push(sex);
+  else if (neuter) whoChips.push('避妊・去勢：' + neuter);
+  if (breed) whoChips.push(breed);
+  const whoHtml = `<span class="who-name">${dogName}</span>` + whoChips.map(c => `<span class="who-chip">${c}</span>`).join('');
+  document.querySelectorAll('.pv-who').forEach(el => el.innerHTML = whoHtml);
 
   // 食事量の基本計算（既存ロジックを維持）
   const feedGram = $('feedGram').value;
@@ -843,7 +817,7 @@ function render(){
   bodyLines.push(`現在の体重：${weight ? weight + 'kg' : '未入力'}`);
   if ($('targetBody').value) bodyLines.push(`目標体重・気になる体型：${$('targetBody').value}`);
   if ($('snackDetail').value) bodyLines.push(`おやつ：${$('snackDetail').value}`);
-  bodyLines.push(`サプリメント：${$('supplement').value || 'なし'}`);
+  if ($('supplement').value) bodyLines.push(`サプリメント：${$('supplement').value}`);
   $('pvBodyMemo').innerHTML = bodyLines.map(l => `<div>${l}</div>`).join('');
 
   const checked = Array.from(document.querySelectorAll('#checkupItems input:checked')).map(c => c.value);
@@ -863,18 +837,7 @@ function render(){
     ownerMbti
   };
 
-  // ---- Page 1: 総合サマリー ----
-  $('ovTypeName').textContent = typeName ? typeName : '（左のフォームにタイプ名を入力してください）';
-  const axisLabels = [axisSocial,axisCaution,axisActivity,axisBond,axisDogDistance].filter(Boolean).map(a=>AXIS_LABEL[a]);
-  $('ovTypeAxes').textContent = axisLabels.length ? axisLabels.join('・') : '無料診断の結果（社交性・慎重さ・活動性・距離感）を入力すると、性格傾向を反映します。';
-  $('ovWeight').textContent = weight ? weight + 'kg' : '-';
-  $('ovDER').textContent = der > 0 ? `約${Math.round(der)}kcal` : '-';
-  $('ovBcs').textContent = bcsLabel || '-';
-  $('ovBcsGauge').innerHTML = bcsGaugeSvg(bcs);
-  $('ovFood').textContent = $('foodName').value || '-';
-  $('ovSummary').textContent = buildOverview(ctx);
-
-  // ---- Page 2: 性格・行動分析 ----
+  // ---- Page 1: 性格・行動分析 ----
   const per = personalityNarrative(ctx);
   $('peNewEnv').textContent = per.newEnv;
   $('pePeople').textContent = per.peopleDistance;
@@ -885,7 +848,7 @@ function render(){
   $('peSecurity').textContent = per.security;
   $('peStress').textContent = per.stress;
 
-  // ---- Page 3: 生活スタイル分析 ----
+  // ---- Page 2: 生活スタイル分析 ----
   const life = lifestyleNarrative(ctx);
   $('liExercise').textContent = life.exercise;
   $('liSleep').textContent = life.sleep;
@@ -893,7 +856,7 @@ function render(){
   $('liEnv').textContent = life.env;
   $('liStimulation').textContent = life.stimulation;
 
-  // ---- Page 4: 食事分析 ----
+  // ---- Page 3: 食事分析 ----
   const diet = dietNarrative(ctx);
   const snackNote = [];
   if ($('snackDetail').value) snackNote.push(`おやつ内容：${$('snackDetail').value}`);
@@ -902,12 +865,13 @@ function render(){
   $('dietAppetite').textContent = diet.appetite;
   $('dietEnv').textContent = diet.env;
   $('dietBcs').textContent = diet.bcs;
+  $('dietBcsGauge').innerHTML = bcs ? bcsGaugeSvg(bcs) : '';
 
-  // ---- Page 5: すでに良い状態のポイント ----
+  // ---- Page 4: すでに良い状態のポイント ----
   const good = buildGoodPoints(ctx);
   $('goodList').innerHTML = good.map(g => `<li>${g}</li>`).join('');
 
-  // ---- Page 6: 見直すと良いポイント（buildInsightsを拡張して利用） ----
+  // ---- Page 5: 見直すと良いポイント（buildInsightsを拡張して利用） ----
   const insights = buildInsights(ctx);
   $('priList').innerHTML = insights.points.map((p,i) => `
     <div class="priority-item">
@@ -916,11 +880,11 @@ function render(){
     </div>`).join('');
   $('pvRefs').textContent = insights.refs.length ? '参考：' + insights.refs.join('／') : '';
 
-  // ---- Page 7: フード選びで大切にしたい条件 ----
+  // ---- Page 6: フード選びで大切にしたい条件 ----
   const criteria = buildFoodCriteria(ctx);
   $('critList').innerHTML = criteria.map(([k,v]) => `<div class="criteria-item"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
 
-  // ---- Page 8 & 9: 候補フード・比較表 ----
+  // ---- Page 7 & 8: 候補フード・比較表 ----
   const products = collectProducts(ctx);
   if (products.length) {
     $('prodCards').innerHTML = products.map(p => `
@@ -948,7 +912,7 @@ function render(){
     $('cmpBody').innerHTML = '<tr><td colspan="10" style="text-align:center;color:#98a094">候補フード未入力</td></tr>';
   }
 
-  // ---- Page 10: 見守りポイント ----
+  // ---- Page 9: 見守りポイント ----
   const watchRows = [
     ['体重', weight ? weight + 'kg' : '-'],
     ['体型（BCS）', bcsLabel || '-'],
@@ -963,7 +927,7 @@ function render(){
   $('watchBody').innerHTML = watchRows.map(([k,v]) => `<tr><td>${k}</td><td>${v}</td><td class="chk-cell">□</td><td class="chk-cell">□</td><td class="chk-cell">□</td></tr>`).join('');
   $('watchNotes').innerHTML = buildWatchNotes(ctx).map(n => `<li>${n}</li>`).join('');
 
-  // ---- Page 11: 前回との比較（リピーター向け） ----
+  // ---- Page 10: 前回との比較（リピーター向け） ----
   const hist = buildHistoryComparison(ctx);
   if (!hist.hasPrev) {
     $('historyBody').innerHTML = `
@@ -990,7 +954,7 @@ function render(){
       ${alertHtml}${memoHtml}`;
   }
 
-  // ---- Page 12: 3か月後に見る項目 ----
+  // ---- Page 11: 3か月後に見る項目 ----
   const recheck = buildRecheckItems(ctx);
   $('recheck3moList').innerHTML = recheck.map((it,i) => `
     <div class="priority-item">
@@ -998,9 +962,10 @@ function render(){
       <div class="priority-body"><strong>${it.title}</strong><p>${it.detail}</p></div>
     </div>`).join('');
 
-  // ---- Page 13: 飼い主タイプとの相性 ----
+  // ---- Page 12: 飼い主タイプとの相性 ----
   const compat = buildOwnerCompatibility(ctx);
   $('ownerCompatBody').innerHTML = compat;
+  $('ownerCompatScenesBody').innerHTML = buildOwnerCompatibilityScenes(ctx);
 
   // ---- PDF②：健康サマリー ----
   const vetBasicItems = [
@@ -1039,7 +1004,7 @@ function render(){
 function buildInsights(ctx){
   const { age, weight, body, checked, onMeds, onTherapeutic, symptoms,
           axisSocial, axisCaution, axisActivity, axisBond, foodDrive,
-          axisDogDistance, livingEnv, bcs, currentIssues } = ctx;
+          axisDogDistance, livingEnv, bcs, currentIssues, der, actualKcal } = ctx;
   const pts = [];
   const refs = new Set();
   const bodyTxt = (body || '').trim();
@@ -1107,7 +1072,11 @@ function buildInsights(ctx){
 
   // H. 体型スコア（BCS）がやや丸め〜ぽっちゃり（新規追加・自由記述に依存しない体型判定）
   if (bcs === 'chubby' || bcs === 'obese') {
-    pts.push('体型スコア（BCS）がやや肥満気味とのことです。体重の増減は数値だけでなく、実際に触って肋骨の触れ方を定期的に確認しながら、極端な減量ではなく緩やかな見直しを心がけてください。');
+    if (der > 0 && actualKcal > 0 && actualKcal < der * 0.85) {
+      pts.push(`体型スコア（BCS）は${BCS_LABEL[bcs]}なのに、現在の給与カロリーは体重・年齢から算出した目安（約${Math.round(der)}kcal/日）より少ないという、一見矛盾した状態です。主食の量は少なくても、おやつ・トッピング・ご家族からの差し入れなど、記録に入っていないカロリーが積み重なっている可能性が高いため、実際に口にしているものを一度すべて書き出して確認してください。それでも説明がつかない場合は、代謝性の病気（甲状腺機能低下症など）の可能性も含めて主治医にご相談ください。`);
+    } else {
+      pts.push('体型スコア（BCS）がやや肥満気味とのことです。体重の増減は数値だけでなく、実際に触って肋骨の触れ方を定期的に確認しながら、極端な減量ではなく緩やかな見直しを心がけてください。');
+    }
   }
 
   // I. 飼い主様からの自由記述の困りごと（新規追加・symptomsとは別入力）
@@ -1133,60 +1102,7 @@ function buildInsights(ctx){
   return { points: pts, refs: Array.from(refs) };
 }
 
-// ページ1：性格タイプ × 健康/生活状態を統合した300〜500字程度の総合アセスメント
-function buildOverview(ctx){
-  const { dogName, typeName, der, actualKcal, checked, bcsLabel, axisCaution, axisActivity, axisBond, foodDrive, weight } = ctx;
-  const name = dogName && dogName !== '（未入力）' ? dogName : 'このコ';
-  const parts = [];
-
-  parts.push(typeName ? `${name}は「${typeName}」タイプで、` : `${name}は、`);
-
-  const traits = [];
-  if (axisCaution === 'safe') traits.push('新しいことには時間をかけて慣れていく慎重さ');
-  if (axisCaution === 'challenge') traits.push('初めてのことにも物怖じせず向き合える好奇心');
-  if (axisActivity === 'active') traits.push('活発でエネルギッシュな一面');
-  if (axisActivity === 'calm') traits.push('落ち着いてマイペースな一面');
-  if (axisBond === 'close') traits.push('飼い主様のそばにいることを好む甘えん坊な一面');
-  if (axisBond === 'indie') traits.push('自分の時間も大切にするマイペースな一面');
-  parts.push(traits.length ? `${traits.join('と')}を持つコです。` : '性格タイプの詳細は、今後の診断結果とあわせて反映していきます。');
-
-  if (weight) {
-    let stateTxt = `現在の体重は${weight}kgで、`;
-    stateTxt += bcsLabel ? `体型スコア（BCS）の目安は${bcsLabel}です。` : '体型については今後の記録とあわせて確認していきます。';
-    parts.push(stateTxt);
-  }
-
-  if (der > 0 && actualKcal > 0) {
-    const ratio = actualKcal / der;
-    if (ratio >= 0.85 && ratio <= 1.15) {
-      parts.push(`現在の給与カロリーは、体重・年齢から算出した目安（約${Math.round(der)}kcal/日）にほぼ沿っており、大きな見直しの必要はなさそうです。`);
-    } else if (ratio > 1.15) {
-      parts.push(`現在の給与カロリーは目安（約${Math.round(der)}kcal/日）よりやや多い可能性があり、おやつも含めた1日の総カロリーを一度見直すとよいでしょう。`);
-    } else {
-      parts.push(`現在の給与カロリーは目安（約${Math.round(der)}kcal/日）よりやや少ない可能性があります。体重の減少がないか、あわせて確認してください。`);
-    }
-  }
-
-  if (checked.length) {
-    parts.push(`健診では${checked.slice(0,3).map(c=>c.replace(/（.*?）/,'')).join('・')}について気になる点が挙げられています。数値の推移は主治医と一緒に確認しながら、食事面でできる工夫をこのカルテでまとめました。`);
-  } else {
-    parts.push('健診では現在のところ大きな指摘はありません。今の状態を維持しながら、日々の変化を見守っていきましょう。');
-  }
-
-  if (foodDrive === 'high') {
-    parts.push('食への反応が強いタイプでもあるため、おやつの管理を意識しながら、無理のない範囲でフード選びを進めていきましょう。');
-  } else if (foodDrive === 'low') {
-    parts.push('食べムラが出やすいタイプでもあるため、食べやすさや香りも意識しながら、無理のない範囲でフード選びを進めていきましょう。');
-  }
-
-  let text = parts.join('');
-  if (text.length < 300) {
-    text += 'このカルテでは、性格タイプと健康状態の両方を踏まえて、日々の食事や生活で意識したいポイントを整理しています。次のページから順番にご確認ください。';
-  }
-  return text;
-}
-
-// ページ2：性格・行動分析（既存の軸フィールド＋任意の対犬距離感フィールドを利用）
+// ページ1：性格・行動分析（既存の軸フィールド＋任意の対犬距離感フィールドを利用）
 function personalityNarrative(ctx){
   const { axisSocial, axisCaution, axisActivity, axisBond, axisDogDistance, walkDetail, aloneTime, livingEnv } = ctx;
   const out = {};
@@ -1274,7 +1190,7 @@ function personalityNarrative(ctx){
   return out;
 }
 
-// ページ3：生活スタイル分析
+// ページ2：生活スタイル分析
 function lifestyleNarrative(ctx){
   const { axisActivity, axisCaution, walkDetail, sleepNote, aloneTime, livingEnv, age } = ctx;
   const out = {};
@@ -1321,7 +1237,7 @@ function lifestyleNarrative(ctx){
   return out;
 }
 
-// ページ4：食事分析
+// ページ3：食事分析
 function dietNarrative(ctx){
   const { foodDrive, symptoms, feedingEnv, bcsLabel } = ctx;
   const symTxt = (symptoms || '').trim();
@@ -1346,7 +1262,7 @@ function dietNarrative(ctx){
   return out;
 }
 
-// ページ5：すでに良い状態のポイント
+// ページ4：すでに良い状態のポイント
 function buildGoodPoints(ctx){
   const { bcs, checked, der, actualKcal, feedTimes, symptoms, onMeds, onTherapeutic, foodDrive } = ctx;
   const symTxt = (symptoms || '').trim();
@@ -1358,7 +1274,7 @@ function buildGoodPoints(ctx){
     const ratio = actualKcal / der;
     if (ratio >= 0.85 && ratio <= 1.15) out.push(`現在の給与カロリー（約${Math.round(actualKcal)}kcal）は、体重・年齢から算出した目安（約${Math.round(der)}kcal）にほぼ沿っています。大きな見直しの必要はなさそうです。`);
   }
-  if (Number(feedTimes || 0) >= 2) out.push('1日の食事を複数回に分けて与えられています。血糖値の急な変動を抑えやすく、消化への負担も少ない、望ましい与え方です。');
+  if (Number(feedTimes || 0) >= 2) out.push(`1日の食事を${feedTimes}回に分けて与えられています。1回あたりの量を抑えられるため、血糖値の急な変動や消化への負担を抑えやすい与え方の一つです。`);
   if (!symTxt) out.push('現在、特に気になる症状の報告はありません。');
   if (onMeds !== 'はい' && onTherapeutic !== 'はい') out.push('現在、服薬・療法食の対応はなく、食事面で特別な制約はない状態です。');
   if (foodDrive !== 'low') out.push('食への関心・反応は良好で、食事の楽しみを感じられているようです。');
@@ -1367,7 +1283,7 @@ function buildGoodPoints(ctx){
   return out.slice(0,6);
 }
 
-// ページ7：フード選びで大切にしたい条件（商品名の前に「見るべき条件」を提示）
+// ページ6：フード選びで大切にしたい条件（商品名の前に「見るべき条件」を提示）
 function buildFoodCriteria(ctx){
   const { body, bcs, foodDrive, axisCaution, symptoms, hasFlag, age, feedingEnv } = ctx;
   const bodyTxt = (body || '').trim();
@@ -1388,7 +1304,7 @@ function buildFoodCriteria(ctx){
   return out.slice(0,6);
 }
 
-// ページ8・9：候補フードの収集（最大5件・入力された分だけ表示）
+// ページ7・8：候補フードの収集（最大5件・入力された分だけ表示）
 function collectProducts(ctx){
   const { der } = ctx;
   const out = [];
@@ -1414,7 +1330,7 @@ function collectProducts(ctx){
   return out;
 }
 
-// ページ10：3〜6ヶ月の見守りポイント（健診フラグに応じて注意事項を補足）
+// ページ9：3〜6ヶ月の見守りポイント（健診フラグに応じて注意事項を補足）
 function buildWatchNotes(ctx){
   const { hasFlag, foodDrive } = ctx;
   const notes = [];
@@ -1425,7 +1341,7 @@ function buildWatchNotes(ctx){
   return notes;
 }
 
-// ページ11：前回との比較（リピーター向け・前回入力がある場合のみ本文を生成）
+// ページ10：前回との比較（リピーター向け・前回入力がある場合のみ本文を生成）
 function buildHistoryComparison(ctx){
   const { weight, bcs, bcsLabel, snackDetail, foodDrive,
           prevWeight, prevBcs, prevBcsLabel, prevSnackDetail, prevFoodDrive, prevHealthMemo,
@@ -1525,7 +1441,7 @@ function buildHistoryComparison(ctx){
   };
 }
 
-// ページ12：3か月後に見る項目（今回の回答から再確認したい項目のみを抽出。全員一律の文言にはしない）
+// ページ11：3か月後に見る項目（今回の回答から再確認したい項目のみを抽出。全員一律の文言にはしない）
 function buildRecheckItems(ctx){
   const { weight, bcs, bcsLabel, body, labValues, foodDrive, symptoms,
           onMeds, onTherapeutic, hasFlag, currentIssues } = ctx;
@@ -1635,10 +1551,10 @@ const COMPAT_BOND = {
   }
 };
 
-// ページ13：MBTI（任意）× このコの性格タイプで、飼い主様との付き合い方のヒントを深掘りして組み立てる
+// ページ12：MBTI（任意）× このコの性格タイプで、飼い主様との付き合い方のヒントを深掘りして組み立てる
 function buildOwnerCompatibility(ctx){
   const { dogName, typeName, axisSocial, axisCaution, axisActivity, axisBond, ownerMbti } = ctx;
-  const name = dogName && dogName !== '（未入力）' ? dogName : 'このコ';
+  const name = dogName && dogName !== '（未入力）' ? `${dogName}ちゃん` : 'このコ';
   const hasAxes = axisSocial || axisCaution || axisActivity || axisBond;
 
   if (!ownerMbti) {
@@ -1674,6 +1590,64 @@ function buildOwnerCompatibility(ctx){
   const items = rows.map(r => `<div class="compat-row"><p class="compat-label">${r.label}</p><p class="small">${r.text}</p><p class="compat-tip"><span class="tip-label">ワンポイント：</span>${r.tip}</p></div>`).join('');
 
   return `<div class="compat-intro"><p class="compat-title">${name}${dogTypeText} × 飼い主様（${ownerTypeText}）</p><p class="small" style="margin:0">${introTone}</p></div>${items}`;
+}
+
+// ページ13：前ページの4項目を、実際の生活シーン（留守番／しつけ／外出／体調管理）に当てはめて具体化する
+function buildOwnerCompatibilityScenes(ctx){
+  const { dogName, axisSocial, axisCaution, axisBond, ownerMbti } = ctx;
+  const name = dogName && dogName !== '（未入力）' ? `${dogName}ちゃん` : 'このコ';
+  const hasAxes = axisSocial || axisCaution || axisBond;
+
+  if (!ownerMbti || !hasAxes) {
+    return `<p class="small">前のページと同じく、${name}の性格タイプと飼い主様のMBTIタイプの両方が入力されると、このページにシーン別のヒントが表示されます。</p>`;
+  }
+
+  const e = mbtiLetter(ownerMbti, 0, 'E', 'I');
+  const t = mbtiLetter(ownerMbti, 2, 'T', 'F');
+  const j = mbtiLetter(ownerMbti, 3, 'J', 'P');
+
+  const scenes = [];
+
+  if (axisBond && j) {
+    const key = axisBond + j;
+    const text = {
+      closeJ: '決まった時間に出かける支度をすると、この子も先の見通しが立てやすく、留守番前の不安が和らぎやすくなります。',
+      closeP: 'その日によって留守番時間が変わっても、帰宅時にしっかり構ってあげる時間をつくれば、この子の不安は和らぎやすいでしょう。',
+      indieJ: '留守番自体への不安は少なめなタイプですが、生活リズムが一定だとこの子にとってもより過ごしやすい環境になります。',
+      indieP: 'マイペースなこの子には、留守番時間が多少不規則でも大きなストレスにはなりにくいでしょう。'
+    }[key];
+    if (text) scenes.push({ title: 'お留守番のとき', text });
+  }
+
+  if (axisCaution && t) {
+    const key = axisCaution + t;
+    const text = {
+      safeF: '新しいことに慎重なこの子には、飼い主様の声のトーンや表情が安心材料になります。焦らず気持ちに寄り添いながら、少しずつ進めてください。',
+      safeT: '新しいことに慎重なこの子には、毎回同じ手順・同じ言葉で淡々と繰り返すことが、励ましの言葉以上に安心につながります。',
+      challengeF: '好奇心旺盛なこの子には、うまくできた時にしっかり感情を込めて褒めてあげると、より積極的に取り組んでくれます。',
+      challengeT: '好奇心旺盛なこの子には、次に何をすれば良いかを具体的に示してあげると、効率よく新しいことを覚えていきます。'
+    }[key];
+    if (text) scenes.push({ title: 'しつけ・お手入れのとき', text });
+  }
+
+  if (axisSocial && e) {
+    const key = axisSocial + e;
+    const text = {
+      openE: '人に慣れているこの子と、人との交流を楽しむ飼い主様は、来客時も外出先でも一緒に楽しめる場面が多いでしょう。',
+      openI: '人に慣れているこの子に対して、飼い主様は少し人混みが苦手なタイプかもしれません。この子の社交性に付き合いすぎず、飼い主様も無理のない範囲で外出先を選んで大丈夫です。',
+      watchE: '人見知りのこの子に対して、飼い主様は積極的に人と関わりたいタイプかもしれません。来客時はこの子のための「逃げ場」（クレートや別室）を用意してあげると安心です。',
+      watchI: '人見知りのこの子と、静かな時間を好む飼い主様は、無理に来客や外出を増やさなくても心地よい時間を過ごせます。'
+    }[key];
+    if (text) scenes.push({ title: '来客・外出先で', text });
+  }
+
+  scenes.push({ title: '体調のサインに気づく', text: '元気そうに見えても、食欲・飲水量・便の状態・呼吸の様子は、性格タイプに関わらず日々チェックしておきたいポイントです。活発なタイプの子は不調を隠しやすく、おとなしいタイプの子はもともと変化に気づきにくいため、「いつもとの違い」を意識して見てあげてください。' });
+
+  if (!scenes.length) {
+    return `<p class="small">前のページと同じく、${name}の性格タイプと飼い主様のMBTIタイプの両方が入力されると、このページにシーン別のヒントが表示されます。</p>`;
+  }
+
+  return scenes.map(s => `<div class="compat-row"><p class="compat-label">${s.title}</p><p class="small">${s.text}</p></div>`).join('');
 }
 
 // PDF②：今後チェックしたいポイント（健診・症状フラグから該当する項目のみ抽出）
