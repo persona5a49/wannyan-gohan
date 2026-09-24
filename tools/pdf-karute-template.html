@@ -42,7 +42,7 @@
   .pdf2-divider{text-align:center;font-size:11px;color:#8a9284;margin:0 0 24px;letter-spacing:2px}
   .head{background:var(--green);background-image:radial-gradient(circle at 100% 0%,rgba(255,255,255,.07),transparent 55%);color:#fff;padding:24px 44px 20px;position:relative}
   .head:after{content:"";position:absolute;left:44px;right:44px;bottom:0;height:1px;background:rgba(255,255,255,.18)}
-  .head .brand{font-family:'Shippori Mincho B1',serif;font-size:13px;font-weight:600;color:#e3ead9;letter-spacing:2px}
+  .head .brand{font-family:'Shippori Mincho B1',serif;font-size:13px;font-weight:600;color:#e3ead9;letter-spacing:.02em}
   .head .title{font-family:'Shippori Mincho B1',serif;font-size:23px;font-weight:800;margin-top:6px;letter-spacing:.02em}
   .head .who{font-size:12px;color:#cfe1d1;margin-top:4px}
   .head .date{float:right;background:var(--accent);color:#fff;border-radius:20px;padding:5px 14px;font-size:12px;font-weight:700}
@@ -57,6 +57,10 @@
   .compat-row{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--green2);border-radius:4px 12px 12px 4px;padding:12px 16px;margin-bottom:12px}
   .compat-row .compat-label{font-size:12px;font-weight:800;color:var(--green2);margin:0 0 5px}
   .compat-row .small{margin:0}
+  .compat-tip{background:#fdf3e4;border:1px solid #ecd3a8;border-radius:8px;padding:8px 12px;margin-top:8px;font-size:12px;line-height:1.7}
+  .compat-tip .tip-label{color:var(--accent);font-weight:800;margin-right:4px}
+  .compat-intro{background:var(--mint);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:16px}
+  .compat-intro .compat-title{font-family:'Shippori Mincho B1',serif;font-size:16px;font-weight:800;color:var(--ink);margin:0 0 6px}
   h2.sec{font-family:'Shippori Mincho B1',serif;font-size:17px;font-weight:800;margin:26px 0 12px;display:flex;align-items:center;gap:10px;color:var(--ink)}
   h2.sec:first-of-type{margin-top:0}
   h2.sec .num{background:var(--green);color:#fff;width:24px;height:24px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-family:'Noto Sans JP',sans-serif;font-weight:800;transform:rotate(-4deg)}
@@ -127,7 +131,7 @@
 
   <div class="panel">
     <h1>詳細ごはんカルテPDF 作成ツール</h1>
-    <p class="hint">Googleフォームの回答内容をここに入力すると、右側にPDF①（飼い主向け詳細カルテ・全13ページ）とPDF②（動物病院相談用サマリー・1ページ）のプレビューが生成されます。印刷ダイアログのページ範囲指定で2つのPDFとして別々に保存するか、まとめて1つのPDFとして保存してください（社内用・非公開ページ）。</p>
+    <p class="hint">Googleフォームの回答内容をここに入力すると、右側にPDF①（飼い主向け詳細カルテ・全13ページ）とPDF②（健康サマリー・1ページ）のプレビューが生成されます。印刷ダイアログのページ範囲指定で2つのPDFとして別々に保存するか、まとめて1つのPDFとして保存してください（社内用・非公開ページ）。</p>
 
     <fieldset>
       <legend>基本情報</legend>
@@ -674,14 +678,14 @@
         </div>
       </section>
 
-      <!-- ============ PDF② 動物病院相談用サマリー ============ -->
+      <!-- ============ PDF② 健康サマリー ============ -->
 
-      <p class="pdf2-divider">▼ ここから PDF②　動物病院相談用サマリー（1ページ）▼</p>
+      <p class="pdf2-divider">▼ ここから PDF②　健康サマリー（1ページ）▼</p>
 
       <section class="pdf-page" id="page11">
         <div class="head">
           <span class="date pv-date">2026/01/01 作成</span>
-          <div class="brand">わんにゃんごはんカルテ　PDF②　動物病院相談用サマリー</div>
+          <div class="brand">わんにゃんごはんカルテ　PDF②　健康サマリー</div>
           <div class="who pv-who"></div>
         </div>
         <div class="body" style="padding:22px 40px 30px">
@@ -703,7 +707,7 @@
           </div>
 
           <div class="vet-section">
-            <h3>動物病院で相談したいこと</h3>
+            <h3>今後チェックしたいポイント</h3>
             <div class="box amber" style="padding:10px 14px">
               <ul class="plain" id="vetQuestions"></ul>
             </div>
@@ -998,7 +1002,7 @@ function render(){
   const compat = buildOwnerCompatibility(ctx);
   $('ownerCompatBody').innerHTML = compat;
 
-  // ---- PDF②：動物病院相談用サマリー ----
+  // ---- PDF②：健康サマリー ----
   const vetBasicItems = [
     ['名前', dogName], ['犬種', breed || '-'], ['年齢', age ? age + '歳' : '-'],
     ['性別／避妊去勢', [sex, neuter].filter(Boolean).join('／') || '-'],
@@ -1572,8 +1576,11 @@ function buildRecheckItems(ctx){
   return items.slice(0, 8);
 }
 
-const MBTI_AXIS = {
-  E:'E', I:'I', S:'S', N:'N', T:'T', F:'F', J:'J', P:'P'
+const MBTI_NICKNAME = {
+  INTJ:'建築家', INTP:'論理学者', ENTJ:'指揮官', ENTP:'討論者',
+  INFJ:'提唱者', INFP:'仲介者', ENFJ:'主人公', ENFP:'広報運動家',
+  ISTJ:'管理者', ISFJ:'擁護者', ESTJ:'幹部', ESFJ:'領事官',
+  ISTP:'巨匠', ISFP:'冒険家', ESTP:'起業家', ESFP:'エンターテイナー'
 };
 function mbtiLetter(mbti, pos, a, b){
   if (!mbti || mbti.length < 4) return '';
@@ -1586,51 +1593,51 @@ function mbtiLetter(mbti, pos, a, b){
 // axisSocial(open/watch) × E/I
 const COMPAT_SOCIAL = {
   open: {
-    E: '人にも犬にも積極的に関わるこの子と、外に出てエネルギーをもらうタイプの飼い主様は、お散歩や外出先での出会いを一緒に楽しめる好相性です。',
-    I: '人にも犬にも積極的に関わるこの子に対して、飼い主様は一人の時間で充電するタイプかもしれません。この子の社交性に無理に合わせすぎず、飼い主様ご自身のペースで外出の頻度を決めて大丈夫です。'
+    E: { text:'人にも犬にも積極的に関わるこの子と、外に出てエネルギーをもらうタイプの飼い主様は、お散歩や外出先での出会いを一緒に楽しめる好相性です。', tip:'一緒に外向的な交流の場（ドッグランやカフェ）に出かけると、お互いにとって心地よい時間になります。' },
+    I: { text:'人にも犬にも積極的に関わるこの子に対して、飼い主様は一人の時間で充電するタイプかもしれません。この子の社交性に無理に合わせすぎず、飼い主様ご自身のペースで外出の頻度を決めて大丈夫です。', tip:'毎日たくさん外に連れ出さなくても大丈夫。週に数回のお出かけでもこの子の社交欲求は満たされます。' }
   },
   watch: {
-    E: '初対面には慎重なこの子に対して、飼い主様は外向的で人との交流を楽しむタイプかもしれません。この子のペースを飼い主様が代わりに守ってあげる（無理に挨拶させない、距離を確保するなど）意識を持つと、良いバランスになります。',
-    I: '初対面には慎重なこの子と、一人の時間を大切にするタイプの飼い主様は、静かな時間を一緒に楽しめる相性の良い組み合わせです。'
+    E: { text:'初対面には慎重なこの子に対して、飼い主様は外向的で人との交流を楽しむタイプかもしれません。この子のペースを飼い主様が代わりに守ってあげる（無理に挨拶させない、距離を確保するなど）意識を持つと、良いバランスになります。', tip:'初対面の相手には飼い主様から先に「少し人見知りなので」と伝えてあげると、この子も飼い主様も気持ちが楽になります。' },
+    I: { text:'初対面には慎重なこの子と、一人の時間を大切にするタイプの飼い主様は、静かな時間を一緒に楽しめる相性の良い組み合わせです。', tip:'無理に交流の場を広げなくても、二人だけの落ち着いた時間を積み重ねることが何よりの信頼構築になります。' }
   }
 };
 // axisCaution(challenge/safe) × S/N
 const COMPAT_CAUTION = {
   safe: {
-    S: '安心できる手順を大事にするこの子と、具体的で着実な進め方を好む飼い主様は、一歩ずつ確実にトレーニングや生活の変化を進められる好相性です。',
-    N: '安心できる手順を大事にするこの子に対して、飼い主様はアイデアや可能性を重視するタイプかもしれません。新しいことを試す時は、この子のペースに合わせて具体的な手順に落とし込んであげると成功しやすくなります。'
+    S: { text:'安心できる手順を大事にするこの子と、具体的で着実な進め方を好む飼い主様は、一歩ずつ確実にトレーニングや生活の変化を進められる好相性です。', tip:'フード切り替えや環境の変化は、1〜2週間かけて段階的に進めると成功しやすいです。' },
+    N: { text:'安心できる手順を大事にするこの子に対して、飼い主様はアイデアや可能性を重視するタイプかもしれません。新しいことを試す時は、この子のペースに合わせて具体的な手順に落とし込んであげると成功しやすくなります。', tip:'「まず試す」前に、変化の手順を一度紙に書き出してから進めると、この子にも飼い主様にも負担が少なくなります。' }
   },
   challenge: {
-    S: '新しいことに物怖じしないこの子に対して、飼い主様は着実な進め方を好むタイプかもしれません。この子の好奇心を安全な範囲で存分に発揮させてあげられると、良い刺激になります。',
-    N: '新しいことに物怖じしないこの子と、新しい発想やアイデアを楽しむタイプの飼い主様は、一緒に新しい場所や遊びを開拓していける好相性です。'
+    S: { text:'新しいことに物怖じしないこの子に対して、飼い主様は着実な進め方を好むタイプかもしれません。この子の好奇心を安全な範囲で存分に発揮させてあげられると、良い刺激になります。', tip:'新しい散歩コースやおもちゃを定期的に取り入れると、好奇心をよい形で発散できます。' },
+    N: { text:'新しいことに物怖じしないこの子と、新しい発想やアイデアを楽しむタイプの飼い主様は、一緒に新しい場所や遊びを開拓していける好相性です。', tip:'思いついたアイデアをそのまま試しても大丈夫なタイプ同士。新しい遊びや環境の変化を一緒に楽しんでください。' }
   }
 };
 // axisActivity(active/calm) × J/P
 const COMPAT_ACTIVITY = {
   active: {
-    J: '活発でエネルギッシュなこの子と、計画的に物事を進めるタイプの飼い主様は、決まった時間に運動量をしっかり確保してあげることで、お互い安定したリズムを作りやすい組み合わせです。',
-    P: '活発でエネルギッシュなこの子と、その場の流れを楽しむタイプの飼い主様は、気ままにお出かけ先を変えたり、思いついた遊びを一緒に楽しめる相性です。'
+    J: { text:'活発でエネルギッシュなこの子と、計画的に物事を進めるタイプの飼い主様は、決まった時間に運動量をしっかり確保してあげることで、お互い安定したリズムを作りやすい組み合わせです。', tip:'朝晩の散歩時間をできるだけ固定すると、活発なこの子の体力・気持ちの両方が安定します。' },
+    P: { text:'活発でエネルギッシュなこの子と、その場の流れを楽しむタイプの飼い主様は、気ままにお出かけ先を変えたり、思いついた遊びを一緒に楽しめる相性です。', tip:'その日の気分で散歩コースや遊びを変えても、この子はむしろ新鮮な刺激として楽しんでくれます。' }
   },
   calm: {
-    J: '落ち着いてマイペースなこの子と、計画的に物事を進めるタイプの飼い主様は、決まった生活リズムの中で安定した毎日を作りやすい組み合わせです。',
-    P: '落ち着いてマイペースなこの子と、柔軟にその場で決めるタイプの飼い主様は、お互いのんびりした時間を大切にできる好相性です。'
+    J: { text:'落ち着いてマイペースなこの子と、計画的に物事を進めるタイプの飼い主様は、決まった生活リズムの中で安定した毎日を作りやすい組み合わせです。', tip:'決まった時間に短めの運動を積み重ねる方が、落ち着いたこの子には合っています。' },
+    P: { text:'落ち着いてマイペースなこの子と、柔軟にその場で決めるタイプの飼い主様は、お互いのんびりした時間を大切にできる好相性です。', tip:'予定を詰め込みすぎず、二人でのんびり過ごす日があってもこの子は満足しています。' }
   }
 };
 // axisBond(close/indie) × F/T
 const COMPAT_BOND = {
   close: {
-    F: 'そばにいることを好むこの子と、気持ちに寄り添うことを大切にするタイプの飼い主様は、お互いの気持ちを深く通わせられる好相性です。',
-    T: 'そばにいることを好むこの子に対して、飼い主様は論理的に物事を判断するタイプかもしれません。感情表現が控えめでも、そばにいる時間そのものがこの子にとって大きな安心材料になっていることを意識してあげてください。'
+    F: { text:'そばにいることを好むこの子と、気持ちに寄り添うことを大切にするタイプの飼い主様は、お互いの気持ちを深く通わせられる好相性です。', tip:'帰宅時や食事の前後に、声をかけたり撫でたりする時間を意識的に増やすと、この子の安心感がさらに高まります。' },
+    T: { text:'そばにいることを好むこの子に対して、飼い主様は論理的に物事を判断するタイプかもしれません。感情表現が控えめでも、そばにいる時間そのものがこの子にとって大きな安心材料になっていることを意識してあげてください。', tip:'「大好き」を言葉で伝えるのが苦手でも、撫でる・そばに座るなどのスキンシップがこの子にはしっかり伝わっています。' }
   },
   indie: {
-    F: 'マイペースなこの子に対して、飼い主様は気持ちに寄り添うことを大切にするタイプかもしれません。構いすぎず見守る形の愛情表現も、この子にはしっかり伝わっています。',
-    T: 'マイペースなこの子と、物事を論理的に判断するタイプの飼い主様は、お互いの自立したペースを尊重し合える好相性です。'
+    F: { text:'マイペースなこの子に対して、飼い主様は気持ちに寄り添うことを大切にするタイプかもしれません。構いすぎず見守る形の愛情表現も、この子にはしっかり伝わっています。', tip:'構いすぎず、この子が近づいてきたタイミングで応えてあげると、マイペースな距離感を保ちながら信頼関係を築けます。' },
+    T: { text:'マイペースなこの子と、物事を論理的に判断するタイプの飼い主様は、お互いの自立したペースを尊重し合える好相性です。', tip:'無理に距離を縮めようとせず、お互いのペースを尊重する今のスタイルがこの子には合っています。' }
   }
 };
 
-// ページ13：MBTI（任意）× このコの性格タイプで、飼い主様との付き合い方のヒントを組み立てる
+// ページ13：MBTI（任意）× このコの性格タイプで、飼い主様との付き合い方のヒントを深掘りして組み立てる
 function buildOwnerCompatibility(ctx){
-  const { dogName, axisSocial, axisCaution, axisActivity, axisBond, ownerMbti } = ctx;
+  const { dogName, typeName, axisSocial, axisCaution, axisActivity, axisBond, ownerMbti } = ctx;
   const name = dogName && dogName !== '（未入力）' ? dogName : 'このコ';
   const hasAxes = axisSocial || axisCaution || axisActivity || axisBond;
 
@@ -1645,22 +1652,31 @@ function buildOwnerCompatibility(ctx){
   const s = mbtiLetter(ownerMbti, 1, 'S', 'N');
   const t = mbtiLetter(ownerMbti, 2, 'T', 'F');
   const j = mbtiLetter(ownerMbti, 3, 'J', 'P');
+  const nickname = MBTI_NICKNAME[ownerMbti] || '';
 
   const rows = [];
-  if (axisSocial && e) rows.push({ label: '人・犬との距離感', text: COMPAT_SOCIAL[axisSocial][e] });
-  if (axisCaution && s) rows.push({ label: '新しいことへの向き合い方', text: COMPAT_CAUTION[axisCaution][s] });
-  if (axisActivity && j) rows.push({ label: '活動量・生活リズム', text: COMPAT_ACTIVITY[axisActivity][j] });
-  if (axisBond && t) rows.push({ label: '甘え方・愛情表現', text: COMPAT_BOND[axisBond][t] });
+  if (axisSocial && e) rows.push({ label: '人・犬との距離感', ...COMPAT_SOCIAL[axisSocial][e] });
+  if (axisCaution && s) rows.push({ label: '新しいことへの向き合い方', ...COMPAT_CAUTION[axisCaution][s] });
+  if (axisActivity && j) rows.push({ label: '活動量・生活リズム', ...COMPAT_ACTIVITY[axisActivity][j] });
+  if (axisBond && t) rows.push({ label: '甘え方・愛情表現', ...COMPAT_BOND[axisBond][t] });
 
   if (!rows.length) {
-    return `<p class="small">${name}の性格タイプ（①のアンケート）が未入力のため、MBTI「${ownerMbti}」との相性コメントを作成できません。性格の4項目をご記入いただくと、このページにヒントが表示されます。</p>`;
+    return `<p class="small">${name}の性格タイプ（①のアンケート）が未入力のため、MBTI「${ownerMbti}」（${nickname}タイプ）との相性コメントを作成できません。性格の4項目をご記入いただくと、このページにヒントが表示されます。</p>`;
   }
 
-  const items = rows.map(r => `<div class="compat-row"><p class="compat-label">${r.label}</p><p class="small">${r.text}</p></div>`).join('');
-  return `<p class="small" style="margin-bottom:10px"><strong>${name}</strong>の性格タイプ × 飼い主様（MBTI: ${ownerMbti}）の組み合わせから見えるヒントです。</p>${items}`;
+  const dogTypeText = typeName ? `（${typeName}）` : '';
+  const ownerTypeText = nickname ? `${ownerMbti}：${nickname}タイプ` : ownerMbti;
+  const closeCount = [axisBond === 'close', axisSocial === 'open', e === 'E'].filter(Boolean).length;
+  const introTone = closeCount >= 2
+    ? '二人の距離感は近め。日々のスキンシップやコミュニケーションの量がそのまま安心感につながるタイプの組み合わせです。'
+    : 'お互いにマイペースを大事にできる組み合わせ。無理に距離を縮めようとせず、今の心地よい距離感を保つことがポイントです。';
+
+  const items = rows.map(r => `<div class="compat-row"><p class="compat-label">${r.label}</p><p class="small">${r.text}</p><p class="compat-tip"><span class="tip-label">ワンポイント：</span>${r.tip}</p></div>`).join('');
+
+  return `<div class="compat-intro"><p class="compat-title">${name}${dogTypeText} × 飼い主様（${ownerTypeText}）</p><p class="small" style="margin:0">${introTone}</p></div>${items}`;
 }
 
-// PDF②：動物病院で相談したいこと（健診・症状フラグから該当する質問のみ抽出）
+// PDF②：今後チェックしたいポイント（健診・症状フラグから該当する項目のみ抽出）
 function buildVetQuestions(ctx){
   const { weight, der, onMeds, onTherapeutic, checked, labValues, foodDrive, symptoms, hasFlag } = ctx;
   const symTxt = (symptoms || '').trim();

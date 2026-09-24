@@ -314,7 +314,8 @@ const QUESTIONS = [
   {key:'concerns', label:'今、気になることを選んでください', type:'multi', options:[['weight','体重管理'],['appetite','食べムラ'],['stomach','お腹・便'],['coat','皮膚・毛艶'],['joint','関節'],['mouth','口・歯'],['behavior','しつけ・行動'],['senior','シニア全般']]},
   {key:'checkup', label:'健診・治療で気になることは？', type:'multi', options:[['none','特になし'],['kidney','腎臓系'],['liver','肝臓系'],['lipid','中性脂肪/コレステロール'],['glucose','血糖'],['urine','尿検査'],['weightloss','体重減少'],['meds','服薬/療法食あり']]},
   {key:'labs', label:'健診数値メモ（任意）', type:'labs'},
-  {key:'preference', label:'最後に、ごはん選びで重視したいことは？', type:'multi', options:[['small','小粒'],['japan','国産'],['grainfree','グレインフリー'],['cost','価格重視'],['ingredient','原材料重視'],['easy','続けやすさ重視']]}
+  {key:'preference', label:'ごはん選びで重視したいことは？', type:'multi', options:[['small','小粒'],['japan','国産'],['grainfree','グレインフリー'],['cost','価格重視'],['ingredient','原材料重視'],['easy','続けやすさ重視']]},
+  {key:'ownerMbti', label:'最後に（任意）：飼い主様のMBTIタイプが分かれば教えてください', type:'choice', options:[['unknown','わからない・答えない'],['INTJ','INTJ'],['INTP','INTP'],['ENTJ','ENTJ'],['ENTP','ENTP'],['INFJ','INFJ'],['INFP','INFP'],['ENFJ','ENFJ'],['ENFP','ENFP'],['ISTJ','ISTJ'],['ISFJ','ISFJ'],['ESTJ','ESTJ'],['ESFJ','ESFJ'],['ISTP','ISTP'],['ISFP','ISFP'],['ESTP','ESTP'],['ESFP','ESFP']]}
 ]
 
 let answers = {}
@@ -359,6 +360,7 @@ function addHistoryEntry(a, r){
     waterUrine: a.waterUrine || null,
     currentFood: a.currentFood || null,
     foodName: (a.currentFoodName || '').trim() || null,
+    ownerMbti: (a.ownerMbti && a.ownerMbti !== 'unknown') ? a.ownerMbti : null,
     checkup: a.checkup || [],
     labs: a.labs || {},
     kcal: r.hasWeight ? Math.round(r.kcal) : null,
@@ -1164,6 +1166,33 @@ function typeWhyNarrative(axes){
   const energy = ENERGY_WHY[axes[2]+axes[3]] || ''
   return `${approach}${energy}`
 }
+const MBTI_NICKNAME = {
+  INTJ:'建築家', INTP:'論理学者', ENTJ:'指揮官', ENTP:'討論者',
+  INFJ:'提唱者', INFP:'仲介者', ENFJ:'主人公', ENFP:'広報運動家',
+  ISTJ:'管理者', ISFJ:'擁護者', ESTJ:'幹部', ESFJ:'領事官',
+  ISTP:'巨匠', ISFP:'冒険家', ESTP:'起業家', ESFP:'エンターテイナー'
+}
+const OWNER_SOCIAL_WHY = {
+  openE:'人にも犬にも積極的なこの子と、外向的な飼い主様は、お散歩や外出先での出会いを一緒に楽しめる好相性です。',
+  openI:'人にも犬にも積極的なこの子に対して、飼い主様は一人の時間で充電するタイプかもしれません。この子の社交性に無理に合わせすぎなくて大丈夫です。',
+  watchE:'初対面には慎重なこの子に対して、飼い主様は外向的で人との交流を楽しむタイプかもしれません。この子のペースを飼い主様が代わりに守ってあげると、良いバランスになります。',
+  watchI:'初対面には慎重なこの子と、一人の時間を大切にする飼い主様は、静かな時間を一緒に楽しめる好相性です。'
+}
+const OWNER_BOND_WHY = {
+  closeT:'そばにいることを好むこの子に対して、飼い主様は論理的に判断するタイプかもしれません。感情表現が控えめでも、そばにいる時間そのものが大きな安心材料になっています。',
+  closeF:'そばにいることを好むこの子と、気持ちに寄り添う飼い主様は、お互いの気持ちを深く通わせられる好相性です。',
+  indieT:'マイペースなこの子と、物事を論理的に判断する飼い主様は、お互いの自立したペースを尊重し合える好相性です。',
+  indieF:'マイペースなこの子に対して、飼い主様は気持ちに寄り添うことを大切にするタイプかもしれません。構いすぎず見守る愛情表現も、この子にはしっかり伝わっています。'
+}
+function ownerCompatBlurb(axes, mbti){
+  if(!mbti || mbti==='unknown' || mbti.length!==4) return null
+  const e = mbti[0], tf = mbti[2]
+  const nickname = MBTI_NICKNAME[mbti] || ''
+  const socialLine = OWNER_SOCIAL_WHY[axes[0]+e] || ''
+  const bondLine = OWNER_BOND_WHY[axes[3]+tf] || ''
+  if(!socialLine && !bondLine) return null
+  return {mbti, nickname, text: `${socialLine}${bondLine}`}
+}
 function profileFor(result){
   const axes = result.axes || ['watch','safe','calm','close']
   const lead = typeWhyNarrative(axes)
@@ -1404,6 +1433,7 @@ function calcResult(a){
   base.relatedGroups = relatedArticleGroups(a, base)
   base.nextSteps = buildNextSteps(a, base)
   base.recheckItems = buildRecheckItems(a, base)
+  base.ownerCompat = ownerCompatBlurb(typeResult.axes, a.ownerMbti)
   return base
 }
 
@@ -1498,6 +1528,7 @@ function renderDiagnosis(){
       <div class="karte-section"><h3>この結果から深掘りする記事</h3><p class="helper">${name}の回答で気になったポイントごとに、関連する記事をまとめました。</p>${r.relatedGroups.map(g=>`<div class="related-group"><h4>${g.topic}</h4><div class="article-cards mini">${g.articles.map(a=>`<a class="article-card" href="/articles/${a.slug}/"><span>関連記事</span><strong>${a.title}</strong><small>${a.lead}</small></a>`).join('')}</div></div>`).join('')}</div>
       <div class="karte-section next-steps"><h3>${name}の次の3ステップ</h3><ol>${r.nextSteps.map(x=>`<li>${x}</li>`).join('')}</ol></div>
       <div class="karte-section recheck-note"><h3>3か月後に見直したい項目</h3><p class="helper">同じ診断にもう一度答えると、今回との変化を自動で比較して表示します。継続して使うことで、単発の診断より変化が見えやすくなります。</p><ul>${r.recheckItems.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+      ${r.ownerCompat ? `<div class="karte-section owner-compat"><h3>飼い主様（${r.ownerCompat.mbti}${r.ownerCompat.nickname ? '：'+r.ownerCompat.nickname+'タイプ' : ''}）との相性</h3><p>${r.ownerCompat.text}</p><p class="helper">PDFカルテでは、活動量・慎重さも含めた4項目でさらに詳しく、具体的な付き合い方のヒントまで深掘りします。</p></div>` : ''}
       <div class="pdf-cta"><p class="eyebrow">有料PDFで追加されること</p><h3>健診表・今のフード・おやつ量を、主治医に相談しやすい1枚へ</h3><p>無料診断は「方向性」まで。PDFカルテでは、検査値・体重・便・食べ方をまとめ、家族や病院で話しやすいメモにします。</p><div class="pdf-mini-grid"><span>健診数値の転記</span><span>相談ポイント整理</span><span>買う前の注意点</span></div><p class="helper"><strong>おすすめ：</strong>健診で指摘がある、療法食中、食べムラや体重変化を家族で共有したい子。<br><strong>不要：</strong>今すぐ症状が強い子は、申込みより先に受診してください。</p><a class="primary pdf-interest" data-price="980" href="/pdf-karute/">980円で相談用カルテを作る</a><small>決済後に入力フォームへ進み、2〜3営業日以内にPDFをお届けします。</small></div>
       <button class="secondary reset">もう一度診断</button></div>`
   }
