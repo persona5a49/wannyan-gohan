@@ -1121,10 +1121,10 @@ const ARTICLES = [
 ]
 
 const TYPE_NAMES = {
-  openchallengeactiveclose:'好奇心旺盛なアクティブ相棒タイプ', openchallengeactiveindie:'自分で切り開くチャレンジャータイプ', openchallengecalmclose:'人が好きな穏やかパートナータイプ', openchallengecalmindie:'ゆるやか社交のマイペースタイプ',
-  opensafeactiveclose:'慎重だけど遊びたい甘えんぼタイプ', opensafeactiveindie:'確認してから進む探検家タイプ', opensafecalmclose:'安心を確かめる寄り添いタイプ', opensafecalmindie:'静かに見守る観察家タイプ',
-  watchchallengeactiveclose:'飼い主と動きたい集中ランナータイプ', watchchallengeactiveindie:'自分の世界を持つ探検家タイプ', watchchallengecalmclose:'信頼相手に寄り添う静かな相棒タイプ', watchchallengecalmindie:'こだわりを大切にする職人タイプ',
-  watchsafeactiveclose:'慎重に確認する甘えんぼアクティブタイプ', watchsafeactiveindie:'そっと確かめる自立探検家タイプ', watchsafecalmclose:'安心重視の寄り添いタイプ', watchsafecalmindie:'自分のペースを守る安心職人タイプ'
+  openchallengeactiveclose:'元気な相棒タイプ', openchallengeactiveindie:'自由な挑戦者タイプ', openchallengecalmclose:'穏やかな人気者タイプ', openchallengecalmindie:'ゆるやか社交派タイプ',
+  opensafeactiveclose:'慎重な甘えんぼタイプ', opensafeactiveindie:'確認派の探検家タイプ', opensafecalmclose:'寄り添い安心派タイプ', opensafecalmindie:'静かな観察家タイプ',
+  watchchallengeactiveclose:'飼い主と走る子タイプ', watchchallengeactiveindie:'ひとり探検家タイプ', watchchallengecalmclose:'静かな相棒タイプ', watchchallengecalmindie:'こだわり職人タイプ',
+  watchsafeactiveclose:'確認派の甘えんぼタイプ', watchsafeactiveindie:'そっと確かめ屋タイプ', watchsafecalmclose:'安心第一の相棒タイプ', watchsafecalmindie:'マイペース職人タイプ'
 }
 const TYPE_TAGLINE = {
   openchallengeactiveclose:'誰とでも仲良し、そばにいるのが一番好き。', openchallengeactiveindie:'フレンドリーだけど、自分の足で前に進むタイプ。', openchallengecalmclose:'社交的なのに落ち着いてる、ちょうどいい距離感。', openchallengecalmindie:'誰とでも仲良し、でも気分屋さんなマイペース派。',
@@ -1148,7 +1148,7 @@ function dogAffinity(a){
   if(a.dogs==='watch2') return {label:'犬が苦手・警戒しやすいタイプ', note:'人への態度だけで「社交的だから大丈夫」と判断せず、他の犬との接触は本犬のペースを優先してください。'}
   return null
 }
-function typeFor(a){ const sc=scoreAxes(a); const axes=[sc.open>=sc.watch?'open':'watch',sc.challenge>=sc.safe?'challenge':'safe',sc.active>=sc.calm?'active':'calm',sc.close>=sc.indie?'close':'indie']; return {name:TYPE_NAMES[axes.join('')]||'安心重視の寄り添いタイプ', axes} }
+function typeFor(a){ const sc=scoreAxes(a); const axes=[sc.open>=sc.watch?'open':'watch',sc.challenge>=sc.safe?'challenge':'safe',sc.active>=sc.calm?'active':'calm',sc.close>=sc.indie?'close':'indie']; return {name:TYPE_NAMES[axes.join('')]||'安心第一の相棒タイプ', axes} }
 const APPROACH_WHY = {
   openchallenge:'人や新しい環境にも物怖じせず飛び込んでいけるタイプで、警戒よりも好奇心が先に立ちます。初対面の相手にもすぐ心を開きやすいぶん、飛び出しや誤飲などへの注意は飼い主側で意識して補う必要があります。',
   opensafe:'人や犬には積極的に関心を向ける一方で、初めての物事には少し時間をかけて確かめたい面もあります。「人は平気だけど新しいモノは慎重」という組み合わせが、この子らしさの土台になっています。',
@@ -1508,9 +1508,9 @@ function renderDiagnosis(){
     const shownTags = displayTags(r.tags, answers.breedGroup)
     const historyAll = loadHistory()
     const matchedHistory = answers.dogName ? historyAll.filter(h=>h.dogName===answers.dogName) : historyAll
-    return `<div class="result karte"><p class="eyebrow">うちの子ごはん・暮らしカルテ</p><div class="type-card profile-cover"><div class="profile-top">${guideBubble('happy', `${name}のこと、少し分かってきたよ。`, 72, answers.dogName)}</div><span class="type-code">16タイプ診断</span><h2>${name}は「${r.type}」</h2><p class="profile-tagline">「${typeTagline(r.profile.axes)}」</p><div class="type-animal-row"><span class="type-animal">${answers.breedGroup && BREED_GROUPS[answers.breedGroup] ? BREED_GROUPS[answers.breedGroup] : '暮らしタイプ'}</span>${r.bcs ? `<span class="type-animal">${r.bcs}</span>` : ''}</div></div><div class="trait-list">${shownTags.map(x=>`<span>${x}</span>`).join('')}</div>
+    return `<div class="result karte"><p class="eyebrow">うちの子ごはん・暮らしカルテ</p><div class="type-card profile-cover"><div class="profile-top">${guideBubble('happy', `${name}のこと、少し分かってきたよ。`, 72, answers.dogName)}</div><span class="type-code">16タイプ診断</span><h2><span class="type-lead">${name}は</span><span class="type-name">「${r.type}」</span></h2><p class="profile-tagline">「${typeTagline(r.profile.axes)}」</p><div class="type-animal-row"><span class="type-animal">${answers.breedGroup && BREED_GROUPS[answers.breedGroup] ? BREED_GROUPS[answers.breedGroup] : '暮らしタイプ'}</span>${r.bcs ? `<span class="type-animal">${r.bcs}</span>` : ''}</div></div><div class="trait-list">${shownTags.map(x=>`<span>${x}</span>`).join('')}</div>
       ${r.hasWeight ? `<div class="result-grid"><div class="metric"><strong>${Math.round(r.kcal)} kcal/日</strong><span>目安必要カロリー</span></div><div class="metric"><strong>${Math.round(r.snack)} kcal/日まで</strong><span>おやつ上限の目安</span></div></div>${evidenceToggle('energy')}${r.isPuppy ? `<p class="helper">子犬期は成長段階によって必要カロリーが大きく変わるため、上の数字はあくまで簡易的な目安です。フードのパッケージ記載の給与量や、かかりつけの獣医師の指示を優先してください。</p>` : ''}` : `<div class="note"><h3>カロリー計算</h3><p>体重を入力すると、目安カロリーとおやつ上限を表示できます。今回はタイプ判定と注意点のみ表示します。</p></div>`}
-      <div class="share-panel"><button class="primary save-share" type="button">結果画像を保存</button><button class="secondary native-share" type="button">LINE/Xで共有</button><canvas id="shareCanvas" width="1200" height="630" aria-label="診断結果シェア画像"></canvas><p class="helper">画像には医療情報や健診数値は入れず、タイプ名だけを共有します。</p></div>
+      <div class="share-panel"><button class="primary save-share" type="button">結果画像を保存</button><button class="secondary native-share" type="button">LINE/Xで共有</button><canvas id="shareCanvas" width="1200" height="630" aria-label="診断結果シェア画像"></canvas><p class="helper">画像にはタイプ名と性格の特徴のみを表示します。医療情報や健診数値は含まれません。</p></div>
       <div class="karte-section deep-summary"><h3>${name}の全体像</h3><p>${r.profile.lead}${r.breedNote ? ' '+r.breedNote : ''}${r.bcs ? ` 体型は${r.bcs}です。` : ''} ここでは回答を並べ直すのではなく、性格・活動量・食べ方・体型（BCS）・健診メモの組み合わせから、暮らしで見たいポイントを整理します。</p>${answers.body ? bcsGaugeSvg(bcsScore(answers.body)) : ''}${r.bcs ? evidenceToggle('bcs') : ''}</div>
       ${renderHistorySection(matchedHistory)}
       ${renderHealthTimeline(matchedHistory)}
@@ -1641,9 +1641,12 @@ function drawShareCard(){
   ctx.fillStyle = '#263028'; ctx.font = 'bold 42px sans-serif'; ctx.fillText('わんにゃんごはんカルテ', 76, 92)
   ctx.fillStyle = '#6f8a55'; ctx.font = 'bold 28px sans-serif'; ctx.fillText('C-BARQ参考セルフチェック', 76, 138)
   ctx.fillStyle = '#17211a'; ctx.font = 'bold 62px sans-serif'; ctx.fillText(`${name}は`, 76, 242)
-  ctx.fillStyle = '#29543a'; ctx.font = 'bold 74px sans-serif'; wrapCanvasText(ctx, `「${r.type}」`, 76, 330, 860, 86)
-  ctx.fillStyle = '#3f463d'; ctx.font = '30px sans-serif'; wrapCanvasText(ctx, r.profile.axes.map(x=>AXIS_COPY[x]).join('、'), 76, 450, 780, 42)
-  ctx.fillStyle = '#b8834b'; ctx.font = 'bold 28px sans-serif'; ctx.fillText('wannyan-gohan.com', 76, 566)
+  ctx.fillStyle = '#29543a'; ctx.font = 'bold 74px sans-serif'
+  const typeEndY = wrapCanvasText(ctx, `「${r.type}」`, 76, 336, 860, 100)
+  ctx.fillStyle = '#3f463d'; ctx.font = '30px sans-serif'
+  const axisEndY = wrapCanvasText(ctx, r.profile.axes.map(x=>AXIS_COPY[x]).join('、'), 76, typeEndY + 70, 780, 44)
+  ctx.fillStyle = '#b8834b'; ctx.font = 'bold 28px sans-serif'
+  ctx.fillText('wannyan-gohan.com', 76, Math.max(axisEndY + 46, 566))
   ctx.fillStyle = '#29543a'; ctx.font = 'bold 120px sans-serif'; ctx.fillText('16', 930, 370)
   ctx.font = 'bold 30px sans-serif'; ctx.fillText('TYPE', 950, 418)
   return canvas
@@ -1655,6 +1658,7 @@ function wrapCanvasText(ctx, text, x, y, maxWidth, lineHeight){
     if(ctx.measureText(test).width > maxWidth && line){ ctx.fillText(line, x, y); line = ch; y += lineHeight } else line = test
   }
   if(line) ctx.fillText(line, x, y)
+  return y
 }
 function shareResult(){
   const r = calcResult(answers)
