@@ -310,7 +310,7 @@ const QUESTIONS = [
   {key:'breedGroup', label:'体格や犬種の雰囲気で近いものは？', type:'choice', options:[['toy','超小型・小型犬'],['companion','シーズー・マルチーズ・キャバリア系'],['retriever','レトリーバー系'],['herding','牧羊・作業犬系'],['terrier','テリア系'],['hound','猟犬・サイトハウンド系'],['spitz','柴・スピッツ系'],['brachy','短頭種'],['large','大型・超大型犬'],['mix','ミックス・不明']]},
   {key:'age', label:'年齢はどのくらいですか？', type:'choice', options:[['under1','1歳未満（子犬期）'],['1-6','1〜6歳（成犬）'],['7-9','7〜9歳（中高齢）'],['10-12','10〜12歳（シニア）'],['13+','13歳以上（ハイシニア）']]},
   {key:'weight', label:'今の体重を入れてください', type:'number', suffix:'kg', placeholder:'例：5.2'},
-  {key:'body', label:'上から見た体型・触った感じに近いのは？', type:'choice', options:[['thin','肋骨が目立つ・やせ気味'],['normal','くびれがあり、ちょうどよい'],['chubby','少し丸くなってきた'],['obese','明らかにぽっちゃり']]},
+  {key:'body', label:'上から見た体型・触った感じに近いのは？', type:'choice', options:[['emaciated','肋骨・骨盤・背骨が浮き出て見える・かなりやせている'],['thin','肋骨が目立つ・やせ気味'],['normal','くびれがあり、ちょうどよい'],['chubby','少し丸くなってきた'],['obese','明らかにぽっちゃり']]},
   {key:'neuter', label:'避妊・去勢はしていますか？', type:'choice', options:[['yes','済み'],['no','未'],['unknown','わからない']]},
   {key:'human', label:'散歩中、知らない人に声をかけられたら？', type:'choice', cbarq:'見知らぬ人への反応・社交性を家庭向けに言い換えています', options:[['open2','しっぽを振って近づく'],['open1','少し確認してから近づく'],['watch1','飼い主の横で様子を見る'],['watch2','隠れる・吠える・強く警戒する']]},
   {key:'dogs', label:'向こうから犬が歩いてきたら？', type:'choice', cbarq:'犬への反応・警戒/友好性の参考項目です', options:[['open2','遊びたがる・近づきたがる'],['open1','相手を見て挨拶する'],['watch1','距離を取りながら観察する'],['watch2','避ける・吠える・固まる']]},
@@ -379,11 +379,11 @@ const BREEDGROUP_CHAR_PREVIEW = {
 // Q12：activityの選択肢に添えるころての表情（active2/active1/calm1/calm2）
 const ACTIVITY_OPTION_MOOD = { active2:'cheer', active1:'happy', calm1:'front', calm2:'sleep' }
 // Q5：body（体型）の選択肢に添える上から見たシルエット4段階
-const BODY_OPTION_IMG = { thin:'thin', normal:'ideal', chubby:'round', obese:'obese' }
+const BODY_OPTION_IMG = { emaciated:'emaciated', thin:'thin', normal:'ideal', chubby:'round', obese:'obese' }
 // 2026-09-25: 体型素材（上から見たポーズ）は太郎さんNGのため一時無効化。ChatGPT側で作り直し次第trueに戻す
 const BODY_ASSET_APPROVED = false
 // 結果画面：体型4段階の短縮ラベル（表示専用。回答値・判定ロジックは不変）
-const BODY_LABEL_SHORT = { thin:'やせ気味', normal:'標準', chubby:'少し丸め', obese:'ぽっちゃり' }
+const BODY_LABEL_SHORT = { emaciated:'やせ', thin:'やややせ', normal:'適正', chubby:'やや肥満', obese:'肥満' }
 // 2026-09-25: 選択肢イラスト141点（Q2犬種・Q5体型は既存実装/差し戻し済みのため対象外）
 // value文字列がQUESTIONS実データと不一致だったため、index位置＋ラベル対応を全件検証した上でvalueへ変換済み
 const CHOICE_ILLUST = {
@@ -598,12 +598,12 @@ function buildHistoryComparison(previous, current){
   return {details, watchItems}
 }
 
-const BCS_SCORE = {thin:2, normal:3, chubby:4, obese:5}
+const BCS_SCORE = {emaciated:1, thin:2, normal:3, chubby:4, obese:5}
 function bcsScore(bodyKey){ return BCS_SCORE[bodyKey] || null }
 function bcsLabel(bodyKey){ const s=bcsScore(bodyKey); return s ? `BCS目安${s}/5` : null }
 function bcsGaugeSvg(score){
   if(!score) return ''
-  const labels = ['やせ','やや細','適正','やや丸','ぽっちゃり']
+  const labels = ['やせ','やややせ','適正','やや肥満','肥満']
   const segW = 44
   const segs = [1,2,3,4,5].map((n,i)=>{
     const active = n===score
@@ -644,7 +644,7 @@ const EVIDENCE_NOTES = {
   lipid: {label:'中性脂肪・コレステロールについて', text:'脂質系の数値は、体重・おやつ量と合わせて見る一般的な栄養管理の考え方を参考にしています。'},
   glucose: {label:'血糖について', text:'血糖の解釈は、再検査・尿糖の確認を含めた一般的な内科的アプローチを参考にしています。'},
   urine: {label:'尿検査について', text:'尿検査の解釈は、IRISおよび一般的な下部尿路疾患の考え方を参考にしています。'},
-  energy: {label:'必要エネルギー量について', text:'目安カロリーの計算は、NRC（全米研究評議会）・FEDIAF（欧州ペットフード工業連合会）の栄養要求量の考え方を参考にしています。個別の代謝差は反映していない一般的な目安です。'},
+  energy: {label:'必要エネルギー量について', text:'目安カロリーの計算は、NRC（全米研究評議会）・FEDIAF（欧州ペットフード工業連合会）の栄養要求量の考え方を参考にしています。個別の代謝差は反映していない一般的な目安です。年齢（子犬期・シニア期など）と避妊・去勢の有無は、この目安カロリーとフード候補の絞り込みに反映しています。性格タイプの判定には使用していません。'},
   behavior: {label:'行動傾向について', text:'性格・行動タイプの判定は、C-BARQ（Canine Behavioral Assessment & Research Questionnaire）の考え方を家庭向けに参考にしています。公式尺度そのものではありません。'}
 }
 function evidenceToggle(key){
@@ -661,10 +661,14 @@ function derMultiplier(a){
   if(a.neuter==='yes') return 1.4
   return 1.6
 }
+// 表示順は「腎臓→肝臓→糖・脂質→タンパク→電解質→血球→尿」のグループ順に整理（値・判定ロジックは無変更）
 const labFields = [
-  ['bun','BUN','mg/dL'], ['cre','Cre','mg/dL'], ['sdma','SDMA','μg/dL'], ['alt','ALT','U/L'], ['alp','ALP','U/L'],
-  ['tg','TG','mg/dL'], ['tcho','T-Cho','mg/dL'], ['glu','GLU','mg/dL'], ['alb','ALB','g/dL'], ['tp','TP','g/dL'],
-  ['ca','Ca','mg/dL'], ['na','Na','mmol/L'], ['k','K','mmol/L'], ['rbc','RBC',''], ['hct','HCT','%'], ['wbc','WBC',''], ['plt','PLT',''],
+  ['bun','BUN','mg/dL'], ['cre','Cre','mg/dL'], ['sdma','SDMA','μg/dL'],
+  ['alt','ALT','U/L'], ['alp','ALP','U/L'],
+  ['glu','GLU','mg/dL'], ['tg','TG','mg/dL'], ['tcho','T-Cho','mg/dL'],
+  ['alb','ALB','g/dL'], ['tp','TP','g/dL'],
+  ['na','Na','mmol/L'], ['k','K','mmol/L'], ['ca','Ca','mg/dL'],
+  ['rbc','RBC',''], ['hct','HCT','%'], ['wbc','WBC',''], ['plt','PLT',''],
   ['usg','尿比重',''], ['upc','UPC','']
 ]
 function labNum(key){ return Number((answers.labs || {})[key] || 0) }
@@ -1309,10 +1313,10 @@ const OWNER_SOCIAL_WHY = {
   watchI:'初対面には慎重なこの子と、一人の時間を大切にする飼い主様は、静かな時間を一緒に楽しめる好相性です。'
 }
 const OWNER_BOND_WHY = {
-  closeT:'そばにいることを好むこの子に対して、飼い主様は論理的に判断するタイプかもしれません。感情表現が控えめでも、そばにいる時間そのものが大きな安心材料になっています。',
+  closeT:'そばにいることを好むこの子に対して、飼い主様は論理的に判断するタイプのようです。感情表現が控えめでも、そばにいる時間そのものが大きな安心材料になっています。',
   closeF:'そばにいることを好むこの子と、気持ちに寄り添う飼い主様は、お互いの気持ちを深く通わせられる好相性です。',
   indieT:'マイペースなこの子と、物事を論理的に判断する飼い主様は、お互いの自立したペースを尊重し合える好相性です。',
-  indieF:'マイペースなこの子に対して、飼い主様は気持ちに寄り添うことを大切にするタイプかもしれません。構いすぎず見守る愛情表現も、この子にはしっかり伝わっています。'
+  indieF:'マイペースなこの子に対して、飼い主様は気持ちに寄り添うことを大切にするタイプのようです。構いすぎず見守る愛情表現も、この子にはしっかり伝わっています。'
 }
 function ownerCompatBlurb(axes, mbti){
   if(!mbti || mbti==='unknown' || mbti.length!==4) return null
@@ -1600,7 +1604,7 @@ function render(){
         <div class="worry-v2-grid">
           <div class="worry-v2-item"><img src="/assets/korote/think.png" alt=""><span>ごはんの量がこれでいいのか不安</span></div>
           <div class="worry-v2-item"><img src="/assets/korote/sad.png" alt=""><span>おやつをあげすぎていないか心配</span></div>
-          <div class="worry-v2-item"><img src="/assets/korote/think.png" alt=""><span>うちの子に合うフードがわからない</span></div>
+          <div class="worry-v2-item"><img src="/assets/korote/worry-food.png" alt=""><span>うちの子に合うフードがわからない</span></div>
           <div class="worry-v2-item"><img src="/assets/korote/cheer.png" alt=""><span>健診結果をうまく活かしたい</span></div>
         </div>
       </section>
@@ -1691,7 +1695,7 @@ function renderDiagnosis(){
         ${r.hasWeight ? `<div class="res-metrics res-metrics-3">${refGrams ? `<div class="res-metric res-metric-gram"><strong>${refGrams}<small>g</small></strong><span>1日のごはん量目安</span></div>` : ''}<div class="res-metric"><strong>${Math.round(r.kcal)}<small>kcal</small></strong><span>目安カロリー</span></div><div class="res-metric res-metric-snack"><strong>${Math.round(r.snack)}<small>kcalまで</small></strong><span>おやつの上限</span></div></div>${refGrams ? `<p class="helper res-gram-note">※ごはん量は候補フード「${refFood.name}」のカロリー密度で計算した目安です。実際に使うフードの表示に合わせて調整してください。</p>` : ''}${evidenceToggle('energy')}${r.isPuppy ? `<p class="helper">子犬期は成長段階によって必要カロリーが大きく変わるため、上の数字はあくまで簡易的な目安です。フードのパッケージ記載の給与量や、かかりつけの獣医師の指示を優先してください。</p>` : ''}` : `<div class="note"><h3>カロリー計算</h3><p>体重を入力すると、目安カロリーとおやつ上限を表示できます。今回はタイプ判定と注意点のみ表示します。</p></div>`}
         <button type="button" class="text-link res-save-mini save-share">📷 結果画像を保存</button>
       </div>
-      ${answers.body ? `<div class="karte-section res-block"><h3>いまの体型</h3><div class="res-bcs-row"><img class="res-bcs-avatar" src="${avatarSrc}" alt="" loading="lazy"><div class="res-bcs-info">${r.bcs ? `<span class="res-bcs-badge">${r.bcs}</span>` : ''}<div class="res-bcs-scale">${['thin','normal','chubby','obese'].map(k=>`<span class="res-bcs-step${answers.body===k?' is-active':''}">${BODY_LABEL_SHORT[k]}</span>`).join('')}</div>${r.hasWeight ? `<p class="res-bcs-weight">現在の体重　<strong>${answers.weight}kg</strong></p>` : ''}</div></div></div>` : ''}
+      ${answers.body ? `<div class="karte-section res-block"><h3>いまの体型</h3><div class="res-bcs-row"><img class="res-bcs-avatar" src="${avatarSrc}" alt="" loading="lazy"><div class="res-bcs-info">${r.bcs ? `<span class="res-bcs-badge">${r.bcs}</span>` : ''}<div class="res-bcs-scale">${['emaciated','thin','normal','chubby','obese'].map(k=>`<span class="res-bcs-step${answers.body===k?' is-active':''}">${BODY_LABEL_SHORT[k]}</span>`).join('')}</div>${r.hasWeight ? `<p class="res-bcs-weight">現在の体重　<strong>${answers.weight}kg</strong></p>` : ''}</div></div></div>` : ''}
       </div>
       <div class="res-col-right">
       <div class="karte-section res-block"><h3>${name}ってこんな子</h3><div class="res-personality-row"><img class="res-personality-avatar" src="${avatarSrc}" alt="" loading="lazy"><ul class="res-personality-list">${r.profile.likely.map(x=>`<li>${x}</li>`).join('')}</ul></div></div>
@@ -1718,7 +1722,14 @@ function renderDiagnosis(){
       <div class="karte-section next-steps"><h3>今日からできる3つのこと</h3><ol>${r.nextSteps.map(x=>`<li>${x}</li>`).join('')}</ol></div>
       <div class="karte-section recheck-note"><h3>3か月後に見直したい項目</h3><p class="helper">同じ診断にもう一度答えると、今回との変化を自動で比較して表示します。継続して使うことで、単発の診断より変化が見えやすくなります。</p><ul>${r.recheckItems.map(x=>`<li>${x}</li>`).join('')}</ul></div>
       ${r.ownerCompat ? `<div class="karte-section owner-compat"><h3>飼い主様（${r.ownerCompat.mbti}${r.ownerCompat.nickname ? '：'+r.ownerCompat.nickname+'タイプ' : ''}）との相性</h3><p>${r.ownerCompat.text}</p><p class="helper">PDFカルテでは、活動量・慎重さも含めた4項目でさらに詳しく、具体的な付き合い方のヒントまで深掘りします。</p></div>` : ''}
-      <div class="pdf-cta"><p class="eyebrow">有料PDFで追加されること</p><h3>健診表・今のフード・おやつ量を、主治医に相談しやすい1枚へ</h3><p>無料診断は「方向性」まで。PDFカルテでは、検査値・体重・便・食べ方をまとめ、家族や病院で話しやすいメモにします。</p><div class="pdf-mini-grid"><span>健診数値の転記</span><span>相談ポイント整理</span><span>買う前の注意点</span></div><p class="helper"><strong>おすすめ：</strong>健診で指摘がある、療法食中、食べムラや体重変化を家族で共有したい子。<br><strong>不要：</strong>今すぐ症状が強い子は、申込みより先に受診してください。</p><a class="primary pdf-interest" data-price="980" href="/pdf-karute/">980円で相談用カルテを作る</a><small>決済後に入力フォームへ進み、2〜3営業日以内にPDFをお届けします。</small>
+      <div class="pdf-cta">
+        <div class="pdf-cta-top">
+          <img class="pdf-cta-illust" src="/assets/korote/pdf-cta-korote.png" alt="" loading="lazy">
+          <div class="pdf-cta-copy"><p class="eyebrow">有料PDFで追加されること</p><h3>健診表・今のフード・おやつ量を、主治医に相談しやすい1枚へ</h3><p>無料診断は「方向性」まで。PDFカルテでは、検査値・体重・便・食べ方をまとめ、家族や病院で話しやすいメモにします。</p></div>
+        </div>
+        <div class="pdf-mini-grid"><span>健診数値の転記</span><span>相談ポイント整理</span><span>買う前の注意点</span></div>
+        <p class="helper"><strong>おすすめ：</strong>健診で指摘がある、療法食中、食べムラや体重変化を家族で共有したい子。<br><strong>不要：</strong>今すぐ症状が強い子は、申込みより先に受診してください。</p>
+        <div class="pdf-cta-action"><a class="primary pdf-interest" data-price="980" href="/pdf-karute/">980円で相談用カルテを作る</a><small>決済後に入力フォームへ進み、2〜3営業日以内にPDFをお届けします。</small></div>
         <div class="pdf-data-copy"><p class="helper">PDFカルテをご注文の方は、この診断データをコピーして、お申込み後の入力フォームに貼り付けてください。入力の手間が減り、内容の転記ミスも防げます。</p><button type="button" class="secondary copy-diagnosis-data" data-default-label="診断データをコピー" data-copied-label="コピーしました ✓">診断データをコピー</button><textarea class="diagnosis-data-json" hidden readonly>${diagnosisDataJson}</textarea></div>
       </div>
       </div></details>

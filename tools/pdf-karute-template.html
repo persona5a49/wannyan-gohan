@@ -214,10 +214,11 @@
       <label>体型スコア（BCS）の目安（任意）</label>
       <select id="bcs">
         <option value="">未回答</option>
-        <option value="thin">やせ気味</option>
-        <option value="normal">適正</option>
-        <option value="chubby">やや丸め</option>
-        <option value="obese">ぽっちゃり</option>
+        <option value="emaciated">かなりやせ（1/5）</option>
+        <option value="thin">やややせ（2/5）</option>
+        <option value="normal">適正（3/5）</option>
+        <option value="chubby">やや肥満（4/5）</option>
+        <option value="obese">肥満（5/5）</option>
       </select>
       <label>おやつの内容と量</label><textarea id="snackDetail"></textarea>
       <label>サプリメントの有無（内容も分かれば）</label><input type="text" id="supplement">
@@ -369,10 +370,11 @@
       <label>前回の体型スコア（BCS）の目安</label>
       <select id="prevBcs">
         <option value="">未回答</option>
-        <option value="thin">やせ気味</option>
-        <option value="normal">適正</option>
-        <option value="chubby">やや丸め</option>
-        <option value="obese">ぽっちゃり</option>
+        <option value="emaciated">かなりやせ（1/5）</option>
+        <option value="thin">やややせ（2/5）</option>
+        <option value="normal">適正（3/5）</option>
+        <option value="chubby">やや肥満（4/5）</option>
+        <option value="obese">肥満（5/5）</option>
       </select>
       <label>前回の食欲の様子</label>
       <select id="prevFoodDrive">
@@ -746,12 +748,12 @@ function fmtDate(iso){
 
 // サイト本体（src/main.js）のBCS_SCORE/bcsGaugeSvgと同じ5段階スケールに統一。
 // thin=2/normal=3/chubby=4/obese=5（本体のBCS目安X/5とキー・並びを揃えている）
-const BCS_LABEL = {thin:'やや細', normal:'適正', chubby:'やや丸', obese:'ぽっちゃり'};
-const BCS_ORDER = {thin:2, normal:3, chubby:4, obese:5};
+const BCS_LABEL = {emaciated:'かなりやせ', thin:'やややせ', normal:'適正', chubby:'やや肥満', obese:'肥満'};
+const BCS_ORDER = {emaciated:1, thin:2, normal:3, chubby:4, obese:5};
 function bcsGaugeSvg(bcsKey){
   if (!bcsKey || !(bcsKey in BCS_ORDER)) return '';
   const score = BCS_ORDER[bcsKey];
-  const labels = ['やせ','やや細','適正','やや丸','ぽっちゃり'];
+  const labels = ['やせ','やややせ','適正','やや肥満','肥満'];
   const segW = 44;
   const segs = [1,2,3,4,5].map((n,i) => {
     const active = n === score;
@@ -1722,7 +1724,7 @@ function loadDiagnosisData(){
     track('慎重さ', setVal('axisCaution', axes[1]));
     track('活動性', setVal('axisActivity', axes[2]));
     track('距離感', setVal('axisBond', axes[3]));
-    track('BCS', setVal('bcs', ['thin', 'normal', 'chubby', 'obese'].includes(a.body) ? a.body : ''));
+    track('BCS', setVal('bcs', ['emaciated', 'thin', 'normal', 'chubby', 'obese'].includes(a.body) ? a.body : ''));
     track('飼い主MBTI', setVal('ownerMbti', (a.ownerMbti && a.ownerMbti !== 'unknown') ? a.ownerMbti : ''));
 
     const checkupLabelMap = {
