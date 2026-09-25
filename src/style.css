@@ -339,6 +339,10 @@ body{background:linear-gradient(180deg,#fbfaf6 0%,#f4efe5 100%)}
 .res-share-main{text-align:center}
 .res-share-main .eyebrow{margin:0 0 10px}
 .res-share-main button,.res-share-main a.pdf-interest{margin:0 6px 10px}
+.pdf-data-copy{margin-top:14px;padding-top:14px;border-top:1px dashed #d9c8ae}
+.pdf-data-copy .helper{font-size:12px;margin:0 0 8px}
+.pdf-data-copy .copy-diagnosis-data{font-size:13px;padding:9px 16px}
+.pdf-data-copy .copy-diagnosis-data:disabled{opacity:.7;cursor:default}
 .karte-section.res-block h3{font-family:var(--font-heading);color:var(--b-text)}
 .res-col-left,.res-col-right{display:contents}
 .res-bcs-row{display:flex;gap:16px;align-items:center}

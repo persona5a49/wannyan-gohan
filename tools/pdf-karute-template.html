@@ -35,6 +35,13 @@
   button{cursor:pointer;font-family:inherit}
   .btn-print{width:100%;background:var(--green);color:#fff;border:0;border-radius:999px;padding:12px;font-size:14px;font-weight:800}
   .btn-reset{width:100%;background:none;border:1px solid #ccc;color:#555;border-radius:999px;padding:8px;font-size:12px;margin-top:8px}
+  .diagnosis-import{background:#fdf8ee;border-color:#e6d3a8}
+  .diagnosis-import textarea{width:100%;font-family:ui-monospace,monospace}
+  #diagnosisLoadStatus .load-ok{color:#29543a;font-size:12px;font-weight:700;margin:4px 0}
+  #diagnosisLoadStatus .load-warn{color:#b8834b;font-size:11.5px;margin:4px 0}
+  #diagnosisLoadStatus .load-error{color:#b3382c;font-size:12px;font-weight:700;margin:4px 0}
+  .auto-filled{background:#fff6db !important;border-color:#e0b678 !important}
+  label.chk.auto-filled{background:#fff6db;border-radius:6px;padding:2px 4px}
   .preview-wrap{padding:24px;display:flex;justify-content:center;overflow-y:auto}
   .sheet{width:794px}
   .pdf-page{background:var(--paper);min-height:1123px;position:relative;box-shadow:0 4px 24px rgba(0,0,0,.12);margin-bottom:24px;page-break-after:always;break-after:page;border-top:6px solid var(--accent)}
@@ -134,6 +141,14 @@
   <div class="panel">
     <h1>詳細ごはんカルテPDF 作成ツール</h1>
     <p class="hint">Googleフォームの回答内容をここに入力すると、右側にPDF①（飼い主向け詳細カルテ・全13ページ）とPDF②（健康サマリー・1ページ）のプレビューが生成されます。印刷ダイアログのページ範囲指定で2つのPDFとして別々に保存するか、まとめて1つのPDFとして保存してください（社内用・非公開ページ）。</p>
+
+    <fieldset class="diagnosis-import">
+      <legend>無料診断データの読み込み（任意）</legend>
+      <p class="hint" style="margin:0 0 8px">お客様からいただいた「診断データ」をここに貼り付けて読み込むと、タイプ名・4軸・BCS・MBTI・健診項目などを自動入力できます。判定・計算のロジックはこのツール側にはなく、無料診断の結果をそのまま転記するだけです。読み込み後も内容は自由に確認・修正できます。</p>
+      <textarea id="diagnosisDataInput" placeholder="ここに診断データを貼り付けてください" style="min-height:70px;font-size:11px"></textarea>
+      <button type="button" id="loadDiagnosisDataBtn" class="btn-print" style="background:var(--accent);margin-top:8px">診断データを読み込む</button>
+      <div id="diagnosisLoadStatus" style="margin-top:8px"></div>
+    </fieldset>
 
     <fieldset>
       <legend>基本情報</legend>
@@ -1665,6 +1680,98 @@ function buildVetQuestions(ctx){
   if (!items.length) items.push('現在の食事量・体重の推移について、このまま継続してよいか。');
   return items.slice(0,6);
 }
+
+// ==== 無料診断データの読み込み（JSON→既存フォームへの機械的な転記のみ。新しい判定・計算ロジックはここに追加しない） ====
+function loadDiagnosisData(){
+  const statusEl = document.getElementById('diagnosisLoadStatus');
+  const setStatus = (html) => { statusEl.innerHTML = html };
+  document.querySelectorAll('.auto-filled').forEach(el => el.classList.remove('auto-filled'));
+
+  const raw = (document.getElementById('diagnosisDataInput').value || '').trim();
+  if (!raw) { setStatus('<p class="load-error">診断データが貼り付けられていません。結果画面の「診断データをコピー」でコピーした内容を貼り付けてください。</p>'); return; }
+
+  let data;
+  try {
+    data = JSON.parse(raw);
+  } catch (e) {
+    setStatus('<p class="load-error">診断データの読み込みに失敗しました（JSON形式として認識できません）。コピーした内容がすべて貼り付けられているか確認してください。フォームの他の項目には影響していません。</p>');
+    return;
+  }
+
+  try {
+    const a = (data && data.answers) || {};
+    const r = (data && data.result) || {};
+    const axes = (data && data.axes) || (r.profile && r.profile.axes) || [];
+    const filled = [];
+    const missing = [];
+
+    const setVal = (id, value) => {
+      const el = document.getElementById(id);
+      if (!el || value === undefined || value === null || value === '') return false;
+      el.value = value;
+      el.classList.add('auto-filled');
+      return true;
+    };
+    const track = (label, ok) => { (ok ? filled : missing).push(label) };
+
+    track('犬の名前', setVal('dogName', a.dogName));
+    track('体重', setVal('weight', a.weight));
+    track('避妊・去勢', setVal('neuter', { yes: '済み', no: '未', unknown: 'わからない' }[a.neuter]));
+    track('タイプ名', setVal('typeName', r.type));
+    track('社交性', setVal('axisSocial', axes[0]));
+    track('慎重さ', setVal('axisCaution', axes[1]));
+    track('活動性', setVal('axisActivity', axes[2]));
+    track('距離感', setVal('axisBond', axes[3]));
+    track('BCS', setVal('bcs', ['thin', 'normal', 'chubby', 'obese'].includes(a.body) ? a.body : ''));
+    track('飼い主MBTI', setVal('ownerMbti', (a.ownerMbti && a.ownerMbti !== 'unknown') ? a.ownerMbti : ''));
+
+    const checkupLabelMap = {
+      kidney: '腎臓系（BUN・Creなど）', liver: '肝臓系（ALT・ALPなど）',
+      lipid: '中性脂肪・コレステロール（TG・T-Choなど）', glucose: '血糖（GLU）',
+      urine: '尿検査', weightloss: '体重減少'
+    };
+    const checkupVals = a.checkup || [];
+    let checkupHit = false;
+    document.querySelectorAll('#checkupItems input[type=checkbox]').forEach(cb => {
+      const matchedKey = Object.keys(checkupLabelMap).find(k => checkupLabelMap[k] === cb.value);
+      if (matchedKey && checkupVals.includes(matchedKey)) {
+        cb.checked = true;
+        cb.closest('label')?.classList.add('auto-filled');
+        checkupHit = true;
+      }
+    });
+    track('健診で気になる項目', checkupHit);
+
+    const labLabels = { bun: 'BUN', cre: 'Cre', sdma: 'SDMA', alt: 'ALT', alp: 'ALP', tg: 'TG', tcho: 'T-Cho', glu: 'GLU', alb: 'ALB', tp: 'TP', ca: 'Ca', na: 'Na', k: 'K', rbc: 'RBC', hct: 'HCT', wbc: 'WBC', plt: 'PLT', usg: '尿比重', upc: 'UPC' };
+    const labs = a.labs || {};
+    const labParts = Object.keys(labLabels).filter(k => labs[k] !== undefined && labs[k] !== '').map(k => `${labLabels[k]} ${labs[k]}`);
+    track('健診数値', setVal('labValues', labParts.join(' / ')));
+
+    track('服薬中', setVal('onMeds', checkupVals.includes('meds') ? 'はい' : ''));
+    track('療法食中', setVal('onTherapeutic', a.currentFood === 'therapeutic' ? 'はい' : ''));
+
+    const foods = r.foods || [];
+    foods.slice(0, 3).forEach((f, i) => {
+      const n = i + 1;
+      let hit = false;
+      if (setVal('p' + n + 'Name', f.name)) hit = true;
+      if (setVal('p' + n + 'Kcal100', f.kcal)) hit = true;
+      if (setVal('p' + n + 'Protein', f.mainProtein)) hit = true;
+      if (setVal('p' + n + 'Reason', f.note || (f.reasons || []).join('／'))) hit = true;
+      track('候補フード' + n + '（下書き）', hit);
+    });
+
+    render();
+
+    setStatus(
+      `<p class="load-ok">自動入力しました（${filled.length}項目）。内容を確認・修正してからPDFを作成してください。</p>` +
+      (missing.length ? `<p class="load-warn">診断データに含まれていなかった項目（手入力してください）：${missing.join('・')}</p>` : '')
+    );
+  } catch (e) {
+    setStatus('<p class="load-error">診断データの一部を読み込めませんでした。読み込めた項目は反映済みです。残りの項目は手入力してください。（詳細：' + (e && e.message ? e.message : '不明なエラー') + '）</p>');
+  }
+}
+document.getElementById('loadDiagnosisDataBtn')?.addEventListener('click', loadDiagnosisData);
 
 document.querySelectorAll('.panel input, .panel select, .panel textarea').forEach(el => {
   el.addEventListener('input', render);

@@ -1672,6 +1672,8 @@ function renderDiagnosis(){
     const appearance = loadCharacterAppearance(answers.dogName)
     const avatarBreed = (appearance && appearance.breed) || (BREEDGROUP_CHAR_PREVIEW[answers.breedGroup] && BREEDGROUP_CHAR_PREVIEW[answers.breedGroup][0]) || 'toy_poodle'
     const avatarSrc = `/character-parts/breed/${avatarBreed}.png`
+    // PDFカルテ連携用：診断結果をそのままJSON化（新しい判定・計算は行わない。既存のtypeFor/calcResultの出力をそのまま書き出すだけ）
+    const diagnosisDataJson = JSON.stringify({version:1, answers, result: r, axes: typeFor(answers).axes}).replace(/</g, '\\u003c')
     // 「1日のごはん量」目安：新規計算式は作らず、候補フード一覧で既に使っている式（kcal ÷ そのフードのkcal/100g × 100）を
     // 上位候補フード1件に適用して代表値として表示する（食べ物ごとにg数は変わるため、注記を添える）。
     const refFood = r.foods && r.foods[0]
@@ -1716,7 +1718,9 @@ function renderDiagnosis(){
       <div class="karte-section next-steps"><h3>今日からできる3つのこと</h3><ol>${r.nextSteps.map(x=>`<li>${x}</li>`).join('')}</ol></div>
       <div class="karte-section recheck-note"><h3>3か月後に見直したい項目</h3><p class="helper">同じ診断にもう一度答えると、今回との変化を自動で比較して表示します。継続して使うことで、単発の診断より変化が見えやすくなります。</p><ul>${r.recheckItems.map(x=>`<li>${x}</li>`).join('')}</ul></div>
       ${r.ownerCompat ? `<div class="karte-section owner-compat"><h3>飼い主様（${r.ownerCompat.mbti}${r.ownerCompat.nickname ? '：'+r.ownerCompat.nickname+'タイプ' : ''}）との相性</h3><p>${r.ownerCompat.text}</p><p class="helper">PDFカルテでは、活動量・慎重さも含めた4項目でさらに詳しく、具体的な付き合い方のヒントまで深掘りします。</p></div>` : ''}
-      <div class="pdf-cta"><p class="eyebrow">有料PDFで追加されること</p><h3>健診表・今のフード・おやつ量を、主治医に相談しやすい1枚へ</h3><p>無料診断は「方向性」まで。PDFカルテでは、検査値・体重・便・食べ方をまとめ、家族や病院で話しやすいメモにします。</p><div class="pdf-mini-grid"><span>健診数値の転記</span><span>相談ポイント整理</span><span>買う前の注意点</span></div><p class="helper"><strong>おすすめ：</strong>健診で指摘がある、療法食中、食べムラや体重変化を家族で共有したい子。<br><strong>不要：</strong>今すぐ症状が強い子は、申込みより先に受診してください。</p><a class="primary pdf-interest" data-price="980" href="/pdf-karute/">980円で相談用カルテを作る</a><small>決済後に入力フォームへ進み、2〜3営業日以内にPDFをお届けします。</small></div>
+      <div class="pdf-cta"><p class="eyebrow">有料PDFで追加されること</p><h3>健診表・今のフード・おやつ量を、主治医に相談しやすい1枚へ</h3><p>無料診断は「方向性」まで。PDFカルテでは、検査値・体重・便・食べ方をまとめ、家族や病院で話しやすいメモにします。</p><div class="pdf-mini-grid"><span>健診数値の転記</span><span>相談ポイント整理</span><span>買う前の注意点</span></div><p class="helper"><strong>おすすめ：</strong>健診で指摘がある、療法食中、食べムラや体重変化を家族で共有したい子。<br><strong>不要：</strong>今すぐ症状が強い子は、申込みより先に受診してください。</p><a class="primary pdf-interest" data-price="980" href="/pdf-karute/">980円で相談用カルテを作る</a><small>決済後に入力フォームへ進み、2〜3営業日以内にPDFをお届けします。</small>
+        <div class="pdf-data-copy"><p class="helper">PDFカルテをご注文の方は、この診断データをコピーして、お申込み後の入力フォームに貼り付けてください。入力の手間が減り、内容の転記ミスも防げます。</p><button type="button" class="secondary copy-diagnosis-data" data-default-label="診断データをコピー" data-copied-label="コピーしました ✓">診断データをコピー</button><textarea class="diagnosis-data-json" hidden readonly>${diagnosisDataJson}</textarea></div>
+      </div>
       </div></details>
       <button class="secondary reset">もう一度診断</button></div>`
   }
@@ -1965,6 +1969,30 @@ function bindEvents(){
   document.querySelectorAll('.pdf-interest').forEach(el=>el.addEventListener('click', e=>{
     trackEvent('pdf_interest_click', {price: Number(e.currentTarget.dataset.price) || 980})
   }))
+  document.querySelector('.copy-diagnosis-data')?.addEventListener('click', async e=>{
+    const btn = e.currentTarget
+    const ta = document.querySelector('.diagnosis-data-json')
+    if(!ta) return
+    let copied = false
+    try{
+      await navigator.clipboard.writeText(ta.value)
+      copied = true
+      trackEvent('diagnosis_data_copy')
+    }catch(err){
+      trackEvent('diagnosis_data_copy_fallback')
+    }
+    if(copied){
+      btn.textContent = btn.dataset.copiedLabel || 'コピーしました'
+      btn.disabled = true
+      setTimeout(()=>{ btn.textContent = btn.dataset.defaultLabel || '診断データをコピー'; btn.disabled = false }, 2500)
+    } else {
+      ta.hidden = false
+      ta.removeAttribute('readonly')
+      ta.select()
+      document.querySelector('.pdf-data-copy-fallback-note')?.remove()
+      btn.insertAdjacentHTML('afterend', '<p class="helper pdf-data-copy-fallback-note">コピーできませんでした。下の欄が選択状態になっているので、このまま端末のコピー操作（Ctrl+C／⌘+C）をお使いください。</p>')
+    }
+  })
   document.querySelectorAll('.save-share').forEach(el=>el.addEventListener('click', saveShareImage))
   document.querySelectorAll('.native-share').forEach(el=>el.addEventListener('click', shareResult))
   drawShareCard()
