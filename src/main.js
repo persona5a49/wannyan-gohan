@@ -1805,6 +1805,7 @@ function renderDiagnosis(){
       <h2 class="dq-heading">${iconBlock}${questionHeading(q)}${questionIsOptional(q) ? '<span class="dq-optional-tag">任意</span>' : ''}</h2>
       ${q.cbarq ? `<p class="dq-cbarq-hint">※ C-BARQを参考にした設問です</p>` : ''}
       ${renderInput(q)}
+      ${q.key==='body' ? `<div class="dq-bcs-reference"><a href="/assets/bcs/bcs-1-to-5-reference.png" target="_blank" rel="noopener"><img src="/assets/bcs/bcs-1-to-5-reference.png" alt="犬のBCS 1/5から5/5までの体型目安" loading="lazy"></a><p class="dq-bcs-reference-hint">タップで拡大表示</p></div>` : ''}
       ${inlineError}
       <div class="nav dq-nav"><button class="secondary back" ${step===0?'disabled':''}>← 戻る</button><button class="primary next" ${canProceed(q)?'':'disabled'}>${step===QUESTIONS.length-1?'結果を見る →':'次へ →'}</button></div>
     </div>`
