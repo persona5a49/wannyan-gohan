@@ -1438,7 +1438,7 @@ function buildHistoryComparison(ctx){
     if (diffKg > 0 && (bcsHeavyNow || bcsHeavyPrev)) {
       alerts.push('体型がやや丸め〜ぽっちゃりの状態で、さらに体重が増えています。給与量・おやつ量の見直しについて主治医にご相談ください。');
     }
-    if (diffKg < 0 && (bcs === 'thin' || prevBcs === 'thin')) {
+    if (diffKg < 0 && (['thin', 'emaciated'].includes(bcs) || ['thin', 'emaciated'].includes(prevBcs))) {
       alerts.push('体型がやせ気味の状態で、さらに体重が減っています。意図しない体重減少でないか、主治医にご確認ください。');
     }
   }
@@ -1465,7 +1465,7 @@ function buildRecheckItems(ctx){
   const bodyTxt = (body || '').trim();
   const symTxt = (symptoms || '').trim();
   const heavyish = /肥満|ぽっちゃり|obese|増加/i.test(bodyTxt) || bcs === 'chubby' || bcs === 'obese';
-  const thinnish = /痩せ|やせ|減少/i.test(bodyTxt) || bcs === 'thin' || hasFlag('体重減少');
+  const thinnish = /痩せ|やせ|減少/i.test(bodyTxt) || ['thin', 'emaciated'].includes(bcs) || hasFlag('体重減少');
   const giSymptom = /軟便|下痢|嘔吐|お腹|吐/.test(symTxt);
   const items = [];
 
