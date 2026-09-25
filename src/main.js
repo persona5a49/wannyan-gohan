@@ -340,9 +340,117 @@ const QUESTIONS = [
   {key:'ownerMbti', label:'最後に（任意）：飼い主様のMBTIタイプが分かれば教えてください', type:'choice', options:[['unknown','わからない・答えない'],['INTJ','INTJ'],['INTP','INTP'],['ENTJ','ENTJ'],['ENTP','ENTP'],['INFJ','INFJ'],['INFP','INFP'],['ENFJ','ENFJ'],['ENFP','ENFP'],['ISTJ','ISTJ'],['ISFJ','ISFJ'],['ESTJ','ESTJ'],['ESFJ','ESFJ'],['ISTP','ISTP'],['ISFP','ISFP'],['ESTP','ESTP'],['ESFP','ESFP']]}
 ]
 
+// ==== 診断画面UI用の表示メタ情報（QUESTIONS本体・key・valueは一切変更しない。見せ方のみ） ====
+const DIAGNOSIS_SECTIONS = [
+  { name:'うちの子の基本', range:[0,6] },
+  { name:'性格・いつもの様子', range:[6,17] },
+  { name:'ごはんと体調', range:[17,27] },
+  { name:'健康・気になること', range:[27,31] },
+  { name:'飼い主さんについて', range:[31,32] }
+]
+function sectionForStep(s){
+  const i = DIAGNOSIS_SECTIONS.findIndex(sec => s >= sec.range[0] && s < sec.range[1])
+  const sec = DIAGNOSIS_SECTIONS[i] || DIAGNOSIS_SECTIONS[DIAGNOSIS_SECTIONS.length-1]
+  return { index:i, section:sec, posInSection: s - sec.range[0] + 1, sectionTotal: sec.range[1]-sec.range[0] }
+}
+const SECTION_INTRO_MSG = [
+  '正解はないよ。いつもの様子を教えてね。',
+  'だんだん、うちの子らしさが見えてきたよ。',
+  'あと少し！ごはんと体調のことも教えてね。',
+  '最後のパートだよ。健康のことを教えてね。',
+  'ラストだよ。飼い主さんのことも教えてね（任意）。'
+]
+// 質問ごとのころての表情（front/think/happy/sad/surprised/point/sleep）
+const DIAGNOSIS_MOOD = {
+  dogName:'front', breedGroup:'front', age:'front', weight:'point', body:'think', neuter:'front',
+  human:'think', dogs:'think', place:'think', sound:'surprised', foodNew:'happy', activity:'happy',
+  excite:'happy', training:'think', persistence:'think', bond:'happy', alone:'sleep',
+  appetite:'happy', treats:'happy', stomach:'sad', stool:'sad', vomit:'surprised', waterUrine:'surprised',
+  mouthState:'sad', currentFood:'point', currentFoodName:'point', treatAmount:'point',
+  concerns:'think', checkup:'sad', labs:'point', preference:'happy', ownerMbti:'think'
+}
+const DIAGNOSIS_KOROTE_IMG = { front:'front', think:'think', happy:'happy', sad:'sad', surprised:'surprised', point:'point', sleep:'sleep', cheer:'cheer' }
+// Q2：breedGroupの選択肢に添える代表犬種キャラ（既存の犬種イラストを流用。新規素材不要）
+const BREEDGROUP_CHAR_PREVIEW = {
+  toy:['toy_poodle','chihuahua'], companion:['shih_tzu','cavalier'], retriever:['golden_retriever','labrador_retriever'],
+  herding:['border_collie','shetland_sheepdog'], terrier:['yorkshire_terrier'], hound:['italian_greyhound'],
+  spitz:['shiba_inu','pomeranian'], brachy:['french_bulldog','pug'], large:['siberian_husky'], mix:['corgi','maltese']
+}
+// Q12：activityの選択肢に添えるころての表情（active2/active1/calm1/calm2）
+const ACTIVITY_OPTION_MOOD = { active2:'cheer', active1:'happy', calm1:'front', calm2:'sleep' }
+// Q5：body（体型）の選択肢に添える上から見たシルエット4段階
+const BODY_OPTION_IMG = { thin:'thin', normal:'ideal', chubby:'round', obese:'obese' }
+// 2026-09-25: 体型素材（上から見たポーズ）は太郎さんNGのため一時無効化。ChatGPT側で作り直し次第trueに戻す
+const BODY_ASSET_APPROVED = false
+// 結果画面：体型4段階の短縮ラベル（表示専用。回答値・判定ロジックは不変）
+const BODY_LABEL_SHORT = { thin:'やせ気味', normal:'標準', chubby:'少し丸め', obese:'ぽっちゃり' }
+// 2026-09-25: 選択肢イラスト141点（Q2犬種・Q5体型は既存実装/差し戻し済みのため対象外）
+// value文字列がQUESTIONS実データと不一致だったため、index位置＋ラベル対応を全件検証した上でvalueへ変換済み
+const CHOICE_ILLUST = {
+  age: {'under1':'q03_age/01_a0.png', '1-6':'q03_age/02_a1.png', '7-9':'q03_age/03_a2.png', '10-12':'q03_age/04_a3.png', '13+':'q03_age/05_a4.png'},
+  neuter: {'yes':'q06_neuter/01_done.png', 'no':'q06_neuter/02_not.png', 'unknown':'q06_neuter/03_unknown.png'},
+  human: {'open2':'q07_human/01_approach.png', 'open1':'q07_human/02_check.png', 'watch1':'q07_human/03_owner.png', 'watch2':'q07_human/04_warn.png'},
+  dogs: {'open2':'q08_dogs/01_play.png', 'open1':'q08_dogs/02_greet.png', 'watch1':'q08_dogs/03_observe.png', 'watch2':'q08_dogs/04_avoid.png'},
+  place: {'challenge2':'q09_place/01_explore.png', 'challenge1':'q09_place/02_slow.png', 'safe1':'q09_place/03_near.png', 'safe2':'q09_place/04_freeze.png'},
+  sound: {'challenge1':'q10_sound/01_recover.png', 'safe1':'q10_sound/02_owner.png', 'safe2':'q10_sound/03_hide.png', 'active1':'q10_sound/04_check.png'},
+  foodNew: {'challenge2':'q11_foodNew/01_eat.png', 'challenge1':'q11_foodNew/02_sniff.png', 'safe1':'q11_foodNew/03_caution.png', 'safe2':'q11_foodNew/04_refuse.png'},
+  activity: {'active2':'q12_activity/01_active.png', 'active1':'q12_activity/02_enjoy.png', 'calm1':'q12_activity/03_normal.png', 'calm2':'q12_activity/04_sleep.png'},
+  excite: {'active2':'q13_excite/01_long.png', 'active1':'q13_excite/02_short.png', 'calm1':'q13_excite/03_fast.png', 'calm2':'q13_excite/04_low.png'},
+  training: {'trainhigh':'q14_training/01_fast.png', 'trainmed':'q14_training/02_reward.png', 'trainlow':'q14_training/03_mood.png', 'trainstubborn':'q14_training/04_repeat.png'},
+  persistence: {'persisthigh':'q15_persistence/01_retry.png', 'persistmed':'q15_persistence/02_persist.png', 'persistlow':'q15_persistence/03_quit.png', 'persistnone':'q15_persistence/04_none.png'},
+  bond: {'close2':'q16_bond/01_close.png', 'close1':'q16_bond/02_come.png', 'indie1':'q16_bond/03_space.png', 'indie2':'q16_bond/04_independent.png'},
+  alone: {'close2':'q17_alone/01_anxious.png', 'close1':'q17_alone/02_initial.png', 'indie1':'q17_alone/03_calm.png', 'indie2':'q17_alone/04_ignore.png'},
+  appetite: {'good':'q18_appetite/01_eat.png', 'uneven':'q18_appetite/02_variable.png', 'picky':'q18_appetite/03_treat.png', 'poor':'q18_appetite/04_low.png'},
+  treats: {'normal':'q19_treats/01_happy.png', 'high':'q19_treats/02_strong.png', 'family':'q19_treats/03_family.png', 'training':'q19_treats/04_focus.png'},
+  stomach: {'stable':'q20_stomach/01_stable.png', 'soft':'q20_stomach/02_sometimes.png', 'sensitive':'q20_stomach/03_often.png', 'unknown':'q20_stomach/04_unknown.png'},
+  stool: {'normal':'q21_stool/01_stable.png', 'soft':'q21_stool/02_soft.png', 'diarrhea':'q21_stool/03_diarrhea.png', 'constipation':'q21_stool/04_hard.png'},
+  vomit: {'rare':'q22_vomit/01_none.png', 'sometimes':'q22_vomit/02_sometimes.png', 'often':'q22_vomit/03_frequent.png', 'acute':'q22_vomit/04_sudden.png'},
+  waterUrine: {'normal':'q23_waterUrine/01_same.png', 'more':'q23_waterUrine/02_more.png', 'muchmore':'q23_waterUrine/03_much.png', 'unknown':'q23_waterUrine/04_unknown.png'},
+  mouthState: {'none':'q24_mouthState/01_none.png', 'smell':'q24_mouthState/02_odor.png', 'chew':'q24_mouthState/03_avoid.png', 'pain':'q24_mouthState/04_pain.png'},
+  currentFood: {'dry':'q25_currentFood/01_dry.png', 'wet':'q25_currentFood/02_wet.png', 'mixed':'q25_currentFood/03_topping.png', 'therapeutic':'q25_currentFood/04_rx.png'},
+  treatAmount: {'low':'q27_treatAmount/01_none.png', 'moderate':'q27_treatAmount/02_little.png', 'high':'q27_treatAmount/03_many.png', 'unknown':'q27_treatAmount/04_unknown.png'},
+  concerns: {'weight':'q28_concerns/01_weight.png', 'appetite':'q28_concerns/02_appetite.png', 'stomach':'q28_concerns/03_gut.png', 'coat':'q28_concerns/04_skin.png', 'joint':'q28_concerns/05_joint.png', 'mouth':'q28_concerns/06_mouth.png', 'behavior':'q28_concerns/07_behavior.png', 'senior':'q28_concerns/08_senior.png'},
+  checkup: {'none':'q29_checkup/01_none.png', 'kidney':'q29_checkup/02_kidney.png', 'liver':'q29_checkup/03_liver.png', 'lipid':'q29_checkup/04_lipid.png', 'glucose':'q29_checkup/05_glucose.png', 'urine':'q29_checkup/06_urine.png', 'weightloss':'q29_checkup/07_weightloss.png', 'meds':'q29_checkup/08_meds.png'},
+  preference: {'small':'q31_preference/01_small.png', 'japan':'q31_preference/02_japan.png', 'grainfree':'q31_preference/03_grainfree.png', 'cost':'q31_preference/04_price.png', 'ingredient':'q31_preference/05_ingredients.png', 'easy':'q31_preference/06_continue.png'},
+  ownerMbti: {'unknown':'q32_ownerMbti/01_unknown.png', 'INTJ':'q32_ownerMbti/02_INTJ.png', 'INTP':'q32_ownerMbti/03_INTP.png', 'ENTJ':'q32_ownerMbti/04_ENTJ.png', 'ENTP':'q32_ownerMbti/05_ENTP.png', 'INFJ':'q32_ownerMbti/06_INFJ.png', 'INFP':'q32_ownerMbti/07_INFP.png', 'ENFJ':'q32_ownerMbti/08_ENFJ.png', 'ENFP':'q32_ownerMbti/09_ENFP.png', 'ISTJ':'q32_ownerMbti/10_ISTJ.png', 'ISFJ':'q32_ownerMbti/11_ISFJ.png', 'ESTJ':'q32_ownerMbti/12_ESTJ.png', 'ESFJ':'q32_ownerMbti/13_ESFJ.png', 'ISTP':'q32_ownerMbti/14_ISTP.png', 'ISFP':'q32_ownerMbti/15_ISFP.png', 'ESTP':'q32_ownerMbti/16_ESTP.png', 'ESFP':'q32_ownerMbti/17_ESFP.png'},
+}
+// 指示書「イラストを強く見せる設問」（Q2犬種は既存実装、Q5体型は保留のため除く）
+const CHOICE_ILLUST_LARGE_KEYS = new Set(['activity','appetite','stool','mouthState','currentFood','concerns','checkup','preference'])
+// Q30：健診数値の主要6項目のみ最初に表示し、残り13項目は開閉式にする
+const LAB_PRIMARY_KEYS = ['bun','cre','alt','alp','glu','alb']
+function questionHeading(q){
+  if(q.key==='dogName') return 'うちの子のお名前は？'
+  if(q.key==='ownerMbti') return '飼い主様のMBTIタイプ、分かれば教えてください'
+  if(q.key==='currentFoodName') return '今の主食の商品名がわかれば教えてください'
+  if(q.key==='labs') return '健診数値メモ'
+  return q.label
+}
+function questionIsOptional(q){ return q.type==='text' || q.type==='multi' || q.type==='labs' }
+
 let answers = {}
 let step = 0
 let mypageSelectedDog = null // マイページで選択中の子（null=直近の子）
+let showValidationError = false // 未回答で「次へ」を押した時のインライン警告表示フラグ（alert()の代替）
+let draftRestoredNotice = false // 診断再開バナーの表示フラグ
+
+// ==== 診断途中の下書き保存（離脱防止。回答内容・判定ロジックには影響しない表示層の機能） ====
+const DIAGNOSIS_DRAFT_KEY = 'wannyan_diagnosis_draft_v1'
+function saveDiagnosisDraft(){
+  if(step <= 0 || step >= QUESTIONS.length){ clearDiagnosisDraft(); return }
+  try{ localStorage.setItem(DIAGNOSIS_DRAFT_KEY, JSON.stringify({step, answers, savedAt: Date.now()})) }catch(e){}
+}
+function loadDiagnosisDraft(){
+  try{
+    const raw = JSON.parse(localStorage.getItem(DIAGNOSIS_DRAFT_KEY) || 'null')
+    if(!raw || typeof raw.step !== 'number' || raw.step <= 0 || raw.step >= QUESTIONS.length || !raw.answers) return null
+    return raw
+  }catch(e){ return null }
+}
+function clearDiagnosisDraft(){ try{ localStorage.removeItem(DIAGNOSIS_DRAFT_KEY) }catch(e){} }
+function restoreDiagnosisDraftIfAny(){
+  const draft = loadDiagnosisDraft()
+  if(draft){ answers = draft.answers; step = draft.step; draftRestoredNotice = true }
+}
 
 const WEIGHT_KEY = 'wannyan_weight_log'
 function loadWeights(){
@@ -1561,16 +1669,42 @@ function renderDiagnosis(){
     const shownTags = displayTags(r.tags, answers.breedGroup)
     const historyAll = loadHistory()
     const matchedHistory = answers.dogName ? historyAll.filter(h=>h.dogName===answers.dogName) : historyAll
-    return `<div class="result karte"><p class="eyebrow">うちの子ごはん・暮らしカルテ</p><div class="type-card profile-cover"><div class="profile-top">${guideBubble('happy', `${name}のこと、少し分かってきたよ。`, 72, answers.dogName)}</div><span class="type-code">16タイプ診断</span><h2><span class="type-lead">${name}は</span><span class="type-name">「${r.type}」</span></h2><p class="profile-tagline">「${typeTagline(r.profile.axes)}」</p><div class="type-animal-row"><span class="type-animal">${answers.breedGroup && BREED_GROUPS[answers.breedGroup] ? BREED_GROUPS[answers.breedGroup] : '暮らしタイプ'}</span>${r.bcs ? `<span class="type-animal">${r.bcs}</span>` : ''}</div></div><div class="trait-list">${shownTags.map(x=>`<span>${x}</span>`).join('')}</div>
-      ${r.hasWeight ? `<div class="result-grid"><div class="metric"><strong>${Math.round(r.kcal)} kcal/日</strong><span>目安必要カロリー</span></div><div class="metric"><strong>${Math.round(r.snack)} kcal/日まで</strong><span>おやつ上限の目安</span></div></div>${evidenceToggle('energy')}${r.isPuppy ? `<p class="helper">子犬期は成長段階によって必要カロリーが大きく変わるため、上の数字はあくまで簡易的な目安です。フードのパッケージ記載の給与量や、かかりつけの獣医師の指示を優先してください。</p>` : ''}` : `<div class="note"><h3>カロリー計算</h3><p>体重を入力すると、目安カロリーとおやつ上限を表示できます。今回はタイプ判定と注意点のみ表示します。</p></div>`}
-      <div class="share-panel"><button class="primary save-share" type="button">結果画像を保存</button><button class="secondary native-share" type="button">LINE/Xで共有</button><canvas id="shareCanvas" width="1200" height="630" aria-label="診断結果シェア画像"></canvas><p class="helper">画像にはタイプ名と性格の特徴のみを表示します。医療情報や健診数値は含まれません。</p></div>
-      <div class="karte-section deep-summary"><h3>${name}の全体像</h3><p>${r.profile.lead}${r.breedNote ? ' '+r.breedNote : ''}${r.bcs ? ` 体型は${r.bcs}です。` : ''} ここでは回答を並べ直すのではなく、性格・活動量・食べ方・体型（BCS）・健診メモの組み合わせから、暮らしで見たいポイントを整理します。</p>${answers.body ? bcsGaugeSvg(bcsScore(answers.body)) : ''}${r.bcs ? evidenceToggle('bcs') : ''}</div>
-      ${renderHistorySection(matchedHistory)}
-      ${renderHealthTimeline(matchedHistory)}
-      <div class="karte-section"><h3>解釈カード</h3>${evidenceToggle('behavior')}<div class="insight-grid">${r.insights.map(x=>`<article class="insight-card"><h4>${x.title}</h4><p>${x.body}</p><strong>実生活では：</strong><p>${x.action}</p></article>`).join('')}</div></div>
-      <div class="karte-section"><h3>接し方のコツ</h3><ul>${r.profile.care.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+    const appearance = loadCharacterAppearance(answers.dogName)
+    const avatarBreed = (appearance && appearance.breed) || (BREEDGROUP_CHAR_PREVIEW[answers.breedGroup] && BREEDGROUP_CHAR_PREVIEW[answers.breedGroup][0]) || 'toy_poodle'
+    const avatarSrc = `/character-parts/breed/${avatarBreed}.png`
+    // 「1日のごはん量」目安：新規計算式は作らず、候補フード一覧で既に使っている式（kcal ÷ そのフードのkcal/100g × 100）を
+    // 上位候補フード1件に適用して代表値として表示する（食べ物ごとにg数は変わるため、注記を添える）。
+    const refFood = r.foods && r.foods[0]
+    const refGrams = (r.hasWeight && refFood) ? Math.round(r.kcal / refFood.kcal * 100) : null
+    return `<div class="result karte res-v2">
+      <div class="res-col-left">
+      <div class="res-hero">
+        <div class="res-hero-top">
+          <img class="res-hero-avatar" src="${avatarSrc}" alt="" loading="lazy">
+          <p class="res-hero-speech">${name}のこと、少し分かってきたよ。</p>
+        </div>
+        <p class="res-type-eyebrow">${name}は…</p>
+        <p class="res-type-name">「${r.type}」</p>
+        <div class="trait-list res-trait-list">${shownTags.map(x=>`<span>${x}</span>`).join('')}</div>
+        ${r.hasWeight ? `<div class="res-metrics res-metrics-3">${refGrams ? `<div class="res-metric res-metric-gram"><strong>${refGrams}<small>g</small></strong><span>1日のごはん量目安</span></div>` : ''}<div class="res-metric"><strong>${Math.round(r.kcal)}<small>kcal</small></strong><span>目安カロリー</span></div><div class="res-metric res-metric-snack"><strong>${Math.round(r.snack)}<small>kcalまで</small></strong><span>おやつの上限</span></div></div>${refGrams ? `<p class="helper res-gram-note">※ごはん量は候補フード「${refFood.name}」のカロリー密度で計算した目安です。実際に使うフードの表示に合わせて調整してください。</p>` : ''}${evidenceToggle('energy')}${r.isPuppy ? `<p class="helper">子犬期は成長段階によって必要カロリーが大きく変わるため、上の数字はあくまで簡易的な目安です。フードのパッケージ記載の給与量や、かかりつけの獣医師の指示を優先してください。</p>` : ''}` : `<div class="note"><h3>カロリー計算</h3><p>体重を入力すると、目安カロリーとおやつ上限を表示できます。今回はタイプ判定と注意点のみ表示します。</p></div>`}
+        <button type="button" class="text-link res-save-mini save-share">📷 結果画像を保存</button>
+      </div>
+      ${answers.body ? `<div class="karte-section res-block"><h3>いまの体型</h3><div class="res-bcs-row"><img class="res-bcs-avatar" src="${avatarSrc}" alt="" loading="lazy"><div class="res-bcs-info">${r.bcs ? `<span class="res-bcs-badge">${r.bcs}</span>` : ''}<div class="res-bcs-scale">${['thin','normal','chubby','obese'].map(k=>`<span class="res-bcs-step${answers.body===k?' is-active':''}">${BODY_LABEL_SHORT[k]}</span>`).join('')}</div>${r.hasWeight ? `<p class="res-bcs-weight">現在の体重　<strong>${answers.weight}kg</strong></p>` : ''}</div></div></div>` : ''}
+      </div>
+      <div class="res-col-right">
+      <div class="karte-section res-block"><h3>${name}ってこんな子</h3><div class="res-personality-row"><img class="res-personality-avatar" src="${avatarSrc}" alt="" loading="lazy"><ul class="res-personality-list">${r.profile.likely.map(x=>`<li>${x}</li>`).join('')}</ul></div></div>
+      <div class="karte-section res-block"><h3>食事を考えるときに気にしておきたいこと</h3><div class="res-badge-row">${shownTags.slice(0,4).map(x=>`<span class="res-badge">${x}</span>`).join('')}</div><p class="helper">気になる症状や検査値がある場合は、かかりつけの動物病院に相談してください。</p></div>
+      </div>
       ${r.redFlags.length ? `<div class="alert"><h3>フード変更前に主治医へ確認</h3><ul>${r.redFlags.map(x=>`<li>${x.text}${evidenceToggle(x.key)}</li>`).join('')}</ul></div>`:''}
       ${r.watch.length ? `<div class="note"><h3>健診メモ</h3><ul>${r.watch.map(x=>`<li>${x.text}${evidenceToggle(x.key)}</li>`).join('')}</ul></div>`:''}
+      <div class="share-panel res-share-main"><p class="eyebrow">このカルテを残しておこう</p><button class="primary save-share" type="button">結果画像を保存</button><button class="secondary native-share" type="button">LINE/Xで共有</button><canvas id="shareCanvas" width="1200" height="630" aria-label="診断結果シェア画像"></canvas><p class="helper">画像にはタイプ名と性格の特徴のみを表示します。医療情報や健診数値は含まれません。</p><a class="primary pdf-interest" data-price="980" href="/pdf-karute/">PDFカルテを作る（980円）</a></div>
+      <details class="res-detail-toggle"><summary>もっとくわしく見る</summary>
+      <div class="res-detail-inner">
+      <div class="karte-section deep-summary"><h3>${name}の全体像（くわしく）</h3><p>${r.profile.lead}${r.breedNote ? ' '+r.breedNote : ''}${r.bcs ? ` 体型は${r.bcs}です。` : ''} ここでは回答を並べ直すのではなく、性格・活動量・食べ方・体型（BCS）・健診メモの組み合わせから、暮らしで見たいポイントを整理します。</p>${answers.body ? bcsGaugeSvg(bcsScore(answers.body)) : ''}${r.bcs ? evidenceToggle('bcs') : ''}</div>
+      ${renderHistorySection(matchedHistory)}
+      ${renderHealthTimeline(matchedHistory)}
+      <div class="karte-section"><h3>解釈カード（くわしく）</h3>${evidenceToggle('behavior')}<div class="insight-grid">${r.insights.map(x=>`<article class="insight-card"><h4>${x.title}</h4><p>${x.body}</p><strong>実生活では：</strong><p>${x.action}</p></article>`).join('')}</div></div>
+      <div class="karte-section"><h3>接し方のコツ</h3><ul>${r.profile.care.map(x=>`<li>${x}</li>`).join('')}</ul></div>
       <div class="note"><h3>この診断について</h3><p>C-BARQ（Canine Behavioral Assessment & Research Questionnaire）の考え方を参考に、家庭で答えやすい場面へ置き換えたセルフチェックです。C-BARQ公式尺度そのものではなく、医学的診断・行動診断でもありません。</p><a class="text-link" href="/about-diagnosis/">参考にしている考え方を見る</a>
         <details style="margin-top:12px"><summary style="cursor:pointer;font-weight:800;color:var(--green)">この評価の根拠を見る</summary><p class="helper" style="margin-top:8px">目安カロリー・おやつ上限は、RER/DER計算など獣医栄養学で一般的に使われる考え方を参考にしています。個別の栄養設計の根拠として使うものではなく、一般的な目安です。</p><ul class="helper" style="padding-left:20px;margin:6px 0"><li>C-BARQ（Canine Behavioral Assessment & Research Questionnaire）</li><li>WSAVA（世界小動物獣医師会）Global Nutrition Guidelines</li><li>AAHA（米国動物病院協会）の栄養評価ガイドライン</li><li>NRC（全米研究評議会）犬猫の栄養要求量</li><li>FEDIAF（欧州ペットフード工業連合会）栄養ガイドライン</li><li>AAFCO（米国飼料検査官協会）の栄養基準</li></ul></details>
       </div>
@@ -1579,17 +1713,66 @@ function renderDiagnosis(){
       ${r.foods.length ? `<h3>${r.isPuppy ? '子犬期向けの候補フード' : '目的別の候補フード'}</h3><p class="helper">${r.isPuppy ? '子犬用として作られた総合栄養食のみを表示しています。成長のスピードには個体差があるため、給与量はパッケージ記載の目安を優先し、気になる場合は獣医師に相談してください。' : 'ランキングではなく、上の条件に合う選択肢として表示します。健診異常・服薬・療法食がある場合は購入前に主治医へ確認してください。'}</p><div class="foods">${r.foods.map(f=>`<article class="food"><h4>${f.name}</h4><p>${f.maker} / ${f.kcal}kcal / 脂質${f.fat}% / 約${f.priceKg.toLocaleString()}円/kg${f.mainProtein ? ` / 主原料:${f.mainProtein}` : ''}</p>${f.note ? `<p class="personalize-note"><strong>${name}の場合：</strong>${f.note}</p>` : ''}<ul>${(f.reasons.length?f.reasons:['条件に比較的合いやすい']).map(x=>`<li>${x}</li>`).join('')}<li>目安給与量：約${r.hasWeight ? Math.round(r.kcal / f.kcal * 100) : '—'}g/日・1日コスト約${r.hasWeight ? Math.round((r.kcal / f.kcal * 100) * f.priceKg / 1000) : '—'}円</li></ul><div class="food-actions">${f.url !== '#' ? `<a class="primary buy-link" data-product="${f.name}" data-maker="${f.maker}" href="${f.url}" target="_blank" rel="noopener sponsored">通販サイトで見る</a>` : ''}${productDetailUrl(f.name) !== '#' ? `<a class="text-link product-link" data-product="${f.name}" data-maker="${f.maker}" href="${productDetailHref(f.name, answers, r)}">くわしく見る</a>` : ''}</div>${f.url !== '#' ? `<small class="pr-inline">PR｜このリンクはアフィリエイト広告を含みます</small>` : ''}</article>`).join('')}</div>` : `<div class="note"><h3>候補フードについて</h3><p>現在のフード候補は、いずれも成犬・シニア犬向けに作られた商品です。子犬期は成長のためにタンパク質・脂質・カルシウムなどの必要量が成犬とは大きく異なるため、このカタログからはおすすめを表示しません。総合栄養食と明記された「子犬用」「オールステージ対応」フードを選ぶか、かかりつけの獣医師にご相談ください。</p></div>`}
       <div class="karte-section"><h3>動物病院で相談したいこと</h3><ul>${r.vetConsult.map(x=>`<li>${x}</li>`).join('')}</ul></div>
       <div class="karte-section"><h3>この結果から深掘りする記事</h3><p class="helper">${name}の回答で気になったポイントごとに、関連する記事をまとめました。</p>${r.relatedGroups.map(g=>`<div class="related-group"><h4>${g.topic}</h4><div class="article-cards mini">${g.articles.map(a=>`<a class="article-card" href="/articles/${a.slug}/"><span>関連記事</span><strong>${a.title}</strong><small>${a.lead}</small></a>`).join('')}</div></div>`).join('')}</div>
-      <div class="karte-section next-steps"><h3>${name}の次の3ステップ</h3><ol>${r.nextSteps.map(x=>`<li>${x}</li>`).join('')}</ol></div>
+      <div class="karte-section next-steps"><h3>今日からできる3つのこと</h3><ol>${r.nextSteps.map(x=>`<li>${x}</li>`).join('')}</ol></div>
       <div class="karte-section recheck-note"><h3>3か月後に見直したい項目</h3><p class="helper">同じ診断にもう一度答えると、今回との変化を自動で比較して表示します。継続して使うことで、単発の診断より変化が見えやすくなります。</p><ul>${r.recheckItems.map(x=>`<li>${x}</li>`).join('')}</ul></div>
       ${r.ownerCompat ? `<div class="karte-section owner-compat"><h3>飼い主様（${r.ownerCompat.mbti}${r.ownerCompat.nickname ? '：'+r.ownerCompat.nickname+'タイプ' : ''}）との相性</h3><p>${r.ownerCompat.text}</p><p class="helper">PDFカルテでは、活動量・慎重さも含めた4項目でさらに詳しく、具体的な付き合い方のヒントまで深掘りします。</p></div>` : ''}
       <div class="pdf-cta"><p class="eyebrow">有料PDFで追加されること</p><h3>健診表・今のフード・おやつ量を、主治医に相談しやすい1枚へ</h3><p>無料診断は「方向性」まで。PDFカルテでは、検査値・体重・便・食べ方をまとめ、家族や病院で話しやすいメモにします。</p><div class="pdf-mini-grid"><span>健診数値の転記</span><span>相談ポイント整理</span><span>買う前の注意点</span></div><p class="helper"><strong>おすすめ：</strong>健診で指摘がある、療法食中、食べムラや体重変化を家族で共有したい子。<br><strong>不要：</strong>今すぐ症状が強い子は、申込みより先に受診してください。</p><a class="primary pdf-interest" data-price="980" href="/pdf-karute/">980円で相談用カルテを作る</a><small>決済後に入力フォームへ進み、2〜3営業日以内にPDFをお届けします。</small></div>
+      </div></details>
       <button class="secondary reset">もう一度診断</button></div>`
   }
   const q = QUESTIONS[step]
-  let introLine = ''
-  if(step===0) introLine = guideBubble('thinking', '正解はないよ。いつもの様子を教えてね。', 56)
-  else if(step === QUESTIONS.length-3) introLine = guideBubble('cheer', 'あと少しだよ、がんばろう。', 56)
-  return `<div class="question">${introLine}<p class="progress">${step+1} / ${QUESTIONS.length}</p><h2>${q.label}</h2>${q.cbarq ? `<p class="cbarq-hint">C-BARQを参考にした観察項目｜${q.cbarq}（公式尺度・診断ではありません）</p>` : ''}${renderInput(q)}<div class="nav"><button class="secondary back" ${step===0?'disabled':''}>戻る</button><button class="primary next">${step===QUESTIONS.length-1?'結果を見る':'次へ'}</button></div></div>`
+  const { index: sectionIndex, section, posInSection, sectionTotal } = sectionForStep(step)
+  const overallPct = Math.round(((step+1) / QUESTIONS.length) * 100)
+  const mood = DIAGNOSIS_MOOD[q.key] || 'front'
+  const koroteImg = DIAGNOSIS_KOROTE_IMG[mood] || 'front'
+
+  const progressBlock = `<div class="dq-progress-wrap"><p class="dq-step-label">STEP ${sectionIndex+1} / ${DIAGNOSIS_SECTIONS.length}　${section.name}</p><div class="dq-progress-bar"><div class="dq-progress-fill" style="width:${overallPct}%"></div></div><p class="dq-progress-sub">${posInSection} / ${sectionTotal}</p></div>`
+
+  // ころて：全質問に小さく登場。セリフはセクション最初の質問のみ。
+  const speech = posInSection===1 ? (SECTION_INTRO_MSG[sectionIndex] || '') : ''
+  const koroteBlock = speech
+    ? `<div class="dq-guide"><img class="dq-guide-img" src="/assets/korote/${koroteImg}.png" alt="" loading="lazy"><p class="dq-guide-speech">${speech}</p></div>`
+    : `<img class="dq-guide-solo" src="/assets/korote/${koroteImg}.png" alt="" loading="lazy">`
+
+  // Q1（名前）だけは特別扱い：ころてを大きく、コピーも専用に、「（任意）」は小さく添える
+  let questionHtml
+  if(step===0){
+    questionHtml = `<div class="question dq-question dq-question-first">
+      ${progressBlock}
+      <div class="dq-guide dq-guide-hero">
+        <img class="dq-guide-img" src="/assets/korote/front.png" alt="" loading="lazy">
+        <p class="dq-guide-speech">まずは、うちの子のお名前を教えてね。あとからでもOKだよ。</p>
+      </div>
+      <p class="dq-category">基本情報</p>
+      <h2 class="dq-heading">${questionHeading(q)}<span class="dq-optional-tag">任意</span></h2>
+      ${renderInput(q)}
+      <p class="dq-optional-note">※ あとからでも変更できます</p>
+      <img class="dq-decor dq-decor-q1-a" src="/assets/decor/flower-01.png" alt="" loading="lazy">
+      <img class="dq-decor dq-decor-q1-b" src="/assets/decor/flower-02.png" alt="" loading="lazy">
+      <img class="dq-decor dq-decor-q1-c" src="/assets/decor/leaf-01.png" alt="" loading="lazy">
+      <div class="nav dq-nav"><button class="secondary back" disabled>← 戻る</button><button class="primary next">次へ →</button></div>
+    </div>`
+  } else {
+    const headerIcon = { appetite:'food', treats:'treat', currentFood:'food' }[q.key]
+    const iconBlock = headerIcon ? `<img class="dq-header-icon" src="/assets/icons/${headerIcon}.png" alt="" loading="lazy">` : ''
+    const draftBanner = draftRestoredNotice ? `<div class="dq-draft-banner"><span>前回の続きから再開しました</span><button type="button" class="text-link draft-restart">最初からやり直す</button><button type="button" class="dq-draft-dismiss draft-notice-dismiss" aria-label="閉じる">×</button></div>` : ''
+    const inlineError = showValidationError ? `<p class="dq-inline-error" role="alert">${q.key==='weight' ? '体重を入力してください。カロリーとおやつ上限の計算に使います。' : '近いものを選んでください。'}</p>` : ''
+    questionHtml = `<div class="question dq-question">
+      ${draftBanner}
+      ${progressBlock}
+      ${koroteBlock}
+      <p class="dq-category">${section.name}</p>
+      <h2 class="dq-heading">${iconBlock}${questionHeading(q)}${questionIsOptional(q) ? '<span class="dq-optional-tag">任意</span>' : ''}</h2>
+      ${q.cbarq ? `<p class="dq-cbarq-hint">※ C-BARQを参考にした設問です</p>` : ''}
+      ${renderInput(q)}
+      ${inlineError}
+      <div class="nav dq-nav"><button class="secondary back" ${step===0?'disabled':''}>← 戻る</button><button class="primary next" ${canProceed(q)?'':'disabled'}>${step===QUESTIONS.length-1?'結果を見る →':'次へ →'}</button></div>
+    </div>`
+  }
+  return `<div class="dq-layout"><aside class="dq-sidebar">${renderDqSidebar(sectionIndex)}</aside>${questionHtml}</div>`
+}
+function renderDqSidebar(activeIndex){
+  return DIAGNOSIS_SECTIONS.map((sec,i)=>`<div class="dq-sidebar-item${i===activeIndex?' is-active':''}${i<activeIndex?' is-done':''}"><span class="dq-sidebar-num">${i<activeIndex?'✓':i+1}</span><span class="dq-sidebar-label">${sec.name}</span></div>`).join('')
 }
 function addMonthsToDate(iso, months){
   const d = new Date(iso + 'T00:00:00')
@@ -1669,11 +1852,38 @@ function renderTracker(){
     ${list.length ? `<ul class="weight-list">${list.slice().reverse().map((e,i)=>`<li><span>${e.date}</span><span>${e.weight}kg</span><button type="button" class="text-link del-weight" data-idx="${list.length-1-i}">削除</button></li>`).join('')}</ul>` : '<p class="helper">まだ記録がありません。</p>'}`
 }
 function renderInput(q){
-  if(q.type==='text') return `<label class="number text-input"><input type="text" value="${answers[q.key]||''}" data-key="${q.key}" placeholder="${q.placeholder||''}"></label>`
-  if(q.type==='number') return `<label class="number"><input type="number" min="0" step="0.1" value="${answers[q.key]||''}" data-key="${q.key}" placeholder="${q.placeholder}"><span>${q.suffix}</span></label>`
-  if(q.type==='labs') return `<p class="helper">空欄でも進めます。健康診断用紙がある場合だけ入力してください。</p><div class="lab-grid">${labFields.map(([k,l,u])=>`<label><span>${l}</span><input type="number" step="0.001" data-lab="${k}" value="${(answers.labs||{})[k]||''}" placeholder="${u}"></label>`).join('')}</div>`
+  if(q.type==='text') return `<label class="dq-text"><input type="text" value="${answers[q.key]||''}" data-key="${q.key}" placeholder="${q.placeholder||''}"></label>`
+  if(q.type==='number') return `<label class="dq-number"><input type="number" min="0" step="0.1" value="${answers[q.key]||''}" data-key="${q.key}" placeholder="${q.placeholder}"><span class="dq-number-suffix">${q.suffix}</span></label>`
+  if(q.type==='labs'){
+    const primary = labFields.filter(([k])=>LAB_PRIMARY_KEYS.includes(k))
+    const rest = labFields.filter(([k])=>!LAB_PRIMARY_KEYS.includes(k))
+    const labInput = ([k,l,u])=>`<label><span>${l}</span><input type="number" step="0.001" data-lab="${k}" value="${(answers.labs||{})[k]||''}" placeholder="${u}"></label>`
+    return `<p class="dq-labs-title">健診結果がなくても大丈夫です</p><p class="dq-labs-sub">わかる項目だけ入力すると、より詳しく整理できます。<span class="dq-labs-optional-badge">すべて任意</span></p><p class="dq-labs-primary-label">まずは主な項目</p><div class="lab-grid dq-lab-grid-primary">${primary.map(labInput).join('')}</div><details class="dq-labs-more"><summary>＋ その他の検査項目を入力する（${rest.length}項目）</summary><div class="lab-grid">${rest.map(labInput).join('')}</div></details>`
+  }
   const multi = q.type==='multi'
-  return `<div class="options">${q.options.map(([v,l])=>`<label class="option"><input type="${multi?'checkbox':'radio'}" name="${q.key}" value="${v}" ${isChecked(q.key,v,multi)?'checked':''}>${l}</label>`).join('')}</div>`
+  const illustrate = (v)=>{
+    if(q.key==='breedGroup'){
+      const breeds = BREEDGROUP_CHAR_PREVIEW[v] || []
+      if(!breeds.length) return ''
+      return `<span class="dq-option-illust dq-option-illust-breed">${breeds.map(b=>`<img src="/character-parts/breed/${b}.png" alt="" loading="lazy">`).join('')}</span>`
+    }
+    if(q.key==='body' && BODY_ASSET_APPROVED && BODY_OPTION_IMG[v]){
+      return `<span class="dq-option-illust dq-option-illust-body"><img src="/assets/body-condition/${BODY_OPTION_IMG[v]}.png" alt="" loading="lazy"></span>`
+    }
+    const choiceAsset = CHOICE_ILLUST[q.key] && CHOICE_ILLUST[q.key][v]
+    if(choiceAsset){
+      return `<span class="dq-option-illust dq-option-illust-choice">${choiceAsset.includes('/') ? `<img src="/assets/choice-illustrations/${choiceAsset}" alt="" loading="lazy">` : ''}</span>`
+    }
+    return ''
+  }
+  // カード表示専用の短縮ラベル（回答値・QUESTIONS本体は不変。2行以内に収めるための表示調整のみ）
+  const cardLabel = (v,l)=> q.key==='breedGroup' && v==='companion' ? 'シーズー・マルチーズ系' : l
+  const optionsClass = ['options','dq-options',
+    q.key==='breedGroup' ? 'dq-options-breed' : '',
+    (q.key==='body' && BODY_ASSET_APPROVED) ? 'dq-options-body' : '',
+    CHOICE_ILLUST_LARGE_KEYS.has(q.key) ? 'dq-options-illust-lg' : (CHOICE_ILLUST[q.key] ? 'dq-options-illust-sm' : '')
+  ].filter(Boolean).join(' ')
+  return `<div class="${optionsClass}">${q.options.map(([v,l])=>`<label class="option dq-option"><input type="${multi?'checkbox':'radio'}" name="${q.key}" value="${v}" ${isChecked(q.key,v,multi)?'checked':''}><span class="dq-option-radio"></span>${illustrate(v)}<span class="dq-option-text">${cardLabel(v,l)}</span></label>`).join('')}</div>`
 }
 function isChecked(k,v,multi){ return multi ? (answers[k]||[]).includes(v) : answers[k]===v }
 function canProceed(q){
@@ -1681,6 +1891,13 @@ function canProceed(q){
   if(q.type==='number') return q.key!=='weight' || Number(answers[q.key])>0
   if(q.type==='multi') return true
   return Boolean(answers[q.key])
+}
+// 選択肢を選んだ瞬間に「次へ」を有効化するための軽量更新（フルrenderはしない＝テキスト入力のフォーカスを保つ）
+function updateNextButtonState(){
+  const btn = document.querySelector('.next')
+  if(!btn || step>=QUESTIONS.length) return
+  btn.disabled = !canProceed(QUESTIONS[step])
+  if(!btn.disabled) document.querySelector('.dq-inline-error')?.remove()
 }
 function drawShareCard(){
   const canvas = document.querySelector('#shareCanvas')
@@ -1745,20 +1962,21 @@ function bindEvents(){
   document.querySelectorAll('.buy-link').forEach(el=>el.addEventListener('click', e=>{
     trackEvent('product_click', {product: e.currentTarget.dataset.product || 'unknown', maker: e.currentTarget.dataset.maker || 'unknown', linked: true, target: 'affiliate'})
   }))
-  document.querySelector('.pdf-interest')?.addEventListener('click', e=>{
+  document.querySelectorAll('.pdf-interest').forEach(el=>el.addEventListener('click', e=>{
     trackEvent('pdf_interest_click', {price: Number(e.currentTarget.dataset.price) || 980})
-  })
-  document.querySelector('.save-share')?.addEventListener('click', saveShareImage)
-  document.querySelector('.native-share')?.addEventListener('click', shareResult)
+  }))
+  document.querySelectorAll('.save-share').forEach(el=>el.addEventListener('click', saveShareImage))
+  document.querySelectorAll('.native-share').forEach(el=>el.addEventListener('click', shareResult))
   drawShareCard()
-  document.querySelectorAll('input[type=radio]').forEach(el=>el.addEventListener('change', e=>{answers[e.target.name]=e.target.value}))
-  document.querySelectorAll('input[type=checkbox]').forEach(el=>el.addEventListener('change', e=>{const k=e.target.name; answers[k]=answers[k]||[]; answers[k]=e.target.checked?[...new Set([...answers[k],e.target.value])]:answers[k].filter(x=>x!==e.target.value)}))
-  document.querySelectorAll('input[data-key]').forEach(el=>el.addEventListener('input', e=>{answers[e.target.dataset.key]=e.target.value}))
-  document.querySelectorAll('input[data-lab]').forEach(el=>el.addEventListener('input', e=>{answers.labs=answers.labs||{}; answers.labs[e.target.dataset.lab]=e.target.value}))
+  document.querySelectorAll('input[type=radio]').forEach(el=>el.addEventListener('change', e=>{answers[e.target.name]=e.target.value; showValidationError=false; updateNextButtonState(); saveDiagnosisDraft()}))
+  document.querySelectorAll('input[type=checkbox]').forEach(el=>el.addEventListener('change', e=>{const k=e.target.name; answers[k]=answers[k]||[]; answers[k]=e.target.checked?[...new Set([...answers[k],e.target.value])]:answers[k].filter(x=>x!==e.target.value); showValidationError=false; updateNextButtonState(); saveDiagnosisDraft()}))
+  document.querySelectorAll('input[data-key]').forEach(el=>el.addEventListener('input', e=>{answers[e.target.dataset.key]=e.target.value; showValidationError=false; updateNextButtonState(); saveDiagnosisDraft()}))
+  document.querySelectorAll('input[data-lab]').forEach(el=>el.addEventListener('input', e=>{answers.labs=answers.labs||{}; answers.labs[e.target.dataset.lab]=e.target.value; saveDiagnosisDraft()}))
   document.querySelector('.next')?.addEventListener('click', ()=>{
     if(step === 0) trackEvent('diagnosis_start', {location: 'question_next'})
     const q = QUESTIONS[step]
-    if(!canProceed(q)){ alert(q.key==='weight' ? '体重を入力してください。カロリーとおやつ上限の計算に使います。' : '近いものを選んでください。'); return }
+    if(!canProceed(q)){ showValidationError=true; render(); return }
+    showValidationError = false
     const finishing = step === QUESTIONS.length - 1
     step++
     if(finishing){
@@ -1767,11 +1985,16 @@ function bindEvents(){
       addHistoryEntry(answers, r)
       trackEvent('diagnosis_history_save')
       ensureCharacterAppearance(answers, r)
+      clearDiagnosisDraft()
+    } else {
+      saveDiagnosisDraft()
     }
     render(); location.hash='diagnosis'
   })
-  document.querySelector('.back')?.addEventListener('click', ()=>{if(step>0) step--; render()})
-  document.querySelector('.reset')?.addEventListener('click', ()=>{trackEvent('diagnosis_reset'); answers={}; step=0; render()})
+  document.querySelector('.back')?.addEventListener('click', ()=>{if(step>0) step--; showValidationError=false; saveDiagnosisDraft(); render()})
+  document.querySelector('.reset')?.addEventListener('click', ()=>{trackEvent('diagnosis_reset'); answers={}; step=0; showValidationError=false; draftRestoredNotice=false; clearDiagnosisDraft(); render()})
+  document.querySelector('.draft-restart')?.addEventListener('click', ()=>{trackEvent('diagnosis_reset', {location:'draft_banner'}); answers={}; step=0; showValidationError=false; draftRestoredNotice=false; clearDiagnosisDraft(); render(); location.hash='diagnosis'})
+  document.querySelector('.draft-notice-dismiss')?.addEventListener('click', ()=>{draftRestoredNotice=false; render()})
   document.querySelector('.weight-form')?.addEventListener('submit', e=>{
     e.preventDefault()
     const date = e.target['w-date'].value
@@ -1812,11 +2035,12 @@ function bindEvents(){
   })
   document.querySelector('.mypage-restart')?.addEventListener('click', ()=>{
     trackEvent('diagnosis_restart', {location:'mypage'})
-    answers={}; step=0; render(); location.hash='diagnosis'
+    answers={}; step=0; showValidationError=false; draftRestoredNotice=false; clearDiagnosisDraft(); render(); location.hash='diagnosis'
   })
   document.querySelectorAll('.dog-switcher-pill').forEach(el=>el.addEventListener('click', e=>{
     mypageSelectedDog = e.currentTarget.dataset.dog || null
     render()
   }))
 }
+restoreDiagnosisDraftIfAny()
 render()
