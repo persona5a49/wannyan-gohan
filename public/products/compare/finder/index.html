@@ -283,7 +283,7 @@ h2{margin-top:0}
     (concernMap[profile.concern] || []).forEach(add);
 
     if (profile.bcs === 'chubby' || profile.bcs === 'obese') { add('kcal'); add('fat'); }
-    if (profile.bcs === 'thin') { add('kcal'); }
+    if (profile.bcs === 'thin' || profile.bcs === 'emaciated') { add('kcal'); }
 
     if (profile.activity === 'high') { add('protein'); add('kcal'); }
     if (profile.activity === 'low')  { add('kcal'); }
@@ -321,11 +321,12 @@ h2{margin-top:0}
       }
       return ' BCS目安' + score + '/5で体重管理を意識したい体型のため、この数値のままだとカロリーが高めになりやすく、給与量を控えめにするなど体重管理の視点での確認が必要です。';
     }
-    if (profile.bcs === 'thin'){
+    if (profile.bcs === 'thin' || profile.bcs === 'emaciated'){
+      var thinDesc = profile.bcs === 'emaciated' ? 'かなり細めの体型' : 'やや細めの体型';
       if (palatableLeaning){
-        return ' BCS目安' + score + '/5でやや細めの体型のため、嗜好性への配慮があるこの数値は食べやすさの面でプラスですが、量や回数を分けるなど食べやすさの工夫も合わせて確認したいところです。';
+        return ' BCS目安' + score + '/5で' + thinDesc + 'のため、嗜好性への配慮があるこの数値は食べやすさの面でプラスですが、量や回数を分けるなど食べやすさの工夫も合わせて確認したいところです。';
       }
-      return ' BCS目安' + score + '/5でやや細めの体型のため、この数値だけでなく、量や回数を分けるなど食べやすさの工夫も合わせて確認したいところです。';
+      return ' BCS目安' + score + '/5で' + thinDesc + 'のため、この数値だけでなく、量や回数を分けるなど食べやすさの工夫も合わせて確認したいところです。';
     }
     // normal
     return ' BCS目安' + score + '/5で標準的な体型です。';

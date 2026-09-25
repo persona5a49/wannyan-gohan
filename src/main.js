@@ -1476,7 +1476,7 @@ function subTags(a, redFlags=[], watch=[]){
   if(a.appetite==='uneven'||a.appetite==='picky'||concerns.includes('appetite')) tags.push('食べムラあり')
   if(a.stomach==='soft'||a.stomach==='sensitive'||a.stool==='soft'||a.stool==='diarrhea'||concerns.includes('stomach')) tags.push('お腹そっと派')
   if(a.body==='chubby'||a.body==='obese'||concerns.includes('weight')) tags.push('体重管理')
-  if(a.body==='thin'||a.appetite==='poor'||c.includes('weightloss')) tags.push('食細め注意')
+  if(a.body==='thin'||a.body==='emaciated'||a.appetite==='poor'||c.includes('weightloss')) tags.push('食細め注意')
   if(concerns.includes('mouth')||['smell','chew','pain'].includes(a.mouthState)) tags.push('口・歯チェック')
   if(concerns.includes('joint')) tags.push('関節配慮')
   if(concerns.includes('coat')) tags.push('皮膚・毛づや配慮')
@@ -1511,7 +1511,7 @@ function personalizedFoodNote(a, r, f){
   if(f.protein >= 28) notes.push('タンパク質はやや高めの設計です。')
   else if(f.protein <= 20) notes.push('タンパク質は控えめな設計です。')
   if(a.body==='chubby' || a.body==='obese') notes.push('今後BCSがさらに上がる場合は、給与量の再調整が必要です。')
-  if(a.body==='thin') notes.push('体重が増えにくい場合は、量や回数を分けるなど食べやすさの工夫も合わせて見ます。')
+  if(a.body==='thin'||a.body==='emaciated') notes.push('体重が増えにくい場合は、量や回数を分けるなど食べやすさの工夫も合わせて見ます。')
   return lead + notes.join('')
 }
 function buildNextSteps(a, r){
