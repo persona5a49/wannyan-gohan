@@ -627,12 +627,12 @@ function bcsGaugeSvg(score){
   const segW = 44
   const segs = [1,2,3,4,5].map((n,i)=>{
     const active = n===score
-    const fill = active ? 'var(--green)' : '#e8e2d5'
+    const fill = active ? 'var(--b-coral)' : '#e8e2d5'
     return `<rect x="${i*segW}" y="0" width="${segW-4}" height="16" rx="6" fill="${fill}"></rect>`
   }).join('')
   return `<svg class="bcs-gauge" viewBox="0 0 ${segW*5} 34" width="100%" height="34" role="img" aria-label="BCS目安${score}/5">
     ${segs}
-    <text x="${(score-1)*segW+ (segW-4)/2}" y="30" font-size="10" font-weight="800" fill="var(--green)" text-anchor="middle">${labels[score-1]}</text>
+    <text x="${(score-1)*segW+ (segW-4)/2}" y="30" font-size="10" font-weight="800" fill="var(--b-text)" text-anchor="middle">${labels[score-1]}</text>
   </svg>`
 }
 function weightTrendSvg(list){
@@ -650,7 +650,7 @@ function weightTrendSvg(list){
   const path = 'M' + points.join(' L')
   const last = points[points.length-1].split(',')
   return `<svg class="weight-trend" viewBox="0 0 ${w} ${h}" width="100%" height="${h}" role="img" aria-label="体重推移グラフ">
-    <path d="${path}" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="${path}" fill="none" stroke="var(--b-coral)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
     <circle cx="${last[0]}" cy="${last[1]}" r="4" fill="var(--accent)"/>
     <text x="${pad}" y="${h-2}" font-size="10" fill="var(--muted)">${list[0].date}</text>
     <text x="${w-pad}" y="${h-2}" font-size="10" fill="var(--muted)" text-anchor="end">${list[list.length-1].date}</text>
@@ -1742,7 +1742,7 @@ function renderDiagnosis(){
       <div class="karte-section"><h3>解釈カード（くわしく）</h3>${evidenceToggle('behavior')}<div class="insight-grid">${r.insights.map(x=>`<article class="insight-card"><h4>${x.title}</h4><p>${x.body}</p><strong>実生活では：</strong><p>${x.action}</p></article>`).join('')}</div></div>
       <div class="karte-section"><h3>接し方のコツ</h3><ul>${r.profile.care.map(x=>`<li>${x}</li>`).join('')}</ul></div>
       <div class="note"><h3>この診断について</h3><p>C-BARQ（Canine Behavioral Assessment & Research Questionnaire）の考え方を参考に、家庭で答えやすい場面へ置き換えたセルフチェックです。C-BARQ公式尺度そのものではなく、医学的診断・行動診断でもありません。</p><a class="text-link" href="/about-diagnosis/">参考にしている考え方を見る</a>
-        <details style="margin-top:12px"><summary style="cursor:pointer;font-weight:800;color:var(--green)">この評価の根拠を見る</summary><p class="helper" style="margin-top:8px">目安カロリー・おやつ上限は、RER/DER計算など獣医栄養学で一般的に使われる考え方をもとに、以下の情報源を参考にしています。個別の栄養設計の根拠として使うものではなく、一般的な目安です。</p><ul class="helper" style="padding-left:20px;margin:6px 0"><li><a class="source-link" href="https://vetapps.vet.upenn.edu/cbarq/about.cfm" target="_blank" rel="noopener">C-BARQ（Canine Behavioral Assessment & Research Questionnaire）</a> — ペンシルベニア大学獣医学部が公式に運営する行動評価アンケート。本診断はC-BARQ公式尺度そのものではなく、考え方を参考にした簡易セルフチェックです。</li><li><a class="source-link" href="https://wsava.org/wp-content/uploads/2020/01/WSAVA-Nutrition-Assessment-Guidelines-2011-JSAP.pdf" target="_blank" rel="noopener">WSAVA Nutritional Assessment Guidelines</a>（2011年、Freeman他、Journal of Small Animal Practice誌）</li><li><a class="source-link" href="https://www.aaha.org/resources/2021-aaha-nutrition-and-weight-management-guidelines/home/" target="_blank" rel="noopener">2021 AAHA Nutrition and Weight Management Guidelines for Dogs and Cats</a>（2021年）</li><li><a class="source-link" href="https://www.nationalacademies.org/publications/10668" target="_blank" rel="noopener">NRC Nutrient Requirements of Dogs and Cats</a>（2006年、National Academies Press）</li><li><a class="source-link" href="https://europeanpetfood.org/wp-content/uploads/2024/09/FEDIAF-Nutritional-Guidelines_2024.pdf" target="_blank" rel="noopener">FEDIAF Nutritional Guidelines for Complete and Complementary Pet Food for Cats and Dogs</a>（2024年9月改定版）</li><li>AAFCO（米国飼料検査官協会）の栄養基準　※特定の発行年・無償の公式URLを確認できなかったため、団体名の記載にとどめています</li></ul></details>
+        <details style="margin-top:12px"><summary style="cursor:pointer;font-weight:800;color:var(--b-text)">この評価の根拠を見る</summary><p class="helper" style="margin-top:8px">目安カロリー・おやつ上限は、RER/DER計算など獣医栄養学で一般的に使われる考え方をもとに、以下の情報源を参考にしています。個別の栄養設計の根拠として使うものではなく、一般的な目安です。</p><ul class="helper" style="padding-left:20px;margin:6px 0"><li><a class="source-link" href="https://vetapps.vet.upenn.edu/cbarq/about.cfm" target="_blank" rel="noopener">C-BARQ（Canine Behavioral Assessment & Research Questionnaire）</a> — ペンシルベニア大学獣医学部が公式に運営する行動評価アンケート。本診断はC-BARQ公式尺度そのものではなく、考え方を参考にした簡易セルフチェックです。</li><li><a class="source-link" href="https://wsava.org/wp-content/uploads/2020/01/WSAVA-Nutrition-Assessment-Guidelines-2011-JSAP.pdf" target="_blank" rel="noopener">WSAVA Nutritional Assessment Guidelines</a>（2011年、Freeman他、Journal of Small Animal Practice誌）</li><li><a class="source-link" href="https://www.aaha.org/resources/2021-aaha-nutrition-and-weight-management-guidelines/home/" target="_blank" rel="noopener">2021 AAHA Nutrition and Weight Management Guidelines for Dogs and Cats</a>（2021年）</li><li><a class="source-link" href="https://www.nationalacademies.org/publications/10668" target="_blank" rel="noopener">NRC Nutrient Requirements of Dogs and Cats</a>（2006年、National Academies Press）</li><li><a class="source-link" href="https://europeanpetfood.org/wp-content/uploads/2024/09/FEDIAF-Nutritional-Guidelines_2024.pdf" target="_blank" rel="noopener">FEDIAF Nutritional Guidelines for Complete and Complementary Pet Food for Cats and Dogs</a>（2024年9月改定版）</li><li>AAFCO（米国飼料検査官協会）の栄養基準　※特定の発行年・無償の公式URLを確認できなかったため、団体名の記載にとどめています</li></ul></details>
       </div>
       ${r.therapyFoods.length ? `<div class="alert therapy"><h3>療法食を相談するなら</h3><p>血液検査・尿検査・服薬状況がある場合に、PDFカルテ側で整理して主治医に確認しやすくする候補です。無料診断では購入推奨ではなく「相談候補」として表示します。</p><div class="foods therapy-foods">${r.therapyFoods.map(f=>`<article class="food"><h4>${f.name}</h4><p>${f.maker}</p><ul><li>${f.note}</li></ul></article>`).join('')}</div></div>`:''}
       <div class="karte-section"><h3>フードを選ぶ前に見る条件</h3><p class="helper">いきなり商品名で選ばず、まず${name}の場合に重視する条件を決めます。</p><div class="condition-grid">${r.conditions.map(([h,b])=>`<article><h4>${h}</h4><p>${b}</p></article>`).join('')}</div></div>
@@ -1952,17 +1952,17 @@ function drawShareCard(){
   const ctx = canvas.getContext('2d')
   ctx.fillStyle = '#faf7ef'; ctx.fillRect(0,0,1200,630)
   ctx.fillStyle = '#f1eadb'; ctx.beginPath(); ctx.arc(1010,120,210,0,Math.PI*2); ctx.fill()
-  ctx.fillStyle = '#29543a'; ctx.fillRect(0,0,1200,18)
+  ctx.fillStyle = '#EE8D78'; ctx.fillRect(0,0,1200,18)
   ctx.fillStyle = '#263028'; ctx.font = 'bold 42px sans-serif'; ctx.fillText('わんにゃんごはんカルテ', 76, 92)
   ctx.fillStyle = '#6f8a55'; ctx.font = 'bold 28px sans-serif'; ctx.fillText('C-BARQ参考セルフチェック', 76, 138)
   ctx.fillStyle = '#17211a'; ctx.font = 'bold 62px sans-serif'; ctx.fillText(`${name}は`, 76, 242)
-  ctx.fillStyle = '#29543a'; ctx.font = 'bold 74px sans-serif'
+  ctx.fillStyle = '#4A3A34'; ctx.font = 'bold 74px sans-serif'
   const typeEndY = wrapCanvasText(ctx, `「${r.type}」`, 76, 336, 860, 100)
   ctx.fillStyle = '#3f463d'; ctx.font = '30px sans-serif'
   const axisEndY = wrapCanvasText(ctx, r.profile.axes.map(x=>AXIS_COPY[x]).join('、'), 76, typeEndY + 70, 780, 44)
   ctx.fillStyle = '#b8834b'; ctx.font = 'bold 28px sans-serif'
   ctx.fillText('wannyan-gohan.com', 76, Math.max(axisEndY + 46, 566))
-  ctx.fillStyle = '#29543a'; ctx.font = 'bold 120px sans-serif'; ctx.fillText('16', 930, 370)
+  ctx.fillStyle = '#EE8D78'; ctx.font = 'bold 120px sans-serif'; ctx.fillText('16', 930, 370)
   ctx.font = 'bold 30px sans-serif'; ctx.fillText('TYPE', 950, 418)
   return canvas
 }
