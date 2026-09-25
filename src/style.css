@@ -389,3 +389,21 @@ body{background:linear-gradient(180deg,#fbfaf6 0%,#f4efe5 100%)}
   .alert,.result.res-v2>.note{grid-column:1 / -1}
   .res-share-main,.res-detail-toggle,.reset{grid-column:1 / -1}
 }
+
+/* Phase 6 Batch 1: PR mini labels, lab grouping, PDF CTA, mobile overflow */
+html,body{max-width:100%;overflow-x:hidden}
+.pr-mini{display:block;margin-top:6px;font-size:.72rem;font-weight:800;color:var(--b-subtext,var(--muted))}
+.dq-labs-note{margin:4px 0 12px;color:var(--muted);font-size:.9rem;font-weight:700;line-height:1.7}
+.dq-labs-grouped{display:grid;gap:12px}
+.lab-group{background:#fffdf8;border:1px solid var(--line);border-radius:18px;padding:12px}
+.lab-group h4{margin:0 0 8px;color:var(--green);font-size:.95rem}
+.lab-group .lab-grid{margin:0}
+.pdf-cta-main{padding:18px;margin:18px 0 20px}
+.pdf-cta-main .pdf-cta-copy h3{margin:2px 0 6px;line-height:1.35}
+@media(max-width:640px){.site-header{padding:12px 14px;gap:8px}.brand{min-width:0;font-size:.92rem}.mini-cta{padding:8px 10px;font-size:.78rem;white-space:nowrap;margin-left:auto}.hero{overflow:hidden}.pdf-cta-main{padding:14px}.pdf-cta-main .pdf-cta-top{gap:10px}.pdf-cta-main .pdf-cta-copy h3{font-size:1rem}.pdf-cta-main .pdf-cta-copy p{font-size:.86rem;line-height:1.65}.pdf-cta-main .pdf-mini-grid span{padding:8px;font-size:.82rem}}@media(max-width:760px){.site-header .mini-cta{display:none}}
+
+@media(max-width:760px){.hero h1,.lead{overflow-wrap:anywhere;word-break:normal}.lead{max-width:100%;font-size:.96rem}.hero h1{font-size:clamp(31px,10vw,42px)}}
+
+@media(max-width:760px){.hero-v2{grid-template-columns:minmax(0,1fr);overflow:hidden}.hero-v2-copy,.hero-v2-lead,.hero-v2-title{min-width:0;max-width:100%;overflow-wrap:anywhere}.hero-v2-lead{font-size:15px;line-height:1.85}}
+
+.source-link{color:var(--green);font-weight:900;text-decoration:underline;text-underline-offset:2px}

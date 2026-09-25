@@ -94,6 +94,7 @@ h2{margin-top:0}
     <label class="field">体型（BCS）
       <select id="bcs">
         <option value="" selected>選択なし</option>
+        <option value="emaciated">肋骨・骨盤・背骨が浮き出て見える・かなりやせている</option>
         <option value="thin">肋骨が目立つ・やせ気味</option>
         <option value="normal">くびれがあり、ちょうどよい</option>
         <option value="chubby">少し丸くなってきた</option>
@@ -146,45 +147,45 @@ h2{margin-top:0}
   "use strict";
 
   var PRODUCTS = [
-    {name:'ニュートロ シュプレモ シニア犬用', maker:'Nutro', kcal:350, protein:26, fat:13, priceKg:1827, tags:['senior','coat','balanced','small'], mainProtein:'チキン', fiber:4.0, slug:'nutro-supremo-senior'},
-    {name:'ヒルズ サイエンス・ダイエット シニア 小型犬用', maker:'Hill’s', kcal:365, protein:19, fat:14, priceKg:1420, tags:['senior','small','cost','balanced'], mainProtein:'チキン', fiber:2.3, slug:'hills-senior-small'},
-    {name:'ロイヤルカナン ミニ エイジング12+', maker:'Royal Canin', kcal:385, protein:24, fat:12, priceKg:1505, tags:['senior','small','palatable'], mainProtein:'チキン', fiber:2.5, slug:'royal-canin-mini-aging12'},
-    {name:'アカナ シニアドッグ', maker:'ACANA', kcal:332, protein:33, fat:14, priceKg:2300, priceUnverified:true, tags:['senior','protein','weight'], mainProtein:'チキン', fiber:6, slug:'acana-senior-dog'},
-    {name:'ピュリナ ワン 7歳以上 ほぐし粒入り', maker:'Purina', kcal:360, protein:27, fat:13, priceKg:1194, tags:['senior','cost','palatable'], mainProtein:'チキン', fiber:4.5, slug:'purina-one-senior7'},
-    {name:'このこのごはん', maker:'オモヤ', kcal:343, protein:20.9, fat:8.2, priceKg:5230, tags:['small','lowfat','japan','coat'], mainProtein:'チキン', slug:'konokonogohan'},
-    {name:'モグワン ドッグフード', maker:'レティシアン', kcal:361, protein:27, fat:10, priceKg:2600, priceUnverified:true, tags:['balanced','palatable','coat'], mainProtein:'チキン', fiber:4.75, slug:'mogwan'},
-    {name:'犬猫生活 ドッグフード シニア', maker:'犬猫生活', kcal:338, protein:26, fat:9, priceKg:5987, tags:['senior','japan','lowfat'], mainProtein:'チキン', fiber:3, slug:'inuneko-seikatsu-senior'},
-    {name:'セレクトバランス エイジングケア チキン', maker:'Select Balance', kcal:325, protein:20, fat:10, priceKg:1687, tags:['senior','lowfat','cost','small'], mainProtein:'チキン', fiber:5.5, kibbleSize:'小粒', slug:'select-balance-agingcare-chicken'},
-    {name:'プロマネージ 7歳からの室内犬用', maker:'PROMANAGE', kcal:375, protein:22, fat:14, priceKg:1208, tags:['senior','cost','small'], mainProtein:'チキン', fiber:5.0, slug:'promanage-senior7-indoor'},
-    {name:'アイムス 7歳以上 健康サポート', maker:'IAMS', kcal:365, protein:24, fat:11, priceKg:749, tags:['senior','cost'], mainProtein:'チキン', fiber:4.0, slug:'iams-senior7-health'},
-    {name:'ユーカヌバ シニア 小型犬用', maker:'Eukanuba', kcal:401, protein:27, fat:15, priceKg:1068, tags:['senior','small','palatable'], mainProtein:'チキン', fiber:2.7, slug:'eukanuba-senior-small'},
-    {name:'ナウフレッシュ スモールブリード シニア', maker:'NOW FRESH', kcal:341, protein:24, fat:12, priceKg:3037, tags:['senior','small','grainfree','weight'], mainProtein:'ターキー', fiber:5.5, slug:'nowfresh-smallbreed-senior'},
-    {name:'オリジン シニア', maker:'ORIJEN', kcal:371, protein:38, fat:15, priceKg:3200, priceUnverified:true, tags:['senior','protein','ingredient'], mainProtein:'チキン', fiber:6, slug:'orijen-senior'},
-    {name:'ソルビダ グレインフリー チキン 室内飼育7歳以上', maker:'SOLVIDA', kcal:350, protein:25, fat:15, priceKg:3129, tags:['senior','grainfree','lowfat','coat'], mainProtein:'チキン', fiber:6, slug:'solvida-grainfree-chicken-senior7'},
-    {name:'アーテミス アガリクス I/S 小粒', maker:'Artemis', kcal:358, protein:24, fat:14, priceKg:1907, tags:['small','stomach','palatable'], mainProtein:'チキン', fiber:4.0, kibbleSize:'小粒', slug:'artemis-agaricus-is-small'},
-    {name:'ナチュロル', maker:'楽しい製薬', kcal:400, protein:23, fat:10, priceKg:3882, tags:['japan','palatable','ingredient'], slug:'naturol'},
-    {name:'馬肉自然づくり', maker:'健康いぬ生活', kcal:399, protein:27, fat:11, priceKg:3300, priceUnverified:true, tags:['japan','palatable','ingredient'], mainProtein:'馬肉', fiber:5.2, slug:'bameat-shizendukuri'},
-    {name:'Yum Yum Yum! シニア&ライト チキン', maker:'GREEN DOG', kcal:320, protein:20, fat:8.5, priceKg:3838, tags:['senior','japan','lowfat','weight','small'], mainProtein:'チキン', slug:'yumyumyum-senior-light-chicken'},
-    {name:'ミシュワン シニア犬用', maker:'ミシュワン', kcal:332, protein:21.5, fat:9.5, priceKg:3800, priceUnverified:true, tags:['senior','japan','small','lowfat'], mainProtein:'チキン', kibbleSize:'小粒', slug:'mishone-senior'},
-    {name:'Dr.ケアワン', maker:'アニマルライフ研究所', kcal:347, protein:22.5, fat:7.5, priceKg:3900, priceUnverified:true, tags:['japan','lowfat','coat','small'], mainProtein:'チキン', fiber:2.5, slug:'dr-careone'},
-    {name:'ペトコトフーズ チキン', maker:'PETOKOTO', kcal:150, protein:13, fat:5.4, priceKg:5200, priceUnverified:true, tags:['fresh','palatable','stomach'], mainProtein:'チキン', slug:'petokoto-chicken'},
-    {name:'ブッチ ブラック・レーベル', maker:'Butch', kcal:116, protein:10.5, fat:8, priceKg:2063, tags:['wet','palatable','senior'], mainProtein:'ビーフ', fiber:1.0, slug:'butch-black-label'},
-    {name:'カナガン ドッグフード チキン', maker:'レティシアン', kcal:376, protein:29, fat:15, priceKg:2600, priceUnverified:true, tags:['grainfree','palatable','protein'], mainProtein:'チキン', fiber:5.25, kibbleSize:'小粒', slug:'canagan-chicken'},
-    {name:'ネルソンズ ドッグフード', maker:'レティシアン', kcal:365, protein:28, fat:12, priceKg:2200, priceUnverified:true, tags:['medium','ingredient','palatable'], mainProtein:'チキン', fiber:4, slug:'nelsons-dogfood'},
-    {name:'POCHI ザ・ドッグフード エイジングケア', maker:'POCHI', kcal:315, protein:30, fat:10, priceKg:2780, tags:['senior','weight','lowfat','protein'], fiber:9, slug:'pochi-agingcare'},
-    {name:'ペロリコ ドッグフード ライト', maker:'レティシアン', kcal:326, protein:22.5, fat:8, priceKg:2600, priceUnverified:true, tags:['weight','lowfat','senior'], mainProtein:'チキン', fiber:8, slug:'perolico-light'},
-    {name:'ロイヤルカナン ミニ ライトウェイトケア', maker:'Royal Canin', kcal:323, protein:28, fat:9, priceKg:1674, tags:['weight','small','lowfat'], mainProtein:'チキン', slug:'royal-canin-mini-lightweight-care'},
-    {name:'ヒルズ サイエンス・ダイエット 減量サポート 小型犬用', maker:'Hill’s', kcal:313, protein:24, fat:9, priceKg:1280, tags:['weight','small','lowfat','cost'], slug:'hills-weight-control-small'},
-    {name:'VetSolution 犬用 胃腸サポート', maker:'Monge', kcal:383, protein:24, fat:15, priceKg:3516, tags:['stomach','senior'], slug:'vetsolution-stomach-support'},
-    {name:'ロイヤルカナン サイズヘルス ニュートリション ミニ パピー', maker:'Royal Canin', kcal:408, protein:28.5, fat:18, priceKg:1785, tags:['puppy','small'], mainProtein:'チキン', fiber:2.4, slug:'royal-canin-mini-puppy'},
-    {name:'ヒルズ サイエンス・ダイエット パピー 小粒', maker:'Hill’s', kcal:377, protein:25, fat:15.3, priceKg:1273, tags:['puppy','small'], mainProtein:'チキン', kibbleSize:'小粒', slug:'hills-puppy-small'},
-    {name:'ロイヤルカナン ミディアム アダルト', maker:'Royal Canin', kcal:385, protein:23, fat:12, priceKg:1278, tags:['adult','medium'], mainProtein:'チキン', fiber:2.4, slug:'royal-canin-medium-adult'},
-    {name:'ロイヤルカナン ミニ ステアライズド', maker:'Royal Canin', kcal:345, protein:28, fat:11, priceKg:1746, tags:['neutered','small'], mainProtein:'チキン', fiber:7.6, slug:'royal-canin-mini-sterilised'},
-    {name:'カナガン ドッグフード チキン 大型犬用', maker:'レティシアン', kcal:391, protein:34, fat:17, priceKg:2459, tags:['grainfree','palatable','protein','large'], mainProtein:'チキン', kibbleSize:'大粒', slug:'canagan-chicken-large'},
-    {name:'ブラバンソンヌ 大型犬・中型犬 成犬用 チキン', maker:'BRABANCONNE', kcal:346, protein:24, fat:14, priceKg:1540, tags:['grainfree','large','medium'], mainProtein:'チキン', slug:'brabanconne-large-medium'},
-    {name:'ヒルズ サイエンス・ダイエット シニア 大型犬種用', maker:'Hill’s', kcal:363, protein:14.9, fat:11.4, priceKg:999, tags:['senior','large'], mainProtein:'チキン', slug:'hills-senior-large'},
-    {name:'ロイヤルカナン ミディアム ステアライズド', maker:'Royal Canin', kcal:348, protein:26, fat:11, priceKg:1848, tags:['neutered','medium'], mainProtein:'チキン', slug:'royal-canin-medium-sterilised'},
-    {name:'デビフ シニア犬の食事 ささみ＆軟骨', maker:'デビフ(d.b.f)', kcal:85, protein:9, fat:3, priceKg:1838, tags:['wet','senior','japan','palatable'], mainProtein:'鶏ささみ', slug:'devif-senior-sasami-nankotsu'}
+    {name:'ニュートロ シュプレモ シニア犬用', maker:'Nutro', kcal:350, protein:26, fat:13, priceKg:1827, priceBasis:'regular', packageSize:'3kg袋基準', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['senior','coat','balanced','small'], mainProtein:'チキン', fiber:4.0, slug:'nutro-supremo-senior'},
+    {name:'ヒルズ サイエンス・ダイエット シニア 小型犬用', maker:'Hill’s', kcal:365, protein:19, fat:14, priceKg:1420, priceBasis:'regular', packageSize:'', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['senior','small','cost','balanced'], mainProtein:'チキン', fiber:2.3, slug:'hills-senior-small'},
+    {name:'ロイヤルカナン ミニ エイジング12+', maker:'Royal Canin', kcal:385, protein:24, fat:12, priceKg:1505, priceBasis:'regular', packageSize:'複数容量展開の代表販売サイズ基準', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['senior','small','palatable'], mainProtein:'チキン', fiber:2.5, slug:'royal-canin-mini-aging12'},
+    {name:'アカナ シニアドッグ', maker:'ACANA', kcal:332, protein:33, fat:14, priceKg:2300, priceUnverified:true, priceBasis:'estimated', packageSize:'', checkedAt:'', priceSourceUrl:'', priceNote:'価格未確認のため販売ページ確認', tags:['senior','protein','weight'], mainProtein:'チキン', fiber:6, slug:'acana-senior-dog'},
+    {name:'ピュリナ ワン 7歳以上 ほぐし粒入り', maker:'Purina', kcal:360, protein:27, fat:13, priceKg:1194, priceBasis:'regular', packageSize:'', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['senior','cost','palatable'], mainProtein:'チキン', fiber:4.5, slug:'purina-one-senior7'},
+    {name:'このこのごはん', maker:'オモヤ', kcal:343, protein:20.9, fat:8.2, priceKg:5230, priceBasis:'regular', packageSize:'', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['small','lowfat','japan','coat'], mainProtein:'チキン', slug:'konokonogohan'},
+    {name:'モグワン ドッグフード', maker:'レティシアン', kcal:361, protein:27, fat:10, priceKg:2600, priceUnverified:true, priceBasis:'estimated', packageSize:'1.8kg袋（販売ページ確認）', checkedAt:'', priceSourceUrl:'', priceNote:'価格未確認のため販売ページ確認', tags:['balanced','palatable','coat'], mainProtein:'チキン', fiber:4.75, slug:'mogwan'},
+    {name:'犬猫生活 ドッグフード シニア', maker:'犬猫生活', kcal:338, protein:26, fat:9, priceKg:5987, priceBasis:'regular', packageSize:'', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['senior','japan','lowfat'], mainProtein:'チキン', fiber:3, slug:'inuneko-seikatsu-senior'},
+    {name:'セレクトバランス エイジングケア チキン', maker:'Select Balance', kcal:325, protein:20, fat:10, priceKg:1687, priceBasis:'regular', packageSize:'', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['senior','lowfat','cost','small'], mainProtein:'チキン', fiber:5.5, kibbleSize:'小粒', slug:'select-balance-agingcare-chicken'},
+    {name:'プロマネージ 7歳からの室内犬用', maker:'PROMANAGE', kcal:375, protein:22, fat:14, priceKg:1208, priceBasis:'regular', packageSize:'', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['senior','cost','small'], mainProtein:'チキン', fiber:5.0, slug:'promanage-senior7-indoor'},
+    {name:'アイムス 7歳以上 健康サポート', maker:'IAMS', kcal:365, protein:24, fat:11, priceKg:749, priceBasis:'regular', packageSize:'', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['senior','cost'], mainProtein:'チキン', fiber:4.0, slug:'iams-senior7-health'},
+    {name:'ユーカヌバ シニア 小型犬用', maker:'Eukanuba', kcal:401, protein:27, fat:15, priceKg:1068, priceBasis:'regular', packageSize:'', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['senior','small','palatable'], mainProtein:'チキン', fiber:2.7, slug:'eukanuba-senior-small'},
+    {name:'ナウフレッシュ スモールブリード シニア', maker:'NOW FRESH', kcal:341, protein:24, fat:12, priceKg:3037, priceBasis:'regular', packageSize:'', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['senior','small','grainfree','weight'], mainProtein:'ターキー', fiber:5.5, slug:'nowfresh-smallbreed-senior'},
+    {name:'オリジン シニア', maker:'ORIJEN', kcal:371, protein:38, fat:15, priceKg:3200, priceUnverified:true, priceBasis:'estimated', packageSize:'', checkedAt:'', priceSourceUrl:'', priceNote:'価格未確認のため販売ページ確認', tags:['senior','protein','ingredient'], mainProtein:'チキン', fiber:6, slug:'orijen-senior'},
+    {name:'ソルビダ グレインフリー チキン 室内飼育7歳以上', maker:'SOLVIDA', kcal:350, protein:25, fat:15, priceKg:3129, priceBasis:'regular', packageSize:'', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['senior','grainfree','lowfat','coat'], mainProtein:'チキン', fiber:6, slug:'solvida-grainfree-chicken-senior7'},
+    {name:'アーテミス アガリクス I/S 小粒', maker:'Artemis', kcal:358, protein:24, fat:14, priceKg:1907, priceBasis:'regular', packageSize:'', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['small','stomach','palatable'], mainProtein:'チキン', fiber:4.0, kibbleSize:'小粒', slug:'artemis-agaricus-is-small'},
+    {name:'ナチュロル', maker:'楽しい製薬', kcal:400, protein:23, fat:10, priceKg:3882, priceBasis:'regular', packageSize:'', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['japan','palatable','ingredient'], slug:'naturol'},
+    {name:'馬肉自然づくり', maker:'健康いぬ生活', kcal:399, protein:27, fat:11, priceKg:3300, priceUnverified:true, priceBasis:'estimated', packageSize:'', checkedAt:'', priceSourceUrl:'', priceNote:'価格未確認のため販売ページ確認', tags:['japan','palatable','ingredient'], mainProtein:'馬肉', fiber:5.2, slug:'bameat-shizendukuri'},
+    {name:'Yum Yum Yum! シニア&ライト チキン', maker:'GREEN DOG', kcal:320, protein:20, fat:8.5, priceKg:3838, priceBasis:'regular', packageSize:'', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['senior','japan','lowfat','weight','small'], mainProtein:'チキン', slug:'yumyumyum-senior-light-chicken'},
+    {name:'ミシュワン シニア犬用', maker:'ミシュワン', kcal:332, protein:21.5, fat:9.5, priceKg:3800, priceUnverified:true, priceBasis:'estimated', packageSize:'', checkedAt:'', priceSourceUrl:'', priceNote:'価格未確認のため販売ページ確認', tags:['senior','japan','small','lowfat'], mainProtein:'チキン', kibbleSize:'小粒', slug:'mishone-senior'},
+    {name:'Dr.ケアワン', maker:'アニマルライフ研究所', kcal:347, protein:22.5, fat:7.5, priceKg:3900, priceUnverified:true, priceBasis:'estimated', packageSize:'', checkedAt:'', priceSourceUrl:'', priceNote:'価格未確認のため販売ページ確認', tags:['japan','lowfat','coat','small'], mainProtein:'チキン', fiber:2.5, slug:'dr-careone'},
+    {name:'ペトコトフーズ チキン', maker:'PETOKOTO', kcal:150, protein:13, fat:5.4, priceKg:5200, priceUnverified:true, priceBasis:'estimated', packageSize:'', checkedAt:'', priceSourceUrl:'', priceNote:'価格未確認のため販売ページ確認', tags:['fresh','palatable','stomach'], mainProtein:'チキン', slug:'petokoto-chicken'},
+    {name:'ブッチ ブラック・レーベル', maker:'Butch', kcal:116, protein:10.5, fat:8, priceKg:2063, priceBasis:'regular', packageSize:'', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['wet','palatable','senior'], mainProtein:'ビーフ', fiber:1.0, slug:'butch-black-label'},
+    {name:'カナガン ドッグフード チキン', maker:'レティシアン', kcal:376, protein:29, fat:15, priceKg:2600, priceUnverified:true, priceBasis:'estimated', packageSize:'', checkedAt:'', priceSourceUrl:'', priceNote:'価格未確認のため販売ページ確認', tags:['grainfree','palatable','protein'], mainProtein:'チキン', fiber:5.25, kibbleSize:'小粒', slug:'canagan-chicken'},
+    {name:'ネルソンズ ドッグフード', maker:'レティシアン', kcal:365, protein:28, fat:12, priceKg:2200, priceUnverified:true, priceBasis:'estimated', packageSize:'', checkedAt:'', priceSourceUrl:'', priceNote:'価格未確認のため販売ページ確認', tags:['medium','ingredient','palatable'], mainProtein:'チキン', fiber:4, slug:'nelsons-dogfood'},
+    {name:'POCHI ザ・ドッグフード エイジングケア', maker:'POCHI', kcal:315, protein:30, fat:10, priceKg:2780, priceBasis:'regular', packageSize:'', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['senior','weight','lowfat','protein'], fiber:9, slug:'pochi-agingcare'},
+    {name:'ペロリコ ドッグフード ライト', maker:'レティシアン', kcal:326, protein:22.5, fat:8, priceKg:2600, priceUnverified:true, priceBasis:'estimated', packageSize:'', checkedAt:'', priceSourceUrl:'', priceNote:'価格未確認のため販売ページ確認', tags:['weight','lowfat','senior'], mainProtein:'チキン', fiber:8, slug:'perolico-light'},
+    {name:'ロイヤルカナン ミニ ライトウェイトケア', maker:'Royal Canin', kcal:323, protein:28, fat:9, priceKg:1674, priceBasis:'regular', packageSize:'', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['weight','small','lowfat'], mainProtein:'チキン', slug:'royal-canin-mini-lightweight-care'},
+    {name:'ヒルズ サイエンス・ダイエット 減量サポート 小型犬用', maker:'Hill’s', kcal:313, protein:24, fat:9, priceKg:1280, priceBasis:'regular', packageSize:'', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['weight','small','lowfat','cost'], slug:'hills-weight-control-small'},
+    {name:'VetSolution 犬用 胃腸サポート', maker:'Monge', kcal:383, protein:24, fat:15, priceKg:3516, priceBasis:'regular', packageSize:'', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['stomach','senior'], slug:'vetsolution-stomach-support'},
+    {name:'ロイヤルカナン サイズヘルス ニュートリション ミニ パピー', maker:'Royal Canin', kcal:408, protein:28.5, fat:18, priceKg:1785, priceBasis:'regular', packageSize:'', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['puppy','small'], mainProtein:'チキン', fiber:2.4, slug:'royal-canin-mini-puppy'},
+    {name:'ヒルズ サイエンス・ダイエット パピー 小粒', maker:'Hill’s', kcal:377, protein:25, fat:15.3, priceKg:1273, priceBasis:'regular', packageSize:'', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['puppy','small'], mainProtein:'チキン', kibbleSize:'小粒', slug:'hills-puppy-small'},
+    {name:'ロイヤルカナン ミディアム アダルト', maker:'Royal Canin', kcal:385, protein:23, fat:12, priceKg:1278, priceBasis:'regular', packageSize:'', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['adult','medium'], mainProtein:'チキン', fiber:2.4, slug:'royal-canin-medium-adult'},
+    {name:'ロイヤルカナン ミニ ステアライズド', maker:'Royal Canin', kcal:345, protein:28, fat:11, priceKg:1746, priceBasis:'regular', packageSize:'', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['neutered','small'], mainProtein:'チキン', fiber:7.6, slug:'royal-canin-mini-sterilised'},
+    {name:'カナガン ドッグフード チキン 大型犬用', maker:'レティシアン', kcal:391, protein:34, fat:17, priceKg:2459, priceBasis:'regular', packageSize:'', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['grainfree','palatable','protein','large'], mainProtein:'チキン', kibbleSize:'大粒', slug:'canagan-chicken-large'},
+    {name:'ブラバンソンヌ 大型犬・中型犬 成犬用 チキン', maker:'BRABANCONNE', kcal:346, protein:24, fat:14, priceKg:1540, priceBasis:'regular', packageSize:'', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['grainfree','large','medium'], mainProtein:'チキン', slug:'brabanconne-large-medium'},
+    {name:'ヒルズ サイエンス・ダイエット シニア 大型犬種用', maker:'Hill’s', kcal:363, protein:14.9, fat:11.4, priceKg:999, priceBasis:'regular', packageSize:'', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['senior','large'], mainProtein:'チキン', slug:'hills-senior-large'},
+    {name:'ロイヤルカナン ミディアム ステアライズド', maker:'Royal Canin', kcal:348, protein:26, fat:11, priceKg:1848, priceBasis:'regular', packageSize:'', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['neutered','medium'], mainProtein:'チキン', slug:'royal-canin-medium-sterilised'},
+    {name:'デビフ シニア犬の食事 ささみ＆軟骨', maker:'デビフ(d.b.f)', kcal:85, protein:9, fat:3, priceKg:1838, priceBasis:'regular', packageSize:'', checkedAt:'2026-09-25', priceSourceUrl:'', priceNote:'', tags:['wet','senior','japan','palatable'], mainProtein:'鶏ささみ', slug:'devif-senior-sasami-nankotsu'}
   ];
 
   var PROTEIN_LABELS = {};
@@ -202,7 +203,7 @@ h2{margin-top:0}
   var FIELD_LABELS = { kcal:'kcal/100g', protein:'タンパク質%', fat:'脂質%', priceKg:'kg単価', feedAmount:'1日給与量', dailyCost:'1日コスト' };
 
   // --- BCS（体型）の1-5目安スコア。src/main.jsのBCS_SCOREと同じマッピング（site-wide共通）。---
-  var BCS_SCORE = {thin:2, normal:3, chubby:4, obese:5};
+  var BCS_SCORE = {emaciated:1, thin:2, normal:3, chubby:4, obese:5};
   function bcsScore(bodyKey){ return BCS_SCORE[bodyKey] || null; }
   function bcsLabel(bodyKey){ var s = bcsScore(bodyKey); return s ? 'BCS目安' + s + '/5' : null; }
 
