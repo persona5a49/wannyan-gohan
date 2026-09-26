@@ -427,6 +427,13 @@ const CHOICE_ILLUST = {
 }
 // 指示書「イラストを強く見せる設問」（Q2犬種は既存実装、Q5体型は保留のため除く）
 const CHOICE_ILLUST_LARGE_KEYS = new Set(['activity','appetite','stool','mouthState','currentFood','concerns','checkup','preference'])
+// Q5〜Q32：設問見出し直下に添える補助イラスト（カテゴリ③診断質問、28/28）。選択肢イラスト(CHOICE_ILLUST)とは別素材。
+const QUESTION_ILLUST = {
+  body:'q05-body', neuter:'q06-neuter', human:'q07-stranger', dogs:'q08-dog-approach', place:'q09-place', sound:'q10-sound', foodNew:'q11-new-food',
+  activity:'q12-activity', excite:'q13-excite', training:'q14-training', persistence:'q15-persistence', bond:'q16-bond', alone:'q17-alone', appetite:'q18-appetite',
+  treats:'q19-treat', stomach:'q20-stomach', stool:'q21-stool', vomit:'q22-vomit', waterUrine:'q23-water-urine', mouthState:'q24-mouth', currentFood:'q25-current-food',
+  currentFoodName:'q26-food-name', treatAmount:'q27-treat-amount', concerns:'q28-concerns', checkup:'q29-checkup', labs:'q30-labs', preference:'q31-preference', ownerMbti:'q32-mbti'
+}
 // Q30：結果整理に使う項目と、記録・推移確認用の追加項目を分けて表示する（項目追加・削除や判定ロジック変更はしない）
 const LAB_PRIMARY_KEYS = ['bun','cre','alt','alp','glu','tg','tcho','alb','usg','upc']
 const LAB_TRACKING_ONLY_KEYS = ['sdma','tp','na','k','ca','rbc','hct','wbc','plt']
@@ -1804,6 +1811,7 @@ function renderDiagnosis(){
       <p class="dq-category">${section.name}</p>
       <h2 class="dq-heading">${iconBlock}${questionHeading(q)}${questionIsOptional(q) ? '<span class="dq-optional-tag">任意</span>' : ''}</h2>
       ${q.cbarq ? `<p class="dq-cbarq-hint">※ C-BARQを参考にした設問です</p>` : ''}
+      ${QUESTION_ILLUST[q.key] ? `<div class="dq-question-illust"><img src="/assets/question-illustrations/${QUESTION_ILLUST[q.key]}.png" alt="" loading="lazy"></div>` : ''}
       ${renderInput(q)}
       ${q.key==='body' ? `<div class="dq-bcs-reference"><a href="/assets/bcs/bcs-1-to-5-reference.png" target="_blank" rel="noopener"><img src="/assets/bcs/bcs-1-to-5-reference.png" alt="犬のBCS 1/5から5/5までの体型目安" loading="lazy"></a><p class="dq-bcs-reference-hint">タップで拡大表示</p></div>` : ''}
       ${inlineError}
