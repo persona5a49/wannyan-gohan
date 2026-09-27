@@ -1,0 +1,46 @@
+name = "wannyan-pdf-worker"
+main = "src/index.js"
+compatibility_date = "2025-09-01"
+
+# pdf-template.html を文字列としてそのままimportできるようにする（DOM実行はせず、
+# Cloudflare Browser Renderingにそのまま渡すための素材として使う）。
+rules = [
+  { type = "Text", globs = ["**/*.html"], fallthrough = true }
+]
+
+# D1データベース：太郎さんがCloudflareダッシュボードでD1を作成後、
+# database_id をここに設定してください（database_name は任意の名前でOK）。
+[[d1_databases]]
+binding = "DB"
+database_name = "wannyan-pdf-orders"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+
+# R2バケット：健診画像（private）とPDF成果物（private）を分離。
+# 太郎さんがダッシュボードで2つのバケットを作成後、bucket_name を実際の名前に置き換えてください。
+[[r2_buckets]]
+binding = "HEALTH_BUCKET"
+bucket_name = "wannyan-pdf-health-inputs"
+
+[[r2_buckets]]
+binding = "OUTPUT_BUCKET"
+bucket_name = "wannyan-pdf-outputs"
+
+# 1日1回、未決済draftの掃除・delivered後の期限切れデータ削除・失敗ジョブの再試行を行う。
+[triggers]
+crons = ["0 18 * * *"]
+
+# secrets（`wrangler secret put <NAME>` で設定。wrangler.tomlには書かない）：
+#   STRIPE_SECRET_KEY
+#   STRIPE_WEBHOOK_SECRET
+#   STRIPE_PDF_PRICE_ID
+#   RESEND_API_KEY
+#   RESEND_FROM            例: "PDFカルテ <pdf@wannyan-gohan.com>"
+#   ADMIN_ALERT_EMAIL      例: "wannyangohan.info@gmail.com"
+#   PDF_JOB_SECRET         内部processエンドポイント用のランダム文字列
+#   CF_BROWSER_RENDERING_TOKEN  Browser Rendering呼び出し用（今回作成済みのBrowser Run:Editトークン）
+#   CF_ACCOUNT_ID
+
+[vars]
+ALLOWED_ORIGIN = "https://www.wannyan-gohan.com"
+# デプロイ後に実際のWorker URL（*.workers.dev、または設定した独自ルート）に置き換えてください。
+WORKER_BASE_URL = "REPLACE_WITH_DEPLOYED_WORKER_URL"
