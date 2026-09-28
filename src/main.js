@@ -1705,6 +1705,8 @@ function renderDiagnosis(){
     const avatarSrc = `/character-parts/breed/${avatarBreed}.png`
     // PDFカルテ連携用：診断結果をそのままJSON化（新しい判定・計算は行わない。既存のtypeFor/calcResultの出力をそのまま書き出すだけ）
     const diagnosisDataJson = JSON.stringify({version:1, answers, result: r, axes: typeFor(answers).axes}).replace(/</g, '\\u003c')
+    // PDFカルテ申込み時にCloudflare Workerへ渡すため保持する（購入者にコピー・貼り付けさせない）
+    try{ localStorage.setItem('pdfKarutePendingDiagnosis', diagnosisDataJson) }catch(e){}
     // 「1日のごはん量」目安：新規計算式は作らず、候補フード一覧で既に使っている式（kcal ÷ そのフードのkcal/100g × 100）を
     // 上位候補フード1件に適用して代表値として表示する（食べ物ごとにg数は変わるため、注記を添える）。
     const refFood = r.foods && r.foods[0]
@@ -1738,8 +1740,7 @@ function renderDiagnosis(){
         </div>
         <div class="pdf-mini-grid"><span>健診値の整理</span><span>フード相談メモ</span><span>おやつ量チェック</span></div>
         <p class="helper"><strong>こんな時に便利です：</strong>健診結果がある／今のフードを続けるか迷う／病院で短時間に相談したい時。<br><strong>先に受診：</strong>緊急症状がある場合は、PDFより先に動物病院へ相談してください。</p>
-        <div class="pdf-cta-action"><a class="primary pdf-interest" data-price="980" href="/pdf-karute/">980円で相談用カルテを作る</a><small>決済後に入力フォームへ進み、2〜3営業日以内にPDFをお届けします。</small></div>
-        <div class="pdf-data-copy"><p class="helper">PDFカルテをご注文の方は、この診断データをコピーして、お申込み後の入力フォームに貼り付けてください。入力の手間が減り、内容の転記ミスも防げます。</p><button type="button" class="secondary copy-diagnosis-data" data-default-label="診断データをコピー" data-copied-label="コピーしました ✓">診断データをコピー</button><textarea class="diagnosis-data-json" hidden readonly>${diagnosisDataJson}</textarea></div>
+        <div class="pdf-cta-action"><a class="primary pdf-interest" data-price="980" href="/pdf-karute/">980円で相談用カルテを作る</a><small>健診結果がなくても作成できます。お支払い後、自動でPDFを作成し完成次第メールでお届けします。</small></div>
       </div>
       <details class="res-detail-toggle"><summary>もっとくわしく見る</summary>
       <div class="res-detail-inner">
@@ -2019,30 +2020,6 @@ function bindEvents(){
   document.querySelectorAll('.pdf-interest').forEach(el=>el.addEventListener('click', e=>{
     trackEvent('pdf_interest_click', {price: Number(e.currentTarget.dataset.price) || 980})
   }))
-  document.querySelector('.copy-diagnosis-data')?.addEventListener('click', async e=>{
-    const btn = e.currentTarget
-    const ta = document.querySelector('.diagnosis-data-json')
-    if(!ta) return
-    let copied = false
-    try{
-      await navigator.clipboard.writeText(ta.value)
-      copied = true
-      trackEvent('diagnosis_data_copy')
-    }catch(err){
-      trackEvent('diagnosis_data_copy_fallback')
-    }
-    if(copied){
-      btn.textContent = btn.dataset.copiedLabel || 'コピーしました'
-      btn.disabled = true
-      setTimeout(()=>{ btn.textContent = btn.dataset.defaultLabel || '診断データをコピー'; btn.disabled = false }, 2500)
-    } else {
-      ta.hidden = false
-      ta.removeAttribute('readonly')
-      ta.select()
-      document.querySelector('.pdf-data-copy-fallback-note')?.remove()
-      btn.insertAdjacentHTML('afterend', '<p class="helper pdf-data-copy-fallback-note">コピーできませんでした。下の欄が選択状態になっているので、このまま端末のコピー操作（Ctrl+C／⌘+C）をお使いください。</p>')
-    }
-  })
   document.querySelectorAll('.save-share').forEach(el=>el.addEventListener('click', saveShareImage))
   document.querySelectorAll('.native-share').forEach(el=>el.addEventListener('click', shareResult))
   drawShareCard()

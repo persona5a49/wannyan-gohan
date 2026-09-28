@@ -5,6 +5,9 @@
 .who ul{display:grid;grid-template-columns:1fr 1fr;gap:6px 20px;padding-left:20px;margin:8px 0 0}
 .badges{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 0}.badges span{background:#f4f0e6;color:#556052;font-size:.82rem;font-weight:700;padding:6px 12px;border-radius:999px}
 .faq details{border-bottom:1px solid #e8e2d5;padding:14px 0}.faq details:last-child{border-bottom:none}.faq summary{cursor:pointer;font-weight:800;list-style:none;display:flex;justify-content:space-between;gap:10px}.faq summary::-webkit-details-marker{display:none}.faq summary::after{content:'+';font-size:1.3rem;color:#4A3A34;flex:none}.faq details[open] summary::after{content:'－'}.faq p{margin:10px 0 0;color:#3f463d}
+button.primary,button.secondary{font-family:inherit;font-size:1rem;border:none;cursor:pointer}button.secondary{border:1px solid #E9DED3;background:#fff}button.primary:disabled,button.secondary:disabled{opacity:.6;cursor:default}
+.pdf-flow-steps{margin:10px 0;padding-left:22px}.pdf-flow-steps li{margin:5px 0}
+.pdf-payment-note{margin-top:10px;background:#fff7e6;border-left:4px solid #c88922;padding:10px 14px;border-radius:10px}.pdf-payment-note a{font-weight:800;text-decoration:underline}
 @media(max-width:640px){.header{align-items:flex-start;flex-direction:column}.wrap{padding:18px}.compare{grid-template-columns:1fr}.who ul{grid-template-columns:1fr}}
 </style><link rel="stylesheet" href="/assets/css/korote-inline.css"></head><body><header class="header"><a class="brand" href="/">わんにゃんごはんカルテ</a><nav class="nav"><a href="/products/">商品一覧</a><a href="/articles/">記事</a><a href="/#diagnosis">無料診断</a></nav></header><main class="wrap"><article>
 
@@ -12,7 +15,7 @@
 
 <div class="sample-wrap"><div class="sample-frame"><span class="sample-badge">SAMPLE</span><img src="/pdf-karute/sample.png" alt="詳細ごはんカルテPDFのサンプルイメージ" loading="lazy"></div><p class="sample-caption">実際に届くPDFのイメージです（画像はサンプルデータです）</p></div>
 
-<div class="price"><strong>980円</strong><span>初回モニター価格（税込）・買い切り／継続課金なし</span></div><div class="actions"><a class="primary js-pdf-payment" data-price="980" href="https://buy.stripe.com/aFa9ALeOS7CcgGv6ITgEg00" target="_blank" rel="noopener" onclick="gtag('event','pdf_payment_click',{price:980,location:'hero'});">980円でPDFカルテを申し込む</a><a class="secondary" href="#summary">病院相談用サマリーを見る</a></div>
+<div class="price"><strong>980円</strong><span>初回モニター価格（税込）・買い切り／継続課金なし</span></div><div class="actions"><button type="button" class="primary js-pdf-payment" data-price="980" data-location="hero">980円でPDFカルテを申し込む</button><a class="secondary" href="#summary">病院相談用サマリーを見る</a></div><p class="small pdf-payment-note" data-slot="hero" hidden></p>
 <div class="badges"><span>アプリのインストール不要</span><span>入力目安5分</span><span>健診表は写真アップロードでもOK</span></div>
 
 <section class="card"><h2>お届けするPDFは2種類です</h2><div class="compare"><div class="col paid"><span class="tag">PDF①</span><h3>飼い主向け 詳細カルテ</h3><ul><li>13ページで、性格・暮らし・食生活・体型・健診メモを統合</li><li>今できていること、見直す優先順位、フード選びの条件を整理</li><li>候補フードはランキングではなく、目的別の選択肢として理由つきで提示</li></ul></div><div class="col free" id="summary"><span class="tag">PDF②</span><h3>動物病院相談用 1枚サマリー</h3><ul><li>現在食・おやつ・体重・BCS・健診異常・気になる症状を1枚に整理</li><li>診察で聞きたいことを箇条書き化</li><li>ネット診断で終わらず、主治医に相談しやすい形にします</li></ul></div></div></section>
@@ -21,21 +24,72 @@
 
 <section class="card"><h2>血液検査・療法食について</h2><p>無料診断では、療法食を「買うべき商品」としては出しません。腎臓・肝臓・脂質・血糖・尿検査などに気になる項目がある場合、PDFカルテで検査値と現在の食事を整理し、主治医に確認しやすい形にします。</p><ul><li>療法食中の変更は必ず主治医確認</li><li>血液検査だけでなく、尿検査・症状・服薬もセットで整理</li><li>ロイヤルカナン・ヒルズ・ドクターズケア・ピュリナなど、取り扱いメーカー例は参考として挙げますが、購入を勧めるものではありません</li><li>療法食は動物病院での処方が基本です。実際にどの製品が合うかは、診察のうえ主治医が判断します</li></ul></section>
 
-<section class="card"><h2><img class="korote-inline" src="/assets/korote/korote_treat.png" alt="" loading="lazy">カルテに整理する内容</h2><ul><li>○○ちゃんの全体像と総合評価</li><li>性格・行動分析：新しい環境、人との距離、他犬との距離、活動性、安心条件</li><li>暮らしの分析：散歩、留守番、刺激量、休息</li><li>食生活分析：現在食、給与量、kcal、食事回数、おやつ、体重、BCS</li><li>今の食事で良いところと、見直す優先順位</li><li>フード選びで重視したい条件、候補フード、比較表、3〜6か月で見る項目</li><li>動物病院で相談したいこと</li></ul><p class="small">健診数値は手入力のほか、健康診断表の写真をアップロードいただければ、数値の転記はこちらで行います。有料販売に関する事業者情報は、特定商取引法に基づく表記をご確認ください。</p></section>
+<section class="card"><h2><img class="korote-inline" src="/assets/korote/korote_treat.png" alt="" loading="lazy">カルテに整理する内容</h2><ul><li>○○ちゃんの全体像と総合評価</li><li>性格・行動分析：新しい環境、人との距離、他犬との距離、活動性、安心条件</li><li>暮らしの分析：散歩、留守番、刺激量、休息</li><li>食生活分析：現在食、給与量、kcal、食事回数、おやつ、体重、BCS</li><li>今の食事で良いところと、見直す優先順位</li><li>フード選びで重視したい条件、候補フード、比較表、3〜6か月で見る項目</li><li>動物病院で相談したいこと</li></ul><p class="small">健診結果がある方は、お支払い後の画面で写真やPDFを追加できます。読み取れた数値は確認画面に表示されるので、内容を確認・修正してからカルテ作成へ進みます。健診結果がなくても作成できます。有料販売に関する事業者情報は、特定商取引法に基づく表記をご確認ください。</p></section>
 
 <section class="card faq"><h2>よくある質問</h2>
 <details><summary>アプリのインストールは必要ですか？</summary><p>不要です。ブラウザ上のフォームに質問に回答いただくだけでお申込みいただけます。アプリを入れる手間はかかりません。</p></details>
 <details><summary>診察や獣医師相談の代わりになりますか？</summary><p>なりません。診断・治療の代わりではなく、診察前に状況を整理し、主治医に相談したい内容を伝えやすくするための資料です。持病・症状がある場合や健診で異常があった場合は、必ず主治医にご相談ください。</p></details>
-<details><summary>健診数値は自分で入力しないといけませんか？</summary><p>手入力が面倒な場合は、健康診断表の写真をフォームからアップロードいただくだけでも大丈夫です。数値の転記はこちらで確認して行います（アップロードにはGoogleアカウントへのログインが必要です）。</p></details>
+<details><summary>健診数値は自分で入力しないといけませんか？</summary><p>手入力が面倒な場合は、お支払い後の画面で健康診断表の写真やPDFをアップロードいただくだけでも大丈夫です（ログイン不要）。読み取れた数値の候補が確認画面に表示されるので、写真と見比べて確認・修正してから確定してください。健診結果がなくてもカルテは作成できます。</p></details>
 <details><summary>入力した内容はどう扱われますか？</summary><p>カルテ作成の目的以外には使用しません。詳しくは<a href="/legal/privacy/">プライバシーポリシー</a>をご確認ください。</p></details>
-<details><summary>返金や不明点の問い合わせはできますか？</summary><p>お支払い後のキャンセル・返金は、作成着手前であれば個別に対応します。ご不明点はフォーム送信後のご案内メールにてお問い合わせください。</p></details>
+<details><summary>返金や不明点の問い合わせはできますか？</summary><p>お支払い後のキャンセル・返金は、PDF作成前であれば個別に対応します。ご不明点はお届けメールに記載の連絡先よりお問い合わせください。</p></details>
 </section>
 
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"詳細ごはんカルテPDF","description":"現在のフード量・おやつ量・体重体型・健診で気になる項目・主治医に相談するポイントを1枚に整理するPDF","image":"https://www.wannyan-gohan.com/pdf-karute/sample.png","brand":{"@type":"Brand","name":"わんにゃんごはんカルテ"},"offers":{"@type":"Offer","price":"980","priceCurrency":"JPY","availability":"https://schema.org/InStock","url":"https://www.wannyan-gohan.com/pdf-karute/"}}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"アプリのインストールは必要ですか？","acceptedAnswer":{"@type":"Answer","text":"不要です。ブラウザ上のフォームに質問に回答いただくだけでお申込みいただけます。アプリを入れる手間はかかりません。"}},{"@type":"Question","name":"診察や獣医師相談の代わりになりますか？","acceptedAnswer":{"@type":"Answer","text":"なりません。診断・治療の代わりではなく、診察前に状況を整理し、主治医に相談したい内容を伝えやすくするための資料です。持病・症状がある場合や健診で異常があった場合は、必ず主治医にご相談ください。"}},{"@type":"Question","name":"健診数値は自分で入力しないといけませんか？","acceptedAnswer":{"@type":"Answer","text":"手入力が面倒な場合は、健康診断表の写真をフォームからアップロードいただくだけでも大丈夫です。数値の転記はこちらで確認して行います。"}},{"@type":"Question","name":"入力した内容はどう扱われますか？","acceptedAnswer":{"@type":"Answer","text":"カルテ作成の目的以外には使用しません。詳しくはプライバシーポリシー（/legal/privacy/）をご確認ください。"}},{"@type":"Question","name":"返金や不明点の問い合わせはできますか？","acceptedAnswer":{"@type":"Answer","text":"お支払い後のキャンセル・返金は、作成着手前であれば個別に対応します。ご不明点はフォーム送信後のご案内メールにてお問い合わせください。"}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"アプリのインストールは必要ですか？","acceptedAnswer":{"@type":"Answer","text":"不要です。ブラウザ上のフォームに質問に回答いただくだけでお申込みいただけます。アプリを入れる手間はかかりません。"}},{"@type":"Question","name":"診察や獣医師相談の代わりになりますか？","acceptedAnswer":{"@type":"Answer","text":"なりません。診断・治療の代わりではなく、診察前に状況を整理し、主治医に相談したい内容を伝えやすくするための資料です。持病・症状がある場合や健診で異常があった場合は、必ず主治医にご相談ください。"}},{"@type":"Question","name":"健診数値は自分で入力しないといけませんか？","acceptedAnswer":{"@type":"Answer","text":"手入力が面倒な場合は、お支払い後の画面で健康診断表の写真やPDFをアップロードいただくだけでも大丈夫です（ログイン不要）。読み取れた数値の候補が確認画面に表示されるので、写真と見比べて確認・修正してから確定してください。健診結果がなくてもカルテは作成できます。"}},{"@type":"Question","name":"入力した内容はどう扱われますか？","acceptedAnswer":{"@type":"Answer","text":"カルテ作成の目的以外には使用しません。詳しくはプライバシーポリシー（/legal/privacy/）をご確認ください。"}},{"@type":"Question","name":"返金や不明点の問い合わせはできますか？","acceptedAnswer":{"@type":"Answer","text":"お支払い後のキャンセル・返金は、PDF作成前であれば個別に対応します。ご不明点はお届けメールに記載の連絡先よりお問い合わせください。"}}]}</script>
 
 <section class="notice"><strong>ご利用前に必ずお読みください</strong><ul><li>本サービスは診断・治療・療法食の指示ではありません。</li><li>持病がある、症状がある、服薬中、療法食を利用中、健診で異常があった場合は、内容の実行前に必ず主治医（かかりつけ獣医師）にご相談ください。</li><li>ぐったりしている、嘔吐・下痢が続く、食欲がないなど、緊急性のある症状がある場合は、申込みより先に動物病院を受診してください。</li></ul><p><a href="/legal/tokushoho/">特定商取引法に基づく表記を確認する</a>／<a href="/legal/privacy/">プライバシーポリシーを確認する</a>／<a href="/about-diagnosis/#sources">参考にしている情報源はこちら</a></p></section>
 
-<section class="card"><h2><img class="korote-inline" src="/assets/korote/korote_point.png" alt="" loading="lazy">お申込み</h2><p class="small">①下のボタンから980円のお支払い→②お支払い完了後に表示される案内から、愛犬の情報を入力フォームへ送信。③飼い主向け詳細カルテと、動物病院相談用1枚サマリーを2〜3営業日以内にメールでお届けします。買い切りで、継続課金はありません（手動対応のため、お時間をいただく場合があります）。</p><p class="small">お申込み前に <a href="/legal/tokushoho/">特定商取引法に基づく表記</a> と <a href="/legal/privacy/">プライバシーポリシー</a> をご確認ください。</p><div class="actions"><a class="primary js-pdf-payment" data-price="980" href="https://buy.stripe.com/aFa9ALeOS7CcgGv6ITgEg00" target="_blank" rel="noopener" onclick="gtag('event','pdf_payment_click',{price:980});">980円でお申込み</a><a class="secondary" href="/#diagnosis">無料診断に戻る</a></div></section>
+<section class="card"><h2><img class="korote-inline" src="/assets/korote/korote_point.png" alt="" loading="lazy">お申込みの流れ</h2><ol class="small pdf-flow-steps"><li>無料診断を完了</li><li>980円のお支払い</li><li>健診結果がある場合は写真・PDFを追加（なくても作成できます）</li><li>読み取った数値を確認・必要なら修正</li><li>PDFカルテを自動作成</li><li>完成後、お支払い時のメールアドレスへお届け</li></ol><p class="small">買い切りで、継続課金はありません。</p><p class="small">お申込み前に <a href="/legal/tokushoho/">特定商取引法に基づく表記</a> と <a href="/legal/privacy/">プライバシーポリシー</a> をご確認ください。</p><div class="actions"><button type="button" class="primary js-pdf-payment" data-price="980" data-location="bottom">980円でお申込み</button><a class="secondary" href="/#diagnosis">無料診断に戻る</a></div><p class="small pdf-payment-note" data-slot="bottom" hidden></p></section>
 
-</article></main><footer>© わんにゃんごはんカルテ　<a href="/legal/tokushoho/">特定商取引法に基づく表記</a>　<a href="/legal/privacy/">プライバシーポリシー</a>　PR｜本サイトはアフィリエイト広告を利用しています。</footer></body></html>
+</article></main><footer>© わんにゃんごはんカルテ　<a href="/legal/tokushoho/">特定商取引法に基づく表記</a>　<a href="/legal/privacy/">プライバシーポリシー</a>　PR｜本サイトはアフィリエイト広告を利用しています。</footer>
+<script>
+(function(){
+  'use strict';
+  var API_BASE = 'https://wannyan-pdf-api.wannyangohan-info.workers.dev';
+
+  function setNote(btn, html){
+    var slot = btn.getAttribute('data-location');
+    var note = document.querySelector('.pdf-payment-note[data-slot="' + slot + '"]');
+    if(!note) return;
+    if(html){ note.innerHTML = html; note.hidden = false; } else { note.hidden = true; note.innerHTML = ''; }
+  }
+
+  async function startCheckout(e){
+    var btn = e.currentTarget;
+    var diagnosisJson = null;
+    try{ diagnosisJson = localStorage.getItem('pdfKarutePendingDiagnosis'); }catch(err){}
+
+    if(!diagnosisJson){
+      setNote(btn, '先に<a href="/#diagnosis">無料診断</a>を完了してから、こちらのボタンからお申込みください。');
+      gtag('event','pdf_payment_click',{price:Number(btn.dataset.price)||980, location:btn.dataset.location, result:'no_diagnosis'});
+      return;
+    }
+
+    setNote(btn, null);
+    btn.disabled = true;
+    var originalText = btn.textContent;
+    btn.textContent = '決済ページを準備しています…';
+    gtag('event','pdf_payment_click',{price:Number(btn.dataset.price)||980, location:btn.dataset.location});
+
+    try{
+      var res = await fetch(API_BASE + '/api/pdf/create-checkout', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ diagnosisJson: diagnosisJson, diagnosisVersion: '1' })
+      });
+      var data = await res.json().catch(function(){ return null; });
+      if(!data || !data.success || !data.checkoutUrl) throw new Error('create_checkout_failed');
+      location.href = data.checkoutUrl;
+    }catch(err){
+      setNote(btn, '決済ページを開けませんでした。もう一度お試しください。');
+      btn.disabled = false;
+      btn.textContent = originalText;
+    }
+  }
+
+  document.querySelectorAll('.js-pdf-payment').forEach(function(btn){
+    btn.addEventListener('click', startCheckout);
+  });
+})();
+</script>
+</body></html>
