@@ -1,4 +1,4 @@
-name = "wannyan-pdf-worker"
+name = "wannyan-pdf-api"
 main = "src/index.js"
 compatibility_date = "2025-09-01"
 
@@ -13,17 +13,17 @@ rules = [
 [[d1_databases]]
 binding = "DB"
 database_name = "wannyan-pdf-orders"
-database_id = "REPLACE_WITH_D1_DATABASE_ID"
+database_id = "d6f1b2ee-f9ac-47a7-ae5b-fd406e8226d6"
 
 # R2バケット：健診画像（private）とPDF成果物（private）を分離。
 # 太郎さんがダッシュボードで2つのバケットを作成後、bucket_name を実際の名前に置き換えてください。
 [[r2_buckets]]
 binding = "HEALTH_BUCKET"
-bucket_name = "wannyan-pdf-health-inputs"
+bucket_name = "wannyan-pdf-health"
 
 [[r2_buckets]]
 binding = "OUTPUT_BUCKET"
-bucket_name = "wannyan-pdf-outputs"
+bucket_name = "wannyan-pdf-output"
 
 # 1日1回、未決済draftの掃除・delivered後の期限切れデータ削除・失敗ジョブの再試行を行う。
 [triggers]
@@ -39,8 +39,12 @@ crons = ["0 18 * * *"]
 #   PDF_JOB_SECRET         内部processエンドポイント用のランダム文字列
 #   CF_BROWSER_RENDERING_TOKEN  Browser Rendering呼び出し用（今回作成済みのBrowser Run:Editトークン）
 #   CF_ACCOUNT_ID
+#   R2_ACCESS_KEY_ID       R2 S3互換API用（health画像のpresigned PUT URL発行に使用）
+#   R2_SECRET_ACCESS_KEY
 
 [vars]
 ALLOWED_ORIGIN = "https://www.wannyan-gohan.com"
 # デプロイ後に実際のWorker URL（*.workers.dev、または設定した独自ルート）に置き換えてください。
-WORKER_BASE_URL = "REPLACE_WITH_DEPLOYED_WORKER_URL"
+WORKER_BASE_URL = "https://wannyan-pdf-api.wannyangohan-info.workers.dev"
+# presigned URL生成にはバケット名の文字列が必要（bindingはWorkerからしか使えないため別途保持）。
+HEALTH_BUCKET_NAME = "wannyan-pdf-health"

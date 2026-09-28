@@ -8,6 +8,7 @@ import { createCheckoutSession, verifyStripeSignature } from './stripe.js'
 import { mergeConfirmedLabs, buildRenderableHtml, renderPdf } from './pdf.js'
 import { sendPdfDeliveryEmail, sendAdminAlert } from './email.js'
 import { CANONICAL_LAB_KEYS } from './labs.js'
+import { presignR2PutUrl } from './r2-presign.js'
 
 const MAX_FILES = 5
 const MAX_FILE_BYTES = 10 * 1024 * 1024
@@ -52,8 +53,11 @@ export default {
       if (pathname === '/api/pdf/order-status' && request.method === 'GET') {
         return await handleOrderStatus(url, env)
       }
-      if (pathname === '/api/pdf/upload' && request.method === 'POST') {
-        return await handleUpload(request, env)
+      if (pathname === '/api/pdf/upload-url' && request.method === 'POST') {
+        return await handleUploadUrl(request, env)
+      }
+      if (pathname === '/api/pdf/upload-complete' && request.method === 'POST') {
+        return await handleUploadComplete(request, env)
       }
       if (pathname === '/api/pdf/confirm-labs' && request.method === 'POST') {
         return await handleConfirmLabs(request, env)
@@ -156,13 +160,20 @@ async function handleOrderStatus(url, env) {
   if (!order) return notFound(env)
   const files = await listOrderFiles(env.DB, order.id)
   // diagnosis_json / confirmed_labs_json / private pathは返さない（安全な要約のみ）
-  return json({
+  const base = {
     success: true,
     status: order.status,
     canUpload: order.status === 'paid',
     hasHealthFiles: files.length > 0,
     labsConfirmed: !!order.labs_confirmed_at
-  }, 200, env)
+  }
+  // delivered後の再ダウンロード導線用。毎回新しい署名付きURLをその場で発行する（保存はしない）。
+  if (order.status === 'delivered' && order.pdf_storage_path) {
+    const { url: downloadUrl, expiresAt } = await buildSignedDownloadUrl(env, order.pdf_storage_path)
+    base.downloadUrl = downloadUrl
+    base.downloadExpiresAt = expiresAt
+  }
+  return json(base, 200, env)
 }
 
 async function requirePaidOrder(env, sessionId) {
@@ -173,36 +184,71 @@ async function requirePaidOrder(env, sessionId) {
   return { order }
 }
 
-async function handleUpload(request, env) {
-  const sessionId = request.headers.get('X-Session-Id')
-  const { order, error } = await requirePaidOrder(env, sessionId)
+// ブラウザ→R2直接アップロード方式。Workerは「誰が・どこへ・何を」発行するかだけを決め、
+// 画像バイト自体はブラウザからR2へ直接PUTされるためWorkerを中継しない。
+async function handleUploadUrl(request, env) {
+  const body = await request.json().catch(() => null)
+  if (!body || !body.sessionId) return badRequest('sessionId is required', env)
+  const { order, error } = await requirePaidOrder(env, body.sessionId)
   if (error) return badRequest(error, env)
 
-  const mimeType = request.headers.get('Content-Type') || ''
+  const mimeType = body.mimeType || ''
   if (!ALLOWED_MIME.includes(mimeType)) return badRequest('unsupported_mime_type', env)
 
   const existing = await listOrderFiles(env.DB, order.id)
   if (existing.length >= MAX_FILES) return badRequest('max_files_exceeded', env)
-  const existingTotal = existing.reduce((sum, f) => sum + f.size_bytes, 0)
-
-  const bytes = await request.arrayBuffer()
-  if (bytes.byteLength > MAX_FILE_BYTES) return badRequest('file_too_large', env)
-  if (existingTotal + bytes.byteLength > MAX_TOTAL_BYTES) return badRequest('total_size_exceeded', env)
 
   // パスは常にサーバー側で生成する（クライアント指定のファイル名は使わない）
   const ext = mimeType === 'application/pdf' ? 'pdf' : mimeType.split('/')[1]
   const r2Key = `health/${order.id}/${crypto.randomUUID()}.${ext}`
 
-  await env.HEALTH_BUCKET.put(r2Key, bytes, { httpMetadata: { contentType: mimeType } })
-  await addOrderFile(env.DB, order.id, {
-    kind: 'health_check',
-    r2Key,
-    mimeType,
-    sizeBytes: bytes.byteLength,
-    measuredAtLabel: request.headers.get('X-Measured-At-Label') || null
+  const uploadUrl = await presignR2PutUrl(env, {
+    bucket: env.HEALTH_BUCKET_NAME,
+    key: r2Key,
+    expiresSeconds: 600
   })
 
-  return json({ success: true, fileKey: r2Key }, 200, env)
+  return json({ success: true, uploadUrl, r2Key, mimeType }, 200, env)
+}
+
+// ブラウザが直接R2へPUTし終えた後、その事実をWorkerに通知するための確定登録エンドポイント。
+// サイズ・存在確認はクライアント自己申告を信用せず、R2へのhead()で実測して行う。
+async function handleUploadComplete(request, env) {
+  const body = await request.json().catch(() => null)
+  if (!body || !body.sessionId || !body.r2Key) return badRequest('sessionId and r2Key are required', env)
+  const { order, error } = await requirePaidOrder(env, body.sessionId)
+  if (error) return badRequest(error, env)
+
+  if (!body.r2Key.startsWith(`health/${order.id}/`)) return badRequest('r2Key_mismatch', env)
+
+  const head = await env.HEALTH_BUCKET.head(body.r2Key)
+  if (!head) return badRequest('upload_not_found', env)
+
+  if (head.size > MAX_FILE_BYTES) {
+    await env.HEALTH_BUCKET.delete(body.r2Key).catch(() => {})
+    return badRequest('file_too_large', env)
+  }
+
+  const existing = await listOrderFiles(env.DB, order.id)
+  if (existing.length >= MAX_FILES) {
+    await env.HEALTH_BUCKET.delete(body.r2Key).catch(() => {})
+    return badRequest('max_files_exceeded', env)
+  }
+  const existingTotal = existing.reduce((sum, f) => sum + f.size_bytes, 0)
+  if (existingTotal + head.size > MAX_TOTAL_BYTES) {
+    await env.HEALTH_BUCKET.delete(body.r2Key).catch(() => {})
+    return badRequest('total_size_exceeded', env)
+  }
+
+  await addOrderFile(env.DB, order.id, {
+    kind: 'health_check',
+    r2Key: body.r2Key,
+    mimeType: head.httpMetadata?.contentType || 'application/octet-stream',
+    sizeBytes: head.size,
+    measuredAtLabel: body.measuredAtLabel || null
+  })
+
+  return json({ success: true }, 200, env)
 }
 
 // OCRはブラウザ側（購入者のthanksページ）で実行し、購入者が確認・修正した「確定値」だけをここで受け取る。

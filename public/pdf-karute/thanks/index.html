@@ -1,0 +1,453 @@
+<!doctype html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><meta name="robots" content="noindex"><title>お申込みありがとうございます｜わんにゃんごはんカルテ</title>
+<style>:root{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;color:#20231f;background:#fbfaf5;line-height:1.75}
+body{margin:0}
+.wrap{max-width:720px;margin:auto;padding:24px}
+.header{display:flex;gap:16px;justify-content:space-between;align-items:center;border-bottom:1px solid #e8e2d5;background:#fbfaf5;padding:14px 24px;position:sticky;top:0}
+.brand{font-weight:900;text-decoration:none;color:inherit}
+.card{background:#fff;border:1px solid #e8e2d5;border-radius:22px;padding:22px;margin:18px 0}
+h1{font-size:1.4rem;margin:0 0 6px}
+.eyebrow{color:#697046;font-weight:800;margin:0 0 4px}
+.small{color:#62665b;font-size:.92rem}
+.primary{display:inline-block;background:#EE8D78;color:white;text-decoration:none;border:none;border-radius:999px;padding:13px 22px;font-weight:900;font-size:1rem;cursor:pointer}
+.primary:disabled{background:#e3d6cf;cursor:not-allowed}
+.secondary{display:inline-block;border:1px solid #E9DED3;background:#fff;color:#4A3A34;text-decoration:none;border-radius:999px;padding:11px 16px;font-weight:800;cursor:pointer;font-size:.94rem}
+.check-row{display:flex;gap:10px;align-items:flex-start;margin:10px 0}
+.check-row .dot{flex:none;width:22px;height:22px;border-radius:999px;background:#edf5ee;color:#3a7a4e;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.8rem;margin-top:2px}
+.notice{background:#fff7e6;border-left:5px solid #c88922;padding:14px;border-radius:14px;margin:14px 0}
+.spinner{display:inline-block;width:18px;height:18px;border:3px solid #e8e2d5;border-top-color:#EE8D78;border-radius:50%;animation:spin 1s linear infinite;vertical-align:middle;margin-right:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.upload-zone{border:2px dashed #E9DED3;border-radius:18px;padding:22px;text-align:center;margin:14px 0;background:#fdfcf8}
+.upload-zone.is-drag{border-color:#EE8D78;background:#fff3e9}
+.file-list{display:flex;flex-direction:column;gap:10px;margin:14px 0}
+.file-item{display:flex;gap:12px;align-items:center;border:1px solid #e8e2d5;border-radius:14px;padding:10px 12px}
+.file-item img{width:52px;height:52px;object-fit:cover;border-radius:10px;background:#f4f0e6;flex:none}
+.file-item .name{font-size:.88rem;flex:1;word-break:break-all}
+.file-item .status{font-size:.8rem;font-weight:700;flex:none}
+.file-item .status.ok{color:#3a7a4e}
+.file-item .status.busy{color:#a06a2c}
+.file-item .status.err{color:#b3432b}
+.lab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:14px 0}
+.lab-field label{display:block;font-size:.8rem;font-weight:800;color:#556052;margin-bottom:4px}
+.lab-field input{width:100%;box-sizing:border-box;border:1px solid #e8e2d5;border-radius:10px;padding:9px 10px;font-size:.95rem}
+.lab-field.has-candidate input{border-color:#EE8D78;background:#fff8f5}
+.lab-field .cand-note{font-size:.72rem;color:#a06a2c;margin-top:3px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.status-badge{display:inline-block;font-size:.78rem;font-weight:800;padding:4px 12px;border-radius:999px;background:#f4f0e6;color:#556052}
+footer{padding:30px 24px;color:#62665b;font-size:.88rem}
+.hidden{display:none!important}
+</style></head>
+<body>
+<header class="header"><a class="brand" href="/">わんにゃんごはんカルテ</a></header>
+<main class="wrap">
+
+<div id="stateError" class="card hidden">
+  <h1>ご注文を確認できませんでした</h1>
+  <p class="small">お手数ですが、決済完了メールのリンクからもう一度お開きいただくか、このページのURLが正しいかご確認ください。解決しない場合はお問い合わせください。</p>
+</div>
+
+<div id="statePaid" class="card hidden">
+  <p class="eyebrow">お申込みありがとうございます</p>
+  <h1>お支払いが完了しました</h1>
+  <div class="check-row"><span class="dot">✓</span><p class="small" style="margin:0">診断データを受け取りました。</p></div>
+  <p class="small">健診結果の写真があれば、追加でアップロードいただくと数値をカルテに反映できます。<strong>健診結果がなくてもカルテは作成できます。</strong>そのまま「PDFカルテを作成する」に進んでください。</p>
+
+  <div class="upload-zone" id="uploadZone">
+    <p class="small" style="margin:0 0 8px">健診結果の写真・PDFをドラッグ＆ドロップ、またはボタンから選択（任意）</p>
+    <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,application/pdf" multiple hidden>
+    <button type="button" class="secondary" id="fileBtn">ファイルを選択</button>
+    <p class="small" style="margin-top:8px">JPEG・PNG・WebP・PDF対応／最大5枚／1枚10MBまで／合計30MBまで</p>
+  </div>
+  <div class="file-list" id="fileList"></div>
+
+  <div id="labSection" class="hidden">
+    <h2 style="font-size:1.05rem">健診数値の確認</h2>
+    <p class="small">写真から数値の候補を読み取りました。写真と見比べて、正しい値に修正してから確定してください（空欄のままでも構いません）。</p>
+    <div class="lab-grid" id="labGrid"></div>
+  </div>
+
+  <div class="actions">
+    <button type="button" class="primary" id="submitBtn">PDFカルテを作成する</button>
+  </div>
+  <p class="small" id="submitHint"></p>
+</div>
+
+<div id="stateProcessing" class="card hidden">
+  <p class="eyebrow"><span class="spinner"></span>作成中</p>
+  <h1>PDFカルテを作成しています</h1>
+  <p class="small">完成しましたら、お支払い時のメールアドレスへ自動でお送りします。このままページを閉じていただいて構いません。</p>
+</div>
+
+<div id="stateDelivered" class="card hidden">
+  <p class="eyebrow">お届け完了</p>
+  <h1>PDFカルテを送信しました</h1>
+  <div class="check-row"><span class="dot">✓</span><p class="small" style="margin:0">お支払い時のメールアドレスへ、ダウンロード用のリンクをお送りしました。</p></div>
+  <div class="actions">
+    <a class="primary hidden" id="downloadLink" href="#" target="_blank" rel="noopener">PDFをダウンロード</a>
+  </div>
+  <p class="small" id="downloadExpiryNote"></p>
+</div>
+
+<div id="stateFailed" class="card hidden">
+  <p class="eyebrow">処理中</p>
+  <h1>現在、自動で再処理しています</h1>
+  <p class="small">お時間をおいて自動的に再試行されます。しばらくしても完了しない場合は、お問い合わせください。</p>
+</div>
+
+</main>
+<footer>© わんにゃんごはんカルテ　<a href="/legal/privacy/">プライバシーポリシー</a></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.1.1/tesseract.min.js"></script>
+<script>
+(function(){
+  'use strict';
+  const API_BASE = 'https://wannyan-pdf-api.wannyangohan-info.workers.dev';
+  const MAX_FILES = 5, MAX_FILE_BYTES = 10*1024*1024, MAX_TOTAL_BYTES = 30*1024*1024;
+  const ALLOWED_MIME = ['image/jpeg','image/png','image/webp','application/pdf'];
+
+  const CANONICAL_LAB_KEYS = ['bun','cre','sdma','alt','alp','glu','tg','tcho','alb','tp','na','k','ca','rbc','hct','wbc','plt','usg','upc'];
+  const LAB_LABEL_JA = {bun:'BUN',cre:'Cre',sdma:'SDMA',alt:'ALT',alp:'ALP',glu:'GLU',tg:'TG',tcho:'T-Cho',alb:'ALB',tp:'TP',na:'Na',k:'K',ca:'Ca',rbc:'RBC',hct:'HCT',wbc:'WBC',plt:'PLT',usg:'尿比重',upc:'UPC'};
+  const ALIASES = {
+    bun:['bun'], cre:['cre','crea','creatinine'], sdma:['sdma'], alt:['alt','gpt'], alp:['alp'],
+    glu:['glu','gluc','glucose'], tg:['tg','trig','triglyceride'],
+    tcho:['tcho','tchol','chol','cholesterol','totalcholesterol'],
+    alb:['alb','albumin'], tp:['tp','totalprotein'], na:['na','sodium'], k:['k','potassium'], ca:['ca','calcium'],
+    rbc:['rbc'], hct:['hct','ht','pcv','hematocrit'], wbc:['wbc'], plt:['plt','platelet','plat'],
+    usg:['usg','urinespecificgravity','specificgravity','尿比重'], upc:['upc']
+  };
+  const REVERSE = {};
+  Object.keys(ALIASES).forEach(k => ALIASES[k].forEach(a => REVERSE[a] = k));
+  function normalizeLabLabel(raw){
+    if(!raw) return null;
+    let s = String(raw).trim().toLowerCase().replace(/[\s\-_./（）()]/g,'');
+    return REVERSE[s] || null;
+  }
+
+  const sessionId = new URLSearchParams(location.search).get('session_id');
+  const els = {
+    error: document.getElementById('stateError'),
+    paid: document.getElementById('statePaid'),
+    processing: document.getElementById('stateProcessing'),
+    delivered: document.getElementById('stateDelivered'),
+    failed: document.getElementById('stateFailed')
+  };
+  function showState(name){
+    Object.keys(els).forEach(k => els[k].classList.toggle('hidden', k !== name));
+  }
+
+  if(!sessionId){ showState('error'); return; }
+
+  let uploadedFiles = []; // {r2Key, name, previewUrl}
+  let ocrCandidatesByKey = {}; // key -> [{value, source}]
+  let pollTimer = null;
+
+  async function fetchOrderStatus(){
+    const res = await fetch(`${API_BASE}/api/pdf/order-status?session_id=${encodeURIComponent(sessionId)}`);
+    if(!res.ok) return null;
+    return res.json();
+  }
+
+  function renderLabGrid(){
+    const grid = document.getElementById('labGrid');
+    grid.innerHTML = '';
+    CANONICAL_LAB_KEYS.forEach(key => {
+      const wrap = document.createElement('div');
+      wrap.className = 'lab-field';
+      wrap.dataset.key = key;
+      const candidates = ocrCandidatesByKey[key] || [];
+      if(candidates.length) wrap.classList.add('has-candidate');
+      wrap.innerHTML = `
+        <label for="lab-${key}">${LAB_LABEL_JA[key]}</label>
+        <input type="text" id="lab-${key}" inputmode="decimal" placeholder="未入力" value="${candidates[0] ? candidates[0].value : ''}">
+        ${candidates.length ? `<div class="cand-note">写真から検出：${candidates.map(c=>c.value).join(' / ')}（要確認）</div>` : ''}
+      `;
+      grid.appendChild(wrap);
+    });
+    document.getElementById('labSection').classList.remove('hidden');
+  }
+
+  function collectConfirmedLabs(){
+    const out = {};
+    CANONICAL_LAB_KEYS.forEach(key => {
+      const el = document.getElementById(`lab-${key}`);
+      if(el && el.value.trim() !== '') out[key] = el.value.trim();
+    });
+    return out;
+  }
+
+  // ---- OCR前処理：自動傾き補正 → 罫線除去 → Tesseract ----
+  function toGrayscale(ctx, w, h){
+    const img = ctx.getImageData(0,0,w,h);
+    const d = img.data;
+    for(let i=0;i<d.length;i+=4){
+      const v = 0.299*d[i] + 0.587*d[i+1] + 0.114*d[i+2];
+      d[i]=d[i+1]=d[i+2]=v;
+    }
+    ctx.putImageData(img,0,0);
+    return img;
+  }
+
+  function rowVarianceAtAngle(srcCanvas, angleDeg){
+    const w = srcCanvas.width, h = srcCanvas.height;
+    const tmp = document.createElement('canvas');
+    tmp.width = w; tmp.height = h;
+    const tctx = tmp.getContext('2d');
+    tctx.translate(w/2, h/2);
+    tctx.rotate(angleDeg * Math.PI/180);
+    tctx.drawImage(srcCanvas, -w/2, -h/2);
+    const data = tctx.getImageData(0,0,w,h).data;
+    const rowSums = new Float64Array(h);
+    for(let y=0;y<h;y++){
+      let sum=0;
+      for(let x=0;x<w;x++){ sum += data[(y*w+x)*4]; }
+      rowSums[y]=sum;
+    }
+    const mean = rowSums.reduce((a,b)=>a+b,0)/h;
+    let variance=0;
+    for(let y=0;y<h;y++){ variance += (rowSums[y]-mean)**2; }
+    return variance/h;
+  }
+
+  function deskew(canvas){
+    let best = {angle:0, variance:-1};
+    for(let a=-8; a<=8; a+=0.5){
+      const v = rowVarianceAtAngle(canvas, a);
+      if(v > best.variance) best = {angle:a, variance:v};
+    }
+    for(let a=best.angle-0.5; a<=best.angle+0.5; a+=0.05){
+      const v = rowVarianceAtAngle(canvas, a);
+      if(v > best.variance) best = {angle:a, variance:v};
+    }
+    const w = canvas.width, h = canvas.height;
+    const out = document.createElement('canvas');
+    out.width = w; out.height = h;
+    const octx = out.getContext('2d');
+    octx.fillStyle = '#fff';
+    octx.fillRect(0,0,w,h);
+    octx.translate(w/2, h/2);
+    octx.rotate(best.angle * Math.PI/180);
+    octx.drawImage(canvas, -w/2, -h/2);
+    return out;
+  }
+
+  function removeGridLines(canvas){
+    const w = canvas.width, h = canvas.height;
+    const ctx = canvas.getContext('2d');
+    const img = ctx.getImageData(0,0,w,h);
+    const d = img.data;
+    const DARK = 120, RUN_RATIO = 0.6;
+    // 横罫線
+    for(let y=0;y<h;y++){
+      let run=0;
+      for(let x=0;x<w;x++){ if(d[(y*w+x)*4] < DARK) run++; }
+      if(run > w*RUN_RATIO){
+        for(let x=0;x<w;x++){
+          for(let dy=-1; dy<=1; dy++){
+            const yy=y+dy; if(yy<0||yy>=h) continue;
+            const idx=(yy*w+x)*4; d[idx]=d[idx+1]=d[idx+2]=255;
+          }
+        }
+      }
+    }
+    // 縦罫線
+    for(let x=0;x<w;x++){
+      let run=0;
+      for(let y=0;y<h;y++){ if(d[(y*w+x)*4] < DARK) run++; }
+      if(run > h*RUN_RATIO){
+        for(let y=0;y<h;y++){
+          for(let dx=-1; dx<=1; dx++){
+            const xx=x+dx; if(xx<0||xx>=w) continue;
+            const idx=(y*w+xx)*4; d[idx]=d[idx+1]=d[idx+2]=255;
+          }
+        }
+      }
+    }
+    ctx.putImageData(img,0,0);
+    return canvas;
+  }
+
+  async function loadImageToCanvas(file){
+    const bitmap = await createImageBitmap(file);
+    const canvas = document.createElement('canvas');
+    canvas.width = bitmap.width; canvas.height = bitmap.height;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(bitmap, 0, 0);
+    return canvas;
+  }
+
+  function parseOcrTextIntoCandidates(text){
+    const lines = text.split(/\n/);
+    const found = {};
+    lines.forEach(line => {
+      const tokens = line.split(/[\s,:：|｜]+/).filter(Boolean);
+      for(let i=0;i<tokens.length;i++){
+        const key = normalizeLabLabel(tokens[i]);
+        if(!key) continue;
+        const numbers = line.match(/\d+\.\d+|\d+/g) || [];
+        if(!numbers.length) continue;
+        found[key] = found[key] || [];
+        numbers.forEach(n => {
+          if(!found[key].some(c => c.value === n)) found[key].push({ value: n, source: 'ocr' });
+        });
+      }
+    });
+    return found;
+  }
+
+  async function runOcrOnImage(file, statusEl){
+    try{
+      statusEl.textContent = '画像を解析中…';
+      const canvas = await loadImageToCanvas(file);
+      toGrayscale(canvas.getContext('2d'), canvas.width, canvas.height);
+      const deskewed = deskew(canvas);
+      const cleaned = removeGridLines(deskewed);
+      const { data } = await Tesseract.recognize(cleaned, 'eng');
+      const candidates = parseOcrTextIntoCandidates(data.text || '');
+      Object.keys(candidates).forEach(key => {
+        ocrCandidatesByKey[key] = (ocrCandidatesByKey[key] || []).concat(candidates[key]);
+      });
+      renderLabGrid();
+      statusEl.textContent = '解析完了';
+      statusEl.className = 'status ok';
+    }catch(err){
+      statusEl.textContent = '解析できませんでした（手入力してください）';
+      statusEl.className = 'status err';
+      renderLabGrid();
+    }
+  }
+
+  async function uploadOneFile(file){
+    const li = document.createElement('div');
+    li.className = 'file-item';
+    const isImage = file.type.startsWith('image/');
+    li.innerHTML = `${isImage ? '<img>' : '<div style="width:52px;height:52px;border-radius:10px;background:#f4f0e6;flex:none;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:#62665b">PDF</div>'}<div class="name">${file.name}</div><div class="status busy">アップロード中…</div>`;
+    document.getElementById('fileList').appendChild(li);
+    const statusEl = li.querySelector('.status');
+    if(isImage){
+      const imgEl = li.querySelector('img');
+      imgEl.src = URL.createObjectURL(file);
+    }
+
+    if(!ALLOWED_MIME.includes(file.type)){ statusEl.textContent='非対応の形式です'; statusEl.className='status err'; return; }
+    if(file.size > MAX_FILE_BYTES){ statusEl.textContent='ファイルが大きすぎます（10MBまで）'; statusEl.className='status err'; return; }
+
+    try{
+      const urlRes = await fetch(`${API_BASE}/api/pdf/upload-url`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ sessionId, mimeType: file.type })
+      });
+      const urlData = await urlRes.json();
+      if(!urlData.success) throw new Error(urlData.error || 'upload_url_failed');
+
+      const putRes = await fetch(urlData.uploadUrl, { method:'PUT', headers:{'Content-Type':file.type}, body:file });
+      if(!putRes.ok) throw new Error('r2_put_failed');
+
+      const completeRes = await fetch(`${API_BASE}/api/pdf/upload-complete`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ sessionId, r2Key: urlData.r2Key })
+      });
+      const completeData = await completeRes.json();
+      if(!completeData.success) throw new Error(completeData.error || 'upload_complete_failed');
+
+      uploadedFiles.push({ r2Key: urlData.r2Key, name: file.name });
+      statusEl.textContent = 'アップロード完了';
+      statusEl.className = 'status ok';
+
+      if(isImage){
+        await runOcrOnImage(file, statusEl);
+        statusEl.textContent = 'アップロード完了・解析済み';
+        statusEl.className = 'status ok';
+      }
+    }catch(err){
+      statusEl.textContent = 'アップロードに失敗しました';
+      statusEl.className = 'status err';
+    }
+  }
+
+  async function handleFiles(fileListLike){
+    const files = Array.from(fileListLike);
+    if(uploadedFiles.length + files.length > MAX_FILES){
+      alert(`アップロードできるのは最大${MAX_FILES}枚までです。`);
+      return;
+    }
+    for(const file of files){
+      await uploadOneFile(file);
+    }
+  }
+
+  document.getElementById('fileBtn').addEventListener('click', () => document.getElementById('fileInput').click());
+  document.getElementById('fileInput').addEventListener('change', e => handleFiles(e.target.files));
+  const dropZone = document.getElementById('uploadZone');
+  ;['dragenter','dragover'].forEach(evt => dropZone.addEventListener(evt, e => { e.preventDefault(); dropZone.classList.add('is-drag'); }));
+  ;['dragleave','drop'].forEach(evt => dropZone.addEventListener(evt, e => { e.preventDefault(); dropZone.classList.remove('is-drag'); }));
+  dropZone.addEventListener('drop', e => { if(e.dataTransfer.files.length) handleFiles(e.dataTransfer.files); });
+
+  document.getElementById('submitBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    document.getElementById('submitHint').textContent = '送信しています…';
+    try{
+      const confirmedLabs = collectConfirmedLabs();
+      await fetch(`${API_BASE}/api/pdf/confirm-labs`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ sessionId, confirmedLabs, ocrCandidates: ocrCandidatesByKey })
+      });
+      const submitRes = await fetch(`${API_BASE}/api/pdf/submit`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ sessionId })
+      });
+      if(!submitRes.ok && submitRes.status !== 202) throw new Error('submit_failed');
+      showState('processing');
+      startPolling();
+    }catch(err){
+      document.getElementById('submitHint').textContent = '送信に失敗しました。もう一度お試しください。';
+      btn.disabled = false;
+    }
+  });
+
+  function startPolling(){
+    if(pollTimer) return;
+    pollTimer = setInterval(async () => {
+      const data = await fetchOrderStatus();
+      if(!data) return;
+      applyStatus(data);
+    }, 4000);
+  }
+
+  function applyStatus(data){
+    const status = data.status;
+    if(status === 'paid'){
+      showState('paid');
+      if(uploadedFiles.length && !document.getElementById('labSection').classList.contains('hidden') === false && Object.keys(ocrCandidatesByKey).length){
+        renderLabGrid();
+      }
+    } else if(status === 'submitted' || status === 'generating') {
+      showState('processing');
+      startPolling();
+    } else if(status === 'generated' || status === 'delivering' || status === 'delivered') {
+      if(status === 'delivered' && data.downloadUrl){
+        const link = document.getElementById('downloadLink');
+        link.href = data.downloadUrl;
+        link.classList.remove('hidden');
+        if(data.downloadExpiresAt){
+          const d = new Date(data.downloadExpiresAt);
+          document.getElementById('downloadExpiryNote').textContent = `このダウンロードリンクは ${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} まで有効です。`;
+        }
+      }
+      showState('delivered');
+      if(pollTimer){ clearInterval(pollTimer); pollTimer = null; }
+    } else if(status === 'generation_failed' || status === 'delivery_failed') {
+      showState('failed');
+      startPolling();
+    } else {
+      showState('error');
+    }
+  }
+
+  (async function init(){
+    const data = await fetchOrderStatus();
+    if(!data || !data.success){ showState('error'); return; }
+    applyStatus(data);
+  })();
+})();
+</script>
+</body></html>
