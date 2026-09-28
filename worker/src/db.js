@@ -83,7 +83,7 @@ export async function claimForSubmit(db, orderId) {
 // process: 同時実行/Cronリトライで二重処理しないよう、generating状態への遷移をatomicに行う。
 export async function claimForProcessing(db, orderId) {
   await db.prepare(
-    `UPDATE pdf_orders SET status='generating' WHERE id=? AND status IN ('submitted','generation_failed')`
+    `UPDATE pdf_orders SET status='generating' WHERE id=? AND status IN ('submitted','generation_failed','delivery_failed')`
   ).bind(orderId).run()
   const after = await getOrderById(db, orderId)
   return after && after.status === 'generating' ? after : null

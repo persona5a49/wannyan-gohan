@@ -71,6 +71,14 @@ export default {
       if (pathname === '/api/pdf/download' && request.method === 'GET') {
         return await handleDownload(url, env)
       }
+      // 運用者専用：日次Cronを待たずretry/cleanupを即時実行して動作確認するための手動トリガー。
+      // X-Job-Secret必須で、購入者向けエンドポイントとは独立。
+      if (pathname === '/api/pdf/run-cron' && request.method === 'POST') {
+        const secret = request.headers.get('X-Job-Secret')
+        if (!secret || secret !== env.PDF_JOB_SECRET) return json({ success: false, error: 'forbidden' }, 403, env)
+        await runCron(env)
+        return json({ success: true }, 200, env)
+      }
       return notFound(env)
     } catch (err) {
       // diagnosis JSON / 健康情報を含めないよう、エラーメッセージは自前の例外文字列のみログに出す
@@ -343,15 +351,19 @@ async function processOrder(env, orderId) {
   if (!order) return // 既に他プロセスが処理中/完了済み（冪等）
 
   try {
-    const diagnosisJson = JSON.parse(order.diagnosis_json)
-    const confirmedLabs = order.confirmed_labs_json ? JSON.parse(order.confirmed_labs_json) : null
-    const merged = mergeConfirmedLabs(diagnosisJson, confirmedLabs)
-    const html = buildRenderableHtml(merged)
-    const pdfBytes = await renderPdf(env, html)
+    // delivery_failedからの再試行はPDFが既に生成済みなので、Browser Renderingを再消費せず再送のみ行う。
+    let outputKey = order.pdf_storage_path
+    if (!outputKey) {
+      const diagnosisJson = JSON.parse(order.diagnosis_json)
+      const confirmedLabs = order.confirmed_labs_json ? JSON.parse(order.confirmed_labs_json) : null
+      const merged = mergeConfirmedLabs(diagnosisJson, confirmedLabs)
+      const html = buildRenderableHtml(merged)
+      const pdfBytes = await renderPdf(env, html)
 
-    const outputKey = `pdf/${order.id}/karute.pdf`
-    await env.OUTPUT_BUCKET.put(outputKey, pdfBytes, { httpMetadata: { contentType: 'application/pdf' } })
-    await markGenerated(env.DB, order.id, outputKey)
+      outputKey = `pdf/${order.id}/karute.pdf`
+      await env.OUTPUT_BUCKET.put(outputKey, pdfBytes, { httpMetadata: { contentType: 'application/pdf' } })
+      await markGenerated(env.DB, order.id, outputKey)
+    }
 
     if (order.customer_email) {
       const { url: downloadUrl, expiresAt } = await buildSignedDownloadUrl(env, outputKey)
