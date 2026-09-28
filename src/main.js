@@ -1939,6 +1939,7 @@ function renderInput(q){
   const cardLabel = (v,l)=> q.key==='breedGroup' && v==='companion' ? 'シーズー・マルチーズ系' : l
   const optionsClass = ['options','dq-options',
     q.key==='breedGroup' ? 'dq-options-breed' : '',
+    q.key==='ownerMbti' ? 'dq-options-mbti' : '',
     (q.key==='body' && BODY_ASSET_APPROVED) ? 'dq-options-body' : '',
     CHOICE_ILLUST_APPROVED && CHOICE_ILLUST_LARGE_KEYS.has(q.key) ? 'dq-options-illust-lg' : (CHOICE_ILLUST_APPROVED && CHOICE_ILLUST[q.key] ? 'dq-options-illust-sm' : '')
   ].filter(Boolean).join(' ')
