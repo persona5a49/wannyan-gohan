@@ -395,6 +395,10 @@ const BODY_OPTION_IMG = { emaciated:'emaciated', thin:'thin', normal:'ideal', ch
 const BODY_ASSET_APPROVED = false
 // 結果画面：体型4段階の短縮ラベル（表示専用。回答値・判定ロジックは不変）
 const BODY_LABEL_SHORT = { emaciated:'やせ', thin:'やややせ', normal:'適正', chubby:'やや肥満', obese:'肥満' }
+// 2026-09-28: 選択肢イラスト（Q3・Q6〜Q29・Q31・Q32、計127点）は太郎さん確認の結果、
+// ChatGPT側の正式承認を経ていない旧素材のため一時無効化。ChatGPT側で作り直し次第、正式承認された分のみtrueに戻す。
+// （Q2犬種=character-parts/breedの既存承認済み素材／Q5体型=別途BODY_ASSET_APPROVEDで管理のため対象外）
+const CHOICE_ILLUST_APPROVED = false
 // 2026-09-25: 選択肢イラスト141点（Q2犬種・Q5体型は既存実装/差し戻し済みのため対象外）
 // value文字列がQUESTIONS実データと不一致だったため、index位置＋ラベル対応を全件検証した上でvalueへ変換済み
 const CHOICE_ILLUST = {
@@ -1925,7 +1929,7 @@ function renderInput(q){
     if(q.key==='body' && BODY_ASSET_APPROVED && BODY_OPTION_IMG[v]){
       return `<span class="dq-option-illust dq-option-illust-body"><img src="/assets/body-condition/${BODY_OPTION_IMG[v]}.png" alt="" loading="lazy"></span>`
     }
-    const choiceAsset = CHOICE_ILLUST[q.key] && CHOICE_ILLUST[q.key][v]
+    const choiceAsset = CHOICE_ILLUST_APPROVED && CHOICE_ILLUST[q.key] && CHOICE_ILLUST[q.key][v]
     if(choiceAsset){
       return `<span class="dq-option-illust dq-option-illust-choice">${choiceAsset.includes('/') ? `<img src="/assets/choice-illustrations/${choiceAsset}" alt="" loading="lazy">` : ''}</span>`
     }
@@ -1936,7 +1940,7 @@ function renderInput(q){
   const optionsClass = ['options','dq-options',
     q.key==='breedGroup' ? 'dq-options-breed' : '',
     (q.key==='body' && BODY_ASSET_APPROVED) ? 'dq-options-body' : '',
-    CHOICE_ILLUST_LARGE_KEYS.has(q.key) ? 'dq-options-illust-lg' : (CHOICE_ILLUST[q.key] ? 'dq-options-illust-sm' : '')
+    CHOICE_ILLUST_APPROVED && CHOICE_ILLUST_LARGE_KEYS.has(q.key) ? 'dq-options-illust-lg' : (CHOICE_ILLUST_APPROVED && CHOICE_ILLUST[q.key] ? 'dq-options-illust-sm' : '')
   ].filter(Boolean).join(' ')
   return `<div class="${optionsClass}">${q.options.map(([v,l])=>`<label class="option dq-option"><input type="${multi?'checkbox':'radio'}" name="${q.key}" value="${v}" ${isChecked(q.key,v,multi)?'checked':''}><span class="dq-option-radio"></span>${illustrate(v)}<span class="dq-option-text">${cardLabel(v,l)}</span></label>`).join('')}</div>`
 }
