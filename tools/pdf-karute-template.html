@@ -402,14 +402,21 @@
       + '</div>';
   }
 
-  // ownerCompatの生成文（protected）は末尾に「好相性」等の相性判定文を含むことがあるため、
-  // 表示層でその一文だけを除外する。判定ロジック自体（buildOwnerCompatibility等）は変更しない。
-  // 元の文はすべて既存resultのverbatimテキストで、要約・言い換えは行わない（文単位の除外のみ）。
-  var COMPAT_JUDGMENT_RE = /相性/;
+  // ownerCompatの生成文（protected、ownerCompatBlurb内のOWNER_SOCIAL_WHY/OWNER_BOND_WHYは変更禁止）は
+  // 文末に「〜好相性です」等の相性の良し悪し評価語を含むことがある。
+  // 以前は該当語を含む文をまるごと削除していたが、OWNER_SOCIAL_WHY・OWNER_BOND_WHYの
+  // 4パターンずつ中2パターンずつに評価語が含まれるため、両方に該当する組み合わせ（16通り中4通り）で
+  // 文が両方とも消え、暮らし方のヒント自体が欄ごと消失していた。
+  // 評価語（好相性／相性が良い・いい・良好／相性抜群／相性ばっちり）だけを文中から除去し、
+  // 直前までの具体的な暮らし方の説明（「一緒に楽しめる」等）はそのまま残す。
+  // 判定ロジック（ownerCompatBlurb、良し悪し判定の追加）は一切変更しない。表示層のみの対応。
+  var COMPAT_JUDGMENT_PHRASE_RE = /(好相性|相性(が)?(良い|いい|良好|抜群|ばっちり))(です)?/g;
   function safeOwnerCompatText(text){
     if (!text) return '';
     var sentences = text.split('。').map(function(s){ return s.trim(); }).filter(Boolean);
-    var safe = sentences.filter(function(s){ return !COMPAT_JUDGMENT_RE.test(s); });
+    var safe = sentences
+      .map(function(s){ return s.replace(COMPAT_JUDGMENT_PHRASE_RE, '').trim(); })
+      .filter(Boolean);
     return safe.map(function(s){ return s + '。'; }).join('');
   }
 
@@ -676,6 +683,23 @@
     html += '</div>';
 
     document.getElementById('app').innerHTML = html;
+    warmFontsAndMarkReady();
+  }
+
+  // Cloudflare Browser Renderingでのcold start時、Zen Maru Gothicの半角英数字グリフ
+  // （不透明.p1-name等で使用）が自動フォントマッチングで読み込まれず、
+  // システム標準フォントにフォールバックする不具合対策。
+  // 該当ウェイトのグリフを明示的にdocument.fonts.load()で読み込み切ってから、
+  // data-pdf-ready属性を立てる（Worker側でこれをwaitForSelectorの対象にする）。
+  function warmFontsAndMarkReady(){
+    var charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var weights = ['500', '700', '900'];
+    var loads = weights.map(function(w){
+      return document.fonts.load(w + ' 40px "Zen Maru Gothic"', charset).catch(function(){ return null; });
+    });
+    Promise.all(loads).then(function(){ return document.fonts.ready; }).catch(function(){}).then(function(){
+      document.documentElement.setAttribute('data-pdf-ready', 'true');
+    });
   }
 
   window.renderKarute = renderKarute;

@@ -33,6 +33,10 @@ export async function renderPdf(env, html) {
       body: JSON.stringify({
         html,
         gotoOptions: { waitUntil: 'networkidle0' },
+        // Zen Maru Gothicの半角英数字グリフのcold-start読み込み漏れ対策。
+        // テンプレート側がdocument.fonts.load()完了後にdata-pdf-ready="true"を立てるので、
+        // それを明示的に待ってからPDFを生成する（networkidle0だけでは間に合わないケースがあった）。
+        waitForSelector: { selector: '[data-pdf-ready="true"]', timeout: 15000 },
         emulateMediaType: 'print',
         pdfOptions: {
           format: 'a4',
