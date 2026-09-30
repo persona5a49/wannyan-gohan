@@ -545,6 +545,12 @@
       foodsHtml = '<div class="p4-cand-h">見えている候補</div>'
         + '<div class="p4-cand-sub">順位ではなく、それぞれ違う観点で合いやすいものです。</div>'
         + '<div class="foodlist">' + items + '</div>';
+    } else if (r.foodShortage) {
+      // 大型犬パピー等、商品マスタにサイズの合うpuppy商品が存在しない場合。
+      // small専用商品の代替表示はせず、候補不足であることをそのまま案内する（表示層のみの対応）。
+      foodsHtml = '<div class="p4-cand-h">見えている候補</div>'
+        + '<div class="p5-callout"><p>現在登録されている商品の中では、この子の年齢・体格に合う候補が不足しています。</p>'
+        + '<p>大型犬パピー向けの商品は、成長段階や体格に合わせて主治医・販売店等で確認してください。</p></div>';
     }
 
     var tipsHtml = '';

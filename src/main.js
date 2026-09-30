@@ -1593,10 +1593,13 @@ function calcResult(a){
     if(!sizeTags.length) return true
     return sizeTags.includes(dogSize)
   }
-  // パピー向け商品は現行仕様どおり体重帯にかかわらずpuppyタグのみで絞り込む（ご指示の「現行仕様を維持」）。
-  // 大型犬種のパピー（体重的にはmedium/large帯になり得る）でも候補が0件にならないよう、
-  // サイズ除外はパピー以外の場合のみ適用する。
-  const foodPool = FOODS.filter(f=> lifeStageOk(f) && (isPuppy || sizeOk(f)))
+  // パピー向け商品にも、実測体重から求めたサイズ帯と明確に矛盾する商品（例：small専用商品を
+  // 大型犬パピーに出す）は候補にしない。サイズタグを持たない商品は汎用候補として残す（sizeOkは
+  // 成犬・シニアと同じ関数）。体重未入力（dogSize=null）の場合はsizeOkが常にtrueを返すため、
+  // 現行どおりpuppyタグのみで絞り込む（既存の挙動を維持）。
+  // 商品マスタに大型犬種向けパピー商品が存在しないため、大型犬パピーはこの時点で候補0件になり得る。
+  // その場合、無理にsmall専用商品を代替表示せず、表示側で候補不足の案内を出す（下のfoodShortage参照）。
+  const foodPool = FOODS.filter(f=> lifeStageOk(f) && sizeOk(f))
   const pseudoR = {profile, tags}
   const SIZE_REASON = {small:'小型犬向けの粒・カロリー設計', medium:'中型犬向けの粒・カロリー設計', large:'大型犬向けの粒・カロリー設計'}
   const scored = foodPool.map(f=>{
@@ -1627,8 +1630,12 @@ function calcResult(a){
   const foodsWithReason = scored.filter(f=>f.reasons.length>0).sort((x,y)=> y.score-x.score || x.name.localeCompare(y.name,'ja'))
   const foodsFiller = scored.filter(f=>f.reasons.length===0).sort((x,y)=> x.name.localeCompare(y.name,'ja'))
   const scoredTop = foodsWithReason.concat(foodsFiller).slice(0,3)
+  // パピー＋体重入力済み（サイズ帯が判明）にもかかわらず候補が0件の場合、原因はサイズ不一致のみ
+  // （lifeStageOkは常にpuppyタグの存在を要求するため）。この場合、表示側でsmall専用商品を
+  // 代替表示せず、候補不足の案内を出すためのフラグ。
+  const foodShortage = isPuppy && !!dogSize && scoredTop.length===0
   const kcal = rer(a.weight) * derMultiplier(a)
-  const base = {type:typeResult.name, profile, tags, breedNote: BREED_NOTES[a.breedGroup] || '', redFlags, watch, foods:scoredTop, therapyFoods, kcal, snack:kcal*0.1, hasWeight:Number(a.weight)>0, isPuppy, bcs: bcsLabel(a.body)}
+  const base = {type:typeResult.name, profile, tags, breedNote: BREED_NOTES[a.breedGroup] || '', redFlags, watch, foods:scoredTop, foodShortage, therapyFoods, kcal, snack:kcal*0.1, hasWeight:Number(a.weight)>0, isPuppy, bcs: bcsLabel(a.body)}
   base.insights = buildIntegratedInsights(a, base)
   base.conditions = foodSelectionConditions(a, base)
   base.vetConsult = vetConsultItems(a, base)
@@ -1801,7 +1808,7 @@ function renderDiagnosis(){
         const dailyCostText = (r.hasWeight && !f.priceUnverified && (f.priceBasis||'regular')!=='estimated') ? `約${Math.round((r.kcal / f.kcal * 100) * f.priceKg / 1000)}円` : '販売ページで確認'
         const checkedNote = price.note ? `<small class="price-checked-note">${price.note}</small>` : ''
         return `<article class="food"><h4>${f.name}</h4><p>${f.maker} / ${f.kcal}kcal / 脂質${f.fat}% / ${price.text}${f.mainProtein ? ` / 主原料:${f.mainProtein}` : ''}</p>${checkedNote}${f.note ? `<p class="personalize-note"><strong>${name}の場合：</strong>${f.note}</p>` : ''}<ul>${(f.reasons.length?f.reasons:['条件に比較的合いやすい']).map(x=>`<li>${x}</li>`).join('')}<li>目安給与量：約${r.hasWeight ? Math.round(r.kcal / f.kcal * 100) : '—'}g/日・1日コスト${dailyCostText}</li></ul><div class="food-actions">${f.url !== '#' ? `<a class="primary buy-link" data-product="${f.name}" data-maker="${f.maker}" href="${f.url}" target="_blank" rel="noopener sponsored">通販サイトで見る</a>` : ''}${productDetailUrl(f.name) !== '#' ? `<a class="text-link product-link" data-product="${f.name}" data-maker="${f.maker}" href="${productDetailHref(f.name, answers, r)}">くわしく見る</a>` : ''}</div>${f.url !== '#' ? `<small class="pr-mini">PRを含みます</small>` : ''}</article>`
-      }).join('')}</div>` : `<div class="note"><h3>候補フードについて</h3><p>現在のフード候補は、いずれも成犬・シニア犬向けに作られた商品です。子犬期は成長のためにタンパク質・脂質・カルシウムなどの必要量が成犬とは大きく異なるため、このカタログからはおすすめを表示しません。総合栄養食と明記された「子犬用」「オールステージ対応」フードを選ぶか、かかりつけの獣医師にご相談ください。</p></div>`}
+      }).join('')}</div>` : (r.foodShortage ? `<div class="note"><h3>候補フードについて</h3><p>現在登録されている商品の中では、この子の年齢・体格に合う候補が不足しています。</p><p>大型犬パピー向けの商品は、成長段階や体格に合わせて主治医・販売店等で確認してください。</p></div>` : `<div class="note"><h3>候補フードについて</h3><p>現在のフード候補は、いずれも成犬・シニア犬向けに作られた商品です。子犬期は成長のためにタンパク質・脂質・カルシウムなどの必要量が成犬とは大きく異なるため、このカタログからはおすすめを表示しません。総合栄養食と明記された「子犬用」「オールステージ対応」フードを選ぶか、かかりつけの獣医師にご相談ください。</p></div>`)}
       <div class="karte-section"><h3>動物病院で相談したいこと</h3><ul>${r.vetConsult.map(x=>`<li>${x}</li>`).join('')}</ul></div>
       <div class="karte-section"><h3>この結果から深掘りする記事</h3><p class="helper">${name}の回答で気になったポイントごとに、関連する記事をまとめました。</p>${r.relatedGroups.map(g=>`<div class="related-group"><h4>${g.topic}</h4><div class="article-cards mini">${g.articles.map(a=>`<a class="article-card" href="/articles/${a.slug}/"><span>関連記事</span><strong>${a.title}</strong><small>${a.lead}</small></a>`).join('')}</div></div>`).join('')}</div>
       <div class="karte-section next-steps"><h3>今日からできる3つのこと</h3><ol>${r.nextSteps.map(x=>`<li>${x}</li>`).join('')}</ol></div>
