@@ -420,3 +420,8 @@ html,body{max-width:100%;overflow-x:hidden}
 @media(max-width:760px){.hero-v2{grid-template-columns:minmax(0,1fr);overflow:hidden}.hero-v2-copy,.hero-v2-lead,.hero-v2-title{min-width:0;max-width:100%;overflow-wrap:anywhere}.hero-v2-lead{font-size:15px;line-height:1.85}}
 
 .source-link{color:var(--b-text);font-weight:900;text-decoration:underline;text-underline-offset:2px}
+
+/* share link copy toast */
+.wg-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(12px);background:#263028;color:#fff;font-weight:800;font-size:.9rem;padding:12px 20px;border-radius:999px;box-shadow:0 10px 24px rgba(0,0,0,.18);opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;z-index:50;max-width:90vw;text-align:center}
+.wg-toast.is-show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:760px){.wg-toast{bottom:calc(20px + env(safe-area-inset-bottom))}}
