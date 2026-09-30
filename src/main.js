@@ -1295,6 +1295,15 @@ const TYPE_NAMES = {
   watchchallengeactiveclose:'飼い主と走る子タイプ', watchchallengeactiveindie:'ひとり探検家タイプ', watchchallengecalmclose:'静かな相棒タイプ', watchchallengecalmindie:'こだわり職人タイプ',
   watchsafeactiveclose:'確認派の甘えんぼタイプ', watchsafeactiveindie:'そっと確かめ屋タイプ', watchsafecalmclose:'安心第一の相棒タイプ', watchsafecalmindie:'マイペース職人タイプ'
 }
+// シェアURL用のタイプslug。表示層のみのmappingで、calcResult/typeForの判定ロジックには影響しない。
+// slugは既存の /type-guides/<slug>/ ページと揃えてある（新規に増減させない）。
+const TYPE_SLUGS = {
+  openchallengeactiveclose:'happy-captain', openchallengeactiveindie:'solo-athlete', openchallengecalmclose:'peace-ambassador', openchallengecalmindie:'easygoing-socializer',
+  opensafeactiveclose:'affectionate-runner', opensafeactiveindie:'cautious-adventurer', opensafecalmclose:'gentle-empath', opensafecalmindie:'calm-observer',
+  watchchallengeactiveclose:'devoted-athlete', watchchallengeactiveindie:'independent-explorer', watchchallengecalmclose:'quiet-partner', watchchallengecalmindie:'particular-craftsman',
+  watchsafeactiveclose:'earnest-companion', watchsafeactiveindie:'gradual-explorer', watchsafecalmclose:'reassurance-seeker', watchsafecalmindie:'quiet-craftsman'
+}
+function shareSlugFor(axes){ return TYPE_SLUGS[(axes||[]).join('')] || '' }
 const TYPE_TAGLINE = {
   openchallengeactiveclose:'誰とでも仲良し、そばにいるのが一番好き。', openchallengeactiveindie:'フレンドリーだけど、自分の足で前に進むタイプ。', openchallengecalmclose:'社交的なのに落ち着いてる、ちょうどいい距離感。', openchallengecalmindie:'誰とでも仲良し、でも気分屋さんなマイペース派。',
   opensafeactiveclose:'少し確認してから、思いきり甘える。', opensafeactiveindie:'慎重だけど、好奇心はちゃんとある。', opensafecalmclose:'安心できたら、そっと寄り添うタイプ。', opensafecalmindie:'急がず、じっくり見てから動くタイプ。',
@@ -2039,14 +2048,41 @@ function wrapCanvasText(ctx, text, x, y, maxWidth, lineHeight){
   if(line) ctx.fillText(line, x, y)
   return y
 }
+function shareUrlFor(r){
+  const origin = location.origin || 'https://www.wannyan-gohan.com'
+  const slug = shareSlugFor(r.profile.axes)
+  return slug ? `${origin}/share/?type=${encodeURIComponent(slug)}` : `${origin}/share/`
+}
 function shareResult(){
   const r = calcResult(answers)
-  const name = answers.dogName ? `${answers.dogName}ちゃん` : 'うちの子'
-  const text = `${name}は「${r.type}」でした。C-BARQ参考セルフチェック｜わんにゃんごはんカルテ`
-  const url = location.origin || 'https://www.wannyan-gohan.com'
-  if(navigator.share){ navigator.share({title:'わんにゃんごはんカルテ診断結果', text, url}).catch(()=>{}) }
-  else { window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank', 'noopener') }
+  const text = `うちの子は「${r.type}」でした🐶\nわんにゃんごはんカルテで診断してみたよ`
+  const url = shareUrlFor(r)
+  if(navigator.share){ navigator.share({title:'わんにゃんごはんカルテ', text, url}).catch(()=>{}) }
+  else { copyShareUrl(url) }
   trackEvent('result_share_click', {result_type:r.type})
+}
+function copyShareUrl(url){
+  const onCopied = ()=>{ showToast('リンクをコピーしました') }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(onCopied).catch(()=>fallbackCopy(url, onCopied))
+  } else {
+    fallbackCopy(url, onCopied)
+  }
+}
+function fallbackCopy(url, onCopied){
+  const ta = document.createElement('textarea')
+  ta.value = url; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.opacity='0'
+  document.body.appendChild(ta); ta.select()
+  try{ document.execCommand('copy'); onCopied() }catch(e){}
+  document.body.removeChild(ta)
+}
+function showToast(msg){
+  let el = document.querySelector('.wg-toast')
+  if(!el){ el = document.createElement('div'); el.className = 'wg-toast'; document.body.appendChild(el) }
+  el.textContent = msg
+  el.classList.remove('is-show'); void el.offsetWidth; el.classList.add('is-show')
+  clearTimeout(showToast._t)
+  showToast._t = setTimeout(()=>el.classList.remove('is-show'), 2200)
 }
 function saveShareImage(){
   const canvas = drawShareCard()
