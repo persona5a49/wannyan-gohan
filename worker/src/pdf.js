@@ -33,7 +33,14 @@ export async function renderPdf(env, html) {
       body: JSON.stringify({
         html,
         gotoOptions: { waitUntil: 'networkidle0' },
-        emulateMediaType: 'print'
+        emulateMediaType: 'print',
+        pdfOptions: {
+          format: 'a4',
+          preferCSSPageSize: true,
+          printBackground: true,
+          scale: 1,
+          margin: { top: '0mm', bottom: '0mm', left: '0mm', right: '0mm' }
+        }
       })
     }
   )
