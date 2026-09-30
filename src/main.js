@@ -195,20 +195,20 @@ const FOODS = [
   {name:'ミシュワン シニア犬用', maker:'ミシュワン', kcal:332, protein:21.5, fat:9.5, priceKg:3800, priceUnverified:true, priceBasis:'estimated', packageSize:'', checkedAt:'', priceSourceUrl:'', priceNote:'価格未確認のため販売ページ確認', tags:['senior','japan','small','lowfat'], mainProtein:'チキン', kibbleSize:'小粒', url:'https://px.a8.net/svt/ejp?a8mat=4BCFNK+3257OY+4PA6+C2O5E'},
   {name:'Dr.ケアワン', maker:'アニマルライフ研究所', kcal:347, protein:22.5, fat:7.5, priceKg:3900, priceUnverified:true, priceBasis:'estimated', packageSize:'', checkedAt:'', priceSourceUrl:'', priceNote:'価格未確認のため販売ページ確認', tags:['japan','lowfat','coat','small'], mainProtein:'チキン', fiber:2.5, url:'https://px.a8.net/svt/ejp?a8mat=4BCFNK+3C9KZ6+3RW8+BX3J6'},
   {name:'ペトコトフーズ チキン', maker:'PETOKOTO', kcal:150, protein:13, fat:5.4, priceKg:5200, priceUnverified:true, priceBasis:'estimated', packageSize:'', checkedAt:'', priceSourceUrl:'', priceNote:'価格未確認のため販売ページ確認', tags:['fresh','palatable','stomach'], mainProtein:'チキン', url:'https://hb.afl.rakuten.co.jp/ichiba/57b799d3.42c5d4fb.57b799d4.8e599777/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fpetokotofoods%2F5345%2F&link_type=picttext&ut=eyJwYW...NlfQ%3D%3D'},
-  {name:'ブッチ ブラック・レーベル', maker:'Butch', kcal:116, protein:10.5, fat:8, priceKg:2063, priceCheckedAt:'2026-09-25', priceBasis:'regular', packageSize:'800g', checkedAt:'2026-09-25', priceSourceUrl:'https://butch-japan.co.jp/products/blacklabel800', priceNote:'', tags:['wet','palatable','senior'], mainProtein:'ビーフ', fiber:1.0, url:'https://butch-japan.co.jp/products/blacklabel800'},
+  {name:'ブッチ ブラック・レーベル', maker:'Butch', kcal:116, protein:10.5, fat:8, priceKg:2063, priceCheckedAt:'2026-09-25', priceBasis:'regular', packageSize:'800g', checkedAt:'2026-09-25', priceSourceUrl:'https://butch-japan.co.jp/products/blacklabel800', priceNote:'', tags:['wet','palatable'], mainProtein:'ビーフ', fiber:1.0, url:'https://butch-japan.co.jp/products/blacklabel800'},
   {name:'カナガン ドッグフード チキン', maker:'レティシアン', kcal:376, protein:29, fat:15, priceKg:2600, priceUnverified:true, priceBasis:'estimated', packageSize:'', checkedAt:'', priceSourceUrl:'', priceNote:'価格未確認のため販売ページ確認', tags:['grainfree','palatable','protein'], mainProtein:'チキン', fiber:5.25, kibbleSize:'小粒', url:'https://px.a8.net/svt/ejp?a8mat=4BCFNK+2Q8JLE+3J8+NSP1V&a8ejpredirect=https%3A%2F%2Fwww.canagandogfood.co.jp%2F3503%2F'},
-  {name:'ネルソンズ ドッグフード', maker:'レティシアン', kcal:365, protein:28, fat:12, priceKg:2200, priceUnverified:true, priceBasis:'estimated', packageSize:'', checkedAt:'', priceSourceUrl:'', priceNote:'価格未確認のため販売ページ確認', tags:['medium','ingredient','palatable'], mainProtein:'チキン', fiber:4, url:'https://px.a8.net/svt/ejp?a8mat=4BCFNK+2P1ODU+3J8+15NP77&a8ejpredirect=http%3A%2F%2Fwww.nelsonsdogfood.jp%2F7500%2F'},
+  {name:'ネルソンズ ドッグフード', maker:'レティシアン', kcal:365, protein:28, fat:12, priceKg:2200, priceUnverified:true, priceBasis:'estimated', packageSize:'', checkedAt:'', priceSourceUrl:'', priceNote:'価格未確認のため販売ページ確認', tags:['ingredient','palatable'], mainProtein:'チキン', fiber:4, url:'https://px.a8.net/svt/ejp?a8mat=4BCFNK+2P1ODU+3J8+15NP77&a8ejpredirect=http%3A%2F%2Fwww.nelsonsdogfood.jp%2F7500%2F'},
   {name:'POCHI ザ・ドッグフード エイジングケア', maker:'POCHI', kcal:315, protein:30, fat:10, priceKg:2780, priceCheckedAt:'2026-09-25', priceBasis:'regular', packageSize:'1kg', checkedAt:'2026-09-25', priceSourceUrl:'https://item.rakuten.co.jp/pochi-tokyo/pod0101080-1000g/', priceNote:'', tags:['senior','weight','lowfat','protein'], fiber:9, url:'https://hb.afl.rakuten.co.jp/ichiba/57b79b5b.a0865e7c.57b79b5c.9f959709/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fpochi-tokyo%2Fpod0101080-1000g%2F&link_type=picttext&ut=eyJwYW...NlfQ%3D%3D'},
-  {name:'ペロリコ ドッグフード ライト', maker:'レティシアン', kcal:326, protein:22.5, fat:8, priceKg:2600, priceUnverified:true, priceBasis:'estimated', packageSize:'', checkedAt:'', priceSourceUrl:'', priceNote:'価格未確認のため販売ページ確認', tags:['weight','lowfat','senior'], mainProtein:'チキン', fiber:8, url:'https://px.a8.net/svt/ejp?a8mat=4BCFNK+34IY42+3J8+4GQLWI&a8ejpredirect=https%3A%2F%2Fwww.perolicodogfood.com%2Flight%2FPDL20000'},
+  {name:'ペロリコ ドッグフード ライト', maker:'レティシアン', kcal:326, protein:22.5, fat:8, priceKg:2600, priceUnverified:true, priceBasis:'estimated', packageSize:'', checkedAt:'', priceSourceUrl:'', priceNote:'価格未確認のため販売ページ確認', tags:['weight','lowfat'], mainProtein:'チキン', fiber:8, url:'https://px.a8.net/svt/ejp?a8mat=4BCFNK+34IY42+3J8+4GQLWI&a8ejpredirect=https%3A%2F%2Fwww.perolicodogfood.com%2Flight%2FPDL20000'},
   {name:'ロイヤルカナン ミニ ライトウェイトケア', maker:'Royal Canin', kcal:323, protein:28, fat:9, priceKg:1674, priceCheckedAt:'2026-09-25', priceBasis:'regular', packageSize:'4kg', checkedAt:'2026-09-25', priceSourceUrl:'https://item.rakuten.co.jp/dog-penet/f11225/', priceNote:'', tags:['weight','small','lowfat'], mainProtein:'チキン', url:'https://hb.afl.rakuten.co.jp/ichiba/57b5a3b9.ecf57661.57b5a3ba.8d1f18b9/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fdog-penet%2Ff11225%2F&link_type=picttext&ut=eyJwYW...NlfQ%3D%3D'},
   {name:'ヒルズ サイエンス・ダイエット 減量サポート 小型犬用', maker:'Hill’s', kcal:313, protein:24, fat:9, priceKg:1280, priceCheckedAt:'2026-09-25', priceBasis:'regular', packageSize:'5kg（2.5kg×2）', checkedAt:'2026-09-25', priceSourceUrl:'https://item.rakuten.co.jp/sweet-pet/set0096s/', priceNote:'', tags:['weight','small','lowfat','cost'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b41d3d.0196a071.57b41d3e.22d83eeb/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fsweet-pet%2Fset0096s%2F&link_type=picttext&ut=eyJwYW...NlfQ%3D%3D'},
-  {name:'VetSolution 犬用 胃腸サポート', maker:'Monge', kcal:383, protein:24, fat:15, priceKg:3516, priceCheckedAt:'2026-09-25', priceBasis:'regular', packageSize:'3kg', checkedAt:'2026-09-25', priceSourceUrl:'https://item.rakuten.co.jp/vetslabo/dr000114/', priceNote:'', tags:['stomach','senior'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b84b87.2ec97563.57b84b88.333718c7/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fvetslabo%2Fdr000114%2F&link_type=picttext&ut=eyJwYW...NlfQ%3D%3D'},
+  {name:'VetSolution 犬用 胃腸サポート', maker:'Monge', kcal:383, protein:24, fat:15, priceKg:3516, priceCheckedAt:'2026-09-25', priceBasis:'regular', packageSize:'3kg', checkedAt:'2026-09-25', priceSourceUrl:'https://item.rakuten.co.jp/vetslabo/dr000114/', priceNote:'', tags:['stomach'], url:'https://hb.afl.rakuten.co.jp/ichiba/57b84b87.2ec97563.57b84b88.333718c7/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fvetslabo%2Fdr000114%2F&link_type=picttext&ut=eyJwYW...NlfQ%3D%3D'},
   {name:'ロイヤルカナン サイズヘルス ニュートリション ミニ パピー', maker:'Royal Canin', kcal:408, protein:28.5, fat:18, priceKg:1785, priceCheckedAt:'2026-09-25', priceBasis:'regular', packageSize:'2kg', checkedAt:'2026-09-25', priceSourceUrl:'https://item.rakuten.co.jp/nyanzaq/3182550793001/', priceNote:'', tags:['puppy','small'], mainProtein:'チキン', fiber:2.4, url:'https://hb.afl.rakuten.co.jp/ichiba/57b41c22.08fe12c0.57b41c23.755a6e9f/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fnyanzaq%2F3182550793001%2F&link_type=hybrid_url&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJoeWJyaWRfdXJsIiwic2l6ZSI6IjI0MHgyNDAiLCJuYW0iOjEsIm5hbXAiOiJyaWdodCIsImNvbSI6MSwiY29tcCI6ImRvd24iLCJwcmljZSI6MSwiYm9yIjoxLCJjb2wiOjEsImJidG4iOjEsInByb2QiOjAsImFtcCI6ZmFsc2V9'},
   {name:'ヒルズ サイエンス・ダイエット パピー 小粒', maker:'Hill’s', kcal:377, protein:25, fat:15.3, priceKg:1273, priceCheckedAt:'2026-09-25', priceBasis:'regular', packageSize:'3.3kg', checkedAt:'2026-09-25', priceSourceUrl:'https://item.rakuten.co.jp/sweet-pet/118630123/', priceNote:'', tags:['puppy','small'], mainProtein:'チキン', kibbleSize:'小粒', url:'https://hb.afl.rakuten.co.jp/ichiba/57b41d3d.0196a071.57b41d3e.22d83eeb/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fsweet-pet%2F118630123%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'},
   {name:'ロイヤルカナン ミディアム アダルト', maker:'Royal Canin', kcal:385, protein:23, fat:12, priceKg:1278, priceCheckedAt:'2026-09-25', priceBasis:'regular', packageSize:'10kg', checkedAt:'2026-09-25', priceSourceUrl:'https://item.rakuten.co.jp/1096dog/w-1000475-00-00/', priceNote:'', tags:['adult','medium'], mainProtein:'チキン', fiber:2.4, url:'https://hb.afl.rakuten.co.jp/ichiba/57b41e37.7d60f1c7.57b41e38.dcb0788f/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2F1096dog%2Fw-1000475-00-00%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'},
   {name:'ロイヤルカナン ミニ ステアライズド', maker:'Royal Canin', kcal:345, protein:28, fat:11, priceKg:1746, priceCheckedAt:'2026-09-25', priceBasis:'regular', packageSize:'4kg', checkedAt:'2026-09-25', priceSourceUrl:'https://item.rakuten.co.jp/dog-penet/f11240/', priceNote:'', tags:['neutered','small'], mainProtein:'チキン', fiber:7.6, url:'https://hb.afl.rakuten.co.jp/ichiba/57b5a3b9.ecf57661.57b5a3ba.8d1f18b9/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fdog-penet%2Ff11240%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'},
   {name:'カナガン ドッグフード チキン 大型犬用', maker:'レティシアン', kcal:391, protein:34, fat:17, priceKg:2459, priceCheckedAt:'2026-09-25', priceBasis:'regular', packageSize:'12kg', checkedAt:'2026-09-25', priceSourceUrl:'https://item.rakuten.co.jp/laetitien/rakuten-cdfclb-01/', priceNote:'', tags:['grainfree','palatable','protein','large'], mainProtein:'チキン', kibbleSize:'大粒', url:'https://hb.afl.rakuten.co.jp/ichiba/57d0bda8.6669781c.57d0bda9.2e11d718/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Flaetitien%2Frakuten-cdfclb-01%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'},
-  {name:'ブラバンソンヌ 大型犬・中型犬 成犬用 チキン', maker:'BRABANCONNE', kcal:346, protein:24, fat:14, priceKg:1540, priceCheckedAt:'2026-09-25', priceBasis:'regular', packageSize:'10kg', checkedAt:'2026-09-25', priceSourceUrl:'https://item.rakuten.co.jp/wepet/1746/', priceNote:'', tags:['grainfree','large','medium'], mainProtein:'チキン', url:'https://hb.afl.rakuten.co.jp/ichiba/57d0bfb1.8e204c36.57d0bfb2.847f0048/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fwepet%2F1746%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'},
+  {name:'ブラバンソンヌ 大型犬・中型犬 成犬用 チキン', maker:'BRABANCONNE', kcal:346, protein:24, fat:14, priceKg:1540, priceCheckedAt:'2026-09-25', priceBasis:'regular', packageSize:'10kg', checkedAt:'2026-09-25', priceSourceUrl:'https://item.rakuten.co.jp/wepet/1746/', priceNote:'', tags:['grainfree','large','medium','adult'], mainProtein:'チキン', url:'https://hb.afl.rakuten.co.jp/ichiba/57d0bfb1.8e204c36.57d0bfb2.847f0048/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fwepet%2F1746%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIyNDB4MjQwIiwibmFtIjoxLCJuYW1wIjoicmlnaHQiLCJjb20iOjEsImNvbXAiOiJkb3duIiwicHJpY2UiOjEsImJvciI6MSwiY29sIjoxLCJiYnRuIjoxLCJwcm9kIjowLCJhbXAiOmZhbHNlfQ%3D%3D'},
   {name:'ヒルズ サイエンス・ダイエット シニア 大型犬種用', maker:'Hill’s', kcal:363, protein:14.9, fat:11.4, priceKg:999, priceCheckedAt:'2026-09-25', priceBasis:'regular', packageSize:'12kg', checkedAt:'2026-09-25', priceSourceUrl:'https://item.rakuten.co.jp/hills-pet/52742015309/', priceNote:'', tags:['senior','large'], mainProtein:'チキン', url:'https://hb.afl.rakuten.co.jp/ichiba/57d6950a.8a7042ee.57d6950b.f4742820/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fhills-pet%2F52742015309%2F&link_type=hybrid_url&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJoeWJyaWRfdXJsIiwic2l6ZSI6IjI0MHgyNDAiLCJuYW0iOjEsIm5hbXAiOiJyaWdodCIsImNvbSI6MSwiY29tcCI6ImRvd24iLCJwcmljZSI6MSwiYm9yIjoxLCJjb2wiOjEsImJidG4iOjEsInByb2QiOjAsImFtcCI6ZmFsc2V9'},
   {name:'ロイヤルカナン ミディアム ステアライズド', maker:'Royal Canin', kcal:348, protein:26, fat:11, priceKg:1848, priceCheckedAt:'2026-09-25', priceBasis:'regular', packageSize:'3kg', checkedAt:'2026-09-25', priceSourceUrl:'https://item.rakuten.co.jp/sweet-pet/ro0075si/', priceNote:'', tags:['neutered','medium'], mainProtein:'チキン', fiber:7.4, url:'https://hb.afl.rakuten.co.jp/ichiba/57b41d3d.0196a071.57b41d3e.22d83eeb/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fsweet-pet%2Fro0075si%2F&link_type=hybrid_url&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJoeWJyaWRfdXJsIiwic2l6ZSI6IjI0MHgyNDAiLCJuYW0iOjEsIm5hbXAiOiJyaWdodCIsImNvbSI6MSwiY29tcCI6ImRvd24iLCJwcmljZSI6MSwiYm9yIjoxLCJjb2wiOjEsImJidG4iOjEsInByb2QiOjAsImFtcCI6ZmFsc2V9'},
   {name:'デビフ シニア犬の食事 ささみ＆軟骨', maker:'デビフ(d.b.f)', kcal:85, protein:9, fat:3, priceKg:1838, priceCheckedAt:'2026-09-25', priceBasis:'regular', packageSize:'2.04kg（85g×24缶）', checkedAt:'2026-09-25', priceSourceUrl:'https://item.rakuten.co.jp/kenkocom/559007/', priceNote:'', tags:['wet','senior','japan','palatable'], mainProtein:'鶏ささみ', url:'https://hb.afl.rakuten.co.jp/ichiba/57d844ca.384fc744.57d844cb.07558315/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fkenkocom%2F559007%2F&link_type=hybrid_url&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJoeWJyaWRfdXJsIiwic2l6ZSI6IjI0MHgyNDAiLCJuYW0iOjEsIm5hbXAiOiJyaWdodCIsImNvbSI6MSwiY29tcCI6ImRvd24iLCJwcmljZSI6MSwiYm9yIjoxLCJjb2wiOjEsImJidG4iOjEsInByb2QiOjAsImFtcCI6ZmFsc2V9'}
@@ -435,8 +435,8 @@ const CHOICE_ILLUST_LARGE_KEYS = new Set(['activity','appetite','stool','mouthSt
 const QUESTION_ILLUST = {
   body:'q05-body', neuter:'q06-neuter', human:'q07-stranger', dogs:'q08-dog-approach', place:'q09-place', sound:'q10-sound', foodNew:'q11-new-food',
   activity:'q12-activity', excite:'q13-excite', training:'q14-training', persistence:'q15-persistence', bond:'q16-bond', alone:'q17-alone', appetite:'q18-appetite',
-  treats:'q19-treat', stomach:'q20-stomach', stool:'q21-stool', vomit:'q22-vomit', waterUrine:'q23-water-urine', mouthState:'q24-mouth', currentFood:'q25-current-food',
-  currentFoodName:'q26-food-name', treatAmount:'q27-treat-amount', concerns:'q28-concerns', checkup:'q29-checkup', labs:'q30-labs', preference:'q31-preference', ownerMbti:'q32-mbti'
+  treats:'korote_treats', stomach:'q20-stomach', stool:'q21-stool', vomit:'q22-vomit', waterUrine:'q23-water-urine', mouthState:'korote_mouth', currentFood:'q25-current-food',
+  currentFoodName:'korote_current_food', treatAmount:'q27-treat-amount', concerns:'q28-concerns', checkup:'q29-checkup', labs:'q30-labs', preference:'q31-preference', ownerMbti:'q32-mbti'
 }
 // Q30：結果整理に使う項目と、記録・推移確認用の追加項目を分けて表示する（項目追加・削除や判定ロジック変更はしない）
 const LAB_PRIMARY_KEYS = ['bun','cre','alt','alp','glu','tg','tcho','alb','usg','upc']
@@ -1543,6 +1543,17 @@ function buildRecheckItems(a, r){
   if(r.watch.length || r.redFlags.length) items.push('健診で指摘された数値')
   return [...new Set(items)].slice(0,6)
 }
+// 体重の実測値から商品マスタのsmall/medium/largeタグに対応するサイズ帯を判定する。
+// ロイヤルカナン公式の区分（小型5〜10kg／中型11〜25kg／大型26〜44kg）に合わせた初期値。
+// 商品マスタは現状タグのみ（サイズ数値レンジを個別に持つ商品はない）のため、全商品にこの帯を一律適用する。
+function sizeBandFromWeight(w){
+  const kg = Number(w)
+  if(!(kg>0)) return null
+  if(kg<=10) return 'small'
+  if(kg<=25) return 'medium'
+  return 'large'
+}
+const FOOD_SIZE_TAGS = ['small','medium','large']
 function calcResult(a){
   const redFlags = []
   const watch = []
@@ -1563,8 +1574,31 @@ function calcResult(a){
   const tags = subTags(a, redFlags, watch)
   const therapyFoods = therapeuticCandidates(a)
   const isPuppy = a.age==='under1'
-  const foodPool = isPuppy ? FOODS.filter(f=>f.tags.includes('puppy')) : FOODS.filter(f=>!f.tags.includes('puppy'))
+  const isSenior = ['7-9','10-12','13+'].includes(a.age)
+  const isYoungAdult = a.age==='1-6'
+  const dogSize = sizeBandFromWeight(a.weight)
+  // ライフステージ不一致（明示的に矛盾するタグを持つ商品）を候補から除外する。
+  // 「〇〇タグの商品のみ」に限定するのではなく、タグなし商品は汎用候補として残す。
+  const lifeStageOk = f=>{
+    if(isPuppy) return f.tags.includes('puppy')
+    if(f.tags.includes('puppy')) return false
+    if(isSenior) return !f.tags.includes('adult')
+    return !f.tags.includes('senior')
+  }
+  // サイズ不一致（実測体重から求めたサイズ帯と矛盾するsmall/medium/largeタグ）を候補から除外する。
+  // サイズタグを持たない商品は汎用候補として残す。複数サイズタグを持つ商品は該当サイズを含めば残す。
+  const sizeOk = f=>{
+    if(!dogSize) return true
+    const sizeTags = f.tags.filter(t=>FOOD_SIZE_TAGS.includes(t))
+    if(!sizeTags.length) return true
+    return sizeTags.includes(dogSize)
+  }
+  // パピー向け商品は現行仕様どおり体重帯にかかわらずpuppyタグのみで絞り込む（ご指示の「現行仕様を維持」）。
+  // 大型犬種のパピー（体重的にはmedium/large帯になり得る）でも候補が0件にならないよう、
+  // サイズ除外はパピー以外の場合のみ適用する。
+  const foodPool = FOODS.filter(f=> lifeStageOk(f) && (isPuppy || sizeOk(f)))
   const pseudoR = {profile, tags}
+  const SIZE_REASON = {small:'小型犬向けの粒・カロリー設計', medium:'中型犬向けの粒・カロリー設計', large:'大型犬向けの粒・カロリー設計'}
   const scored = foodPool.map(f=>{
     let s=0; const reasons=[]
     if(isPuppy){
@@ -1573,12 +1607,10 @@ function calcResult(a){
       if((a.preference||[]).includes('cost') && f.priceKg<1600) {s+=3; reasons.push('続けやすい価格帯')}
       return {...f, score:s, reasons: reasons.slice(0,3), note: personalizedFoodNote(a, pseudoR, f)}
     }
-    const isSenior = ['7-9','10-12','13+'].includes(a.age)
-    const isYoungAdult = a.age==='1-6'
     if(isSenior && f.tags.includes('senior')) {s+=2; reasons.push('シニア期向け')}
     if(isYoungAdult && f.tags.includes('adult')) {s+=2; reasons.push('成犬期向け')}
     if(a.neuter==='yes' && f.tags.includes('neutered')) {s+=3; reasons.push('避妊・去勢後の体重管理を意識')}
-    if(a.breedGroup==='large' && f.tags.includes('large')) {s+=4; reasons.push('大型犬向けの粒・カロリー設計')}
+    if(dogSize && f.tags.includes(dogSize)) {s+=4; reasons.push(SIZE_REASON[dogSize])}
     if(tags.includes('体重管理') && (f.kcal<355 || f.tags.includes('lowfat') || f.tags.includes('weight'))) {s+=5; reasons.push('カロリー/脂質を見直しやすい')}
     if(tags.includes('食べムラあり') && (f.tags.includes('palatable') || f.tags.includes('wet') || f.tags.includes('fresh'))) {s+=5; reasons.push('食いつき配慮')}
     if(tags.includes('お腹そっと派') && (f.tags.includes('stomach') || f.tags.includes('lowfat'))) {s+=4; reasons.push('お腹・便に配慮')}
@@ -1588,9 +1620,15 @@ function calcResult(a){
     if((a.preference||[]).includes('cost') && f.priceKg<1600) {s+=3; reasons.push('続けやすい価格帯')}
     if((a.preference||[]).includes('japan') && f.tags.includes('japan')) {s+=2; reasons.push('国産系')}
     return {...f, score:s, reasons: reasons.slice(0,3), note: personalizedFoodNote(a, pseudoR, f)}
-  }).sort((a,b)=>b.score-a.score).slice(0,3)
+  })
+  // 同点タイブレークを配列順（偶然の記述順）に依存させない。
+  // まず「適合理由（reasons）を1件以上持つ」商品をスコア降順で採用し、
+  // 3件に満たない場合のみ、理由ゼロの商品から商品名（ja比較・再現性あり）で補完する。
+  const foodsWithReason = scored.filter(f=>f.reasons.length>0).sort((x,y)=> y.score-x.score || x.name.localeCompare(y.name,'ja'))
+  const foodsFiller = scored.filter(f=>f.reasons.length===0).sort((x,y)=> x.name.localeCompare(y.name,'ja'))
+  const scoredTop = foodsWithReason.concat(foodsFiller).slice(0,3)
   const kcal = rer(a.weight) * derMultiplier(a)
-  const base = {type:typeResult.name, profile, tags, breedNote: BREED_NOTES[a.breedGroup] || '', redFlags, watch, foods:scored, therapyFoods, kcal, snack:kcal*0.1, hasWeight:Number(a.weight)>0, isPuppy, bcs: bcsLabel(a.body)}
+  const base = {type:typeResult.name, profile, tags, breedNote: BREED_NOTES[a.breedGroup] || '', redFlags, watch, foods:scoredTop, therapyFoods, kcal, snack:kcal*0.1, hasWeight:Number(a.weight)>0, isPuppy, bcs: bcsLabel(a.body)}
   base.insights = buildIntegratedInsights(a, base)
   base.conditions = foodSelectionConditions(a, base)
   base.vetConsult = vetConsultItems(a, base)
