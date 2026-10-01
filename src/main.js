@@ -2084,13 +2084,30 @@ function showToast(msg){
   clearTimeout(showToast._t)
   showToast._t = setTimeout(()=>el.classList.remove('is-show'), 2200)
 }
+function showSaveImageOverlay(dataUrl){
+  const overlay = document.createElement('div')
+  overlay.className = 'wg-save-overlay'
+  overlay.innerHTML = `<div class="wg-save-overlay-inner"><button type="button" class="wg-save-overlay-close" aria-label="閉じる">✕</button><img src="${dataUrl}" alt="診断結果シェア画像"><p>画像を長押しして「写真に保存」を選んでください</p></div>`
+  overlay.addEventListener('click', e=>{ if(e.target === overlay) overlay.remove() })
+  overlay.querySelector('.wg-save-overlay-close').addEventListener('click', ()=> overlay.remove())
+  document.body.appendChild(overlay)
+}
 function saveShareImage(){
   const canvas = drawShareCard()
   if(!canvas) return
-  const a = document.createElement('a')
-  a.download = 'wannyan-gohan-type.png'
-  a.href = canvas.toDataURL('image/png')
-  a.click()
+  const dataUrl = canvas.toDataURL('image/png')
+  // iOS Safari ignores the a[download] attribute for data URIs, so a.click() silently does
+  // nothing there. Show the image inline instead so the user can long-press it to save it
+  // (long-pressing an <img> to save is native WebKit behavior, unlike a forced download).
+  const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+  if(isIOS){
+    showSaveImageOverlay(dataUrl)
+  } else {
+    const a = document.createElement('a')
+    a.download = 'wannyan-gohan-type.png'
+    a.href = dataUrl
+    a.click()
+  }
   trackEvent('result_share_image_save')
 }
 
