@@ -425,3 +425,10 @@ html,body{max-width:100%;overflow-x:hidden}
 .wg-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(12px);background:#263028;color:#fff;font-weight:800;font-size:.9rem;padding:12px 20px;border-radius:999px;box-shadow:0 10px 24px rgba(0,0,0,.18);opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;z-index:50;max-width:90vw;text-align:center}
 .wg-toast.is-show{opacity:1;transform:translateX(-50%) translateY(0)}
 @media(max-width:760px){.wg-toast{bottom:calc(20px + env(safe-area-inset-bottom))}}
+
+/* iOS save-image overlay (long-press to save, since a[download] is ignored there) */
+.wg-save-overlay{position:fixed;inset:0;background:rgba(23,33,26,.78);display:flex;align-items:center;justify-content:center;z-index:60;padding:20px}
+.wg-save-overlay-inner{position:relative;max-width:92vw;max-height:88vh;display:flex;flex-direction:column;align-items:center;gap:12px}
+.wg-save-overlay-inner img{max-width:100%;max-height:70vh;border-radius:16px;box-shadow:0 20px 40px rgba(0,0,0,.35)}
+.wg-save-overlay-inner p{color:#fff;font-weight:800;font-size:.92rem;text-align:center;margin:0}
+.wg-save-overlay-close{position:absolute;top:-14px;right:-14px;width:36px;height:36px;border-radius:999px;border:0;background:#fff;color:#263028;font-weight:900;font-size:1rem;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.25)}
