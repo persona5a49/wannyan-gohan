@@ -162,7 +162,7 @@ body{background:linear-gradient(180deg,#fbfaf6 0%,#f4efe5 100%)}
 .hero-v2-shadow{position:absolute;width:280px;height:56px;left:50%;bottom:36px;transform:translateX(-50%);background:radial-gradient(ellipse at center,rgba(74,58,52,.16) 0%,rgba(74,58,52,0) 72%);z-index:1;pointer-events:none}
 .hero-v2-korote{position:absolute;width:96px;bottom:-16px;right:0;z-index:3}
 .hero-v2-korote-solo{position:relative;width:440px;max-width:88%;bottom:auto;right:auto;z-index:2;image-rendering:auto}
-.hero-v2-visual .decor{position:absolute;pointer-events:none}
+.hero-v2-visual .decor{position:absolute;pointer-events:none;height:auto}
 .hero-v2-blob{position:absolute;width:380px;height:380px;top:50%;left:50%;transform:translate(-50%,-50%);z-index:0;border-radius:44% 56% 58% 42%/54% 42% 58% 46%;background:radial-gradient(circle at 40% 35%,var(--b-pinkbeige) 0%,#f7e8de 65%,rgba(247,232,222,0) 100%)}
 .hero-v2-visual .decor-paw1{width:38px;top:8%;left:2%;z-index:1;opacity:.85;transform:rotate(-12deg)}
 .hero-v2-visual .decor-paw2{width:30px;bottom:14%;right:4%;z-index:1;opacity:.8;transform:rotate(18deg)}
@@ -432,3 +432,24 @@ html,body{max-width:100%;overflow-x:hidden}
 .wg-save-overlay-inner img{max-width:100%;max-height:70vh;border-radius:16px;box-shadow:0 20px 40px rgba(0,0,0,.35)}
 .wg-save-overlay-inner p{color:#fff;font-weight:800;font-size:.92rem;text-align:center;margin:0}
 .wg-save-overlay-close{position:absolute;top:-14px;right:-14px;width:36px;height:36px;border-radius:999px;border:0;background:#fff;color:#263028;font-weight:900;font-size:1rem;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.25)}
+
+/* dog/cat availability note */
+.dog-cat-note{margin:10px 0 0;font-size:.84rem;font-weight:700;color:var(--b-subtext,var(--muted))}
+
+/* result page: STEP hierarchy */
+.res-step-label{margin:0 0 6px;display:block}
+.res-step-label-pdf{margin:18px 0 -4px}
+.res-share-step{margin:18px 0}
+.share-reveal-btn{margin-top:4px}
+.res-share-main.is-collapsed{display:none}
+
+/* 4-card discovery grids (homepage "診断だけじゃない" + result STEP4) */
+.discover-v2{max-width:1080px;margin:0 auto;padding:36px 18px 8px;text-align:center}
+.discover-v2-eyebrow{display:block}
+.discover-v2-title{font-size:clamp(22px,3.6vw,30px);margin:4px 0 20px}
+.discover-v2-grid,.res-step4-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:14px}
+.discover-v2-card,.res-step4-card{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--paper,#fffdf8);border:1px solid var(--line,#e7dece);border-radius:20px;padding:18px 12px;text-decoration:none;color:inherit;text-align:center}
+.discover-v2-card img,.res-step4-card img{width:40px;height:40px;object-fit:contain}
+.discover-v2-card strong,.res-step4-card strong{font-size:.95rem;color:var(--b-text,#4A3A34)}
+.discover-v2-card span,.res-step4-card span{font-size:.78rem;color:var(--muted)}
+@media(max-width:760px){.discover-v2-grid,.res-step4-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
