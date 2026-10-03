@@ -1662,7 +1662,7 @@ function calcResult(a){
 
 function render(){
   document.querySelector('#app').innerHTML = `
-    <header class="site-header"><div class="brand">わんにゃんごはんカルテ</div><nav class="nav-links"><a href="#mypage">うちの子ホーム</a><a href="/products/">商品一覧</a><a href="/products/compare/">比較</a><a href="#articles">記事</a><a href="/type-guides/">タイプ別ガイド</a><a href="#tracker">体重記録</a><a href="/pdf-karute/">詳細ごはんカルテPDF</a></nav><a href="#diagnosis" class="mini-cta js-diagnosis-start" data-location="header">無料でチェック</a></header>
+    <header class="site-header"><div class="brand">わんにゃんごはんカルテ</div><nav class="nav-links"><a href="#mypage">うちの子ホーム</a><a href="/products/">商品一覧</a><a href="/products/compare/">比較</a><a href="#articles">記事</a><a href="/type-guides/">タイプ別ガイド</a><a href="#tracker">体重記録</a><a href="/pdf-karute/">詳細ごはんカルテPDF</a></nav><a href="#diagnosis" class="mini-cta js-diagnosis-start" data-location="header">無料診断をはじめる</a></header>
     <main>
       <section class="hero-v2">
         <div class="hero-v2-copy">
@@ -1670,10 +1670,11 @@ function render(){
           <h1 class="hero-v2-title">うちの子の<br>ごはんと健康を、<br>ずっといっしょに。</h1>
           <p class="hero-v2-lead">性格や体型、健診結果から、うちの子にぴったりのごはん量・おやつ・フード選びをわかりやすく整理します。</p>
           <div class="hero-v2-actions">
-            <a href="#diagnosis" class="cta-coral js-diagnosis-start" data-location="hero">うちの子タイプ診断をはじめる →</a>
+            <a href="#diagnosis" class="cta-coral js-diagnosis-start" data-location="hero">無料でうちの子診断をはじめる →</a>
             <a href="/pdf-karute/" class="text-link hero-sub-link">くわしいPDFカルテもある →</a>
           </div>
           <div class="trust-v2"><span>約3分でできる</span><span>無料で診断</span><span>登録不要</span></div>
+          <p class="dog-cat-note">🐶 現在は犬版を公開中です（猫版は準備中）</p>
         </div>
         <div class="hero-v2-visual">
           <div class="hero-v2-blob" aria-hidden="true"></div>
@@ -1698,9 +1699,19 @@ function render(){
         </div>
       </section>
       <section class="diagnosis" id="diagnosis">${renderDiagnosis()}</section>
+      ${step < QUESTIONS.length ? `<section class="discover-v2">
+        <p class="eyebrow-v2 discover-v2-eyebrow">診断だけじゃない</p>
+        <h2 class="discover-v2-title">毎日の健康管理にも使えます</h2>
+        <div class="discover-v2-grid">
+          <a class="discover-v2-card" href="#mypage"><img src="/assets/icons/heart.png" alt=""><strong>マイページ</strong><span>これまでの記録をまとめて見る</span></a>
+          <a class="discover-v2-card" href="#tracker"><img src="/assets/icons/scale.png" alt=""><strong>体重記録</strong><span>日々の体重の変化を記録する</span></a>
+          <a class="discover-v2-card" href="/products/compare/"><img src="/assets/icons/food.png" alt=""><strong>フード比較</strong><span>条件に合うフードを比べる</span></a>
+          <a class="discover-v2-card" href="#articles"><img src="/assets/icons/leaf.png" alt=""><strong>ごはん記事</strong><span>気になる悩みを記事で深掘り</span></a>
+        </div>
+      </section>` : ''}
       <section class="mypage" id="mypage">${renderMyPage()}</section>
       <section class="tracker" id="tracker">${renderTracker()}</section>
-      <section class="article-list" id="articles"><h2>うちの子のごはん記事</h2><p class="helper">診察室でよく出る悩みを、できるだけ普通の言葉でまとめました。記事末に参考文献も載せています。</p><div class="article-cards">${ARTICLES.map(a=>`<a class="article-card js-article-click" data-article="${a.slug}" href="/articles/${a.slug}/"><span>記事</span><strong>${a.title}</strong><small>${a.lead}</small></a>`).join('')}</div><p><a class="secondary" href="/type-guides/">タイプ別ごはんガイドを見る</a></p></section>
+      <section class="article-list" id="articles"><h2>うちの子のごはん記事</h2><p class="helper">診察室でよく出る悩みを、できるだけ普通の言葉でまとめました。記事末に参考文献も載せています。</p><div class="article-cards">${ARTICLES.slice(0,6).map(a=>`<a class="article-card js-article-click" data-article="${a.slug}" href="/articles/${a.slug}/"><span>記事</span><strong>${a.title}</strong><small>${a.lead}</small></a>`).join('')}</div><p><a class="secondary" href="/articles/">すべての記事を見る（${ARTICLES.length}件）</a> <a class="secondary" href="/type-guides/">タイプ別ごはんガイドを見る</a></p></section>
       <section class="article-list" id="compare"><h2>条件から見るフード比較</h2><p class="helper">年齢・体型・活動量・食べ方・健診メモによって、見るべき成分やコストは変わります。まずは診断結果で重視条件を整理し、比較ページではkcal・脂質・粒サイズ・価格・1日コストを見比べます。</p><div class="article-cards"><a class="article-card" href="/products/compare/senior-dog-low-fat/"><span>比較</span><strong>低脂肪ドッグフード比較</strong><small>脂質や体重管理が気になる子向け。</small></a><a class="article-card" href="/products/compare/senior-dog-small-kibble/"><span>比較</span><strong>小粒ドッグフード比較</strong><small>口・歯・食べやすさが気になる小型犬向け。</small></a><a class="article-card" href="/products/compare/senior-dog-weight-control/"><span>比較</span><strong>体重管理ドッグフード比較</strong><small>太りやすくなった子の食事整理に。</small></a></div></section>
     </main>
     <footer><p>本サイトはペットフード選びの参考情報を提供するもので、診断・治療・療法食の指示ではありません。持病、症状、療法食利用中の場合は獣医師に相談してください。PR｜本サイトはアフィリエイト広告を利用しています。<br><a href="/legal/tokushoho/">特定商取引法に基づく表記</a>　<a href="/legal/privacy/">プライバシーポリシー</a></p></footer>`
@@ -1709,7 +1720,7 @@ function render(){
 
 
 function renderArticle(article){
-  return `<article class="article-full" id="article-${article.slug}"><p class="eyebrow">読みもの</p><h2>${article.title}</h2><p class="lead small">${article.lead}</p>${article.sections.map(([h,b])=>`<section><h3>${h}</h3><p>${b}</p></section>`).join('')}<div class="article-cta"><a class="primary" href="#diagnosis">うちの子タイプ診断を試す</a><a class="secondary" href="#tracker">体重記録を使う</a></div></article>`
+  return `<article class="article-full" id="article-${article.slug}"><p class="eyebrow">読みもの</p><h2>${article.title}</h2><p class="lead small">${article.lead}</p>${article.sections.map(([h,b])=>`<section><h3>${h}</h3><p>${b}</p></section>`).join('')}<div class="article-cta"><a class="primary" href="#diagnosis">無料診断をはじめる</a><a class="secondary" href="#tracker">体重記録を使う</a></div></article>`
 }
 
 function formatDateJp(iso){ return (iso || '').replace(/-/g,'/') }
@@ -1776,6 +1787,7 @@ function renderDiagnosis(){
     return `<div class="result karte res-v2">
       <div class="res-col-left">
       <div class="res-hero">
+        <p class="eyebrow res-step-label">STEP 1 ・ 結果を見る</p>
         <div class="res-hero-top">
           <img class="res-hero-avatar" src="${avatarSrc}" alt="" loading="lazy">
           <p class="res-hero-speech">${name}のこと、少し分かってきたよ。</p>
@@ -1783,7 +1795,7 @@ function renderDiagnosis(){
         <p class="res-type-eyebrow">${name}は…</p>
         <p class="res-type-name">「${r.type}」</p>
         <div class="trait-list res-trait-list">${shownTags.map(x=>`<span>${x}</span>`).join('')}</div>
-        ${r.hasWeight ? `<div class="res-metrics res-metrics-3">${refGrams ? `<div class="res-metric res-metric-gram"><strong>${refGrams}<small>g</small></strong><span>1日のごはん量目安</span></div>` : ''}<div class="res-metric"><strong>${Math.round(r.kcal)}<small>kcal</small></strong><span>目安カロリー</span></div><div class="res-metric res-metric-snack"><strong>${Math.round(r.snack)}<small>kcalまで</small></strong><span>おやつの上限</span></div></div>${refGrams ? `<p class="helper res-gram-note">※ごはん量は候補フード「${refFood.name}」のカロリー密度で計算した目安です。実際に使うフードの表示に合わせて調整してください。</p>` : ''}${evidenceToggle('energy')}${r.isPuppy ? `<p class="helper">子犬期は成長段階によって必要カロリーが大きく変わるため、上の数字はあくまで簡易的な目安です。フードのパッケージ記載の給与量や、かかりつけの獣医師の指示を優先してください。</p>` : ''}` : `<div class="note"><h3>カロリー計算</h3><p>体重を入力すると、目安カロリーとおやつ上限を表示できます。今回はタイプ判定と注意点のみ表示します。</p></div>`}
+        ${r.hasWeight ? `<div class="res-metrics res-metrics-3"><div class="res-metric"><strong>${Math.round(r.kcal)}<small>kcal</small></strong><span>1日の必要カロリー目安</span></div>${refGrams ? `<div class="res-metric res-metric-gram"><strong>${refGrams}<small>g</small></strong><span>この候補フードの場合・約${refGrams}g/日</span></div>` : ''}<div class="res-metric res-metric-snack"><strong>${Math.round(r.snack)}<small>kcalまで</small></strong><span>おやつの上限</span></div></div>${refGrams ? `<p class="helper res-gram-note">※ごはん量は候補フード「${refFood.name}」のカロリー密度で計算した目安です。実際に使うフードの表示に合わせて調整してください。</p>` : ''}${evidenceToggle('energy')}${r.isPuppy ? `<p class="helper">子犬期は成長段階によって必要カロリーが大きく変わるため、上の数字はあくまで簡易的な目安です。フードのパッケージ記載の給与量や、かかりつけの獣医師の指示を優先してください。</p>` : ''}` : `<div class="note"><h3>カロリー計算</h3><p>体重を入力すると、目安カロリーとおやつ上限を表示できます。今回はタイプ判定と注意点のみ表示します。</p></div>`}
         <button type="button" class="text-link res-save-mini save-share">📷 結果画像を保存</button>
       </div>
       ${answers.body ? `<div class="karte-section res-block"><h3>いまの体型</h3><div class="res-bcs-row"><img class="res-bcs-avatar" src="${avatarSrc}" alt="" loading="lazy"><div class="res-bcs-info">${r.bcs ? `<span class="res-bcs-badge">${r.bcs}</span>` : ''}<div class="res-bcs-scale">${['emaciated','thin','normal','chubby','obese'].map(k=>`<span class="res-bcs-step${answers.body===k?' is-active':''}">${BODY_LABEL_SHORT[k]}</span>`).join('')}</div>${r.hasWeight ? `<p class="res-bcs-weight">現在の体重　<strong>${answers.weight}kg</strong></p>` : ''}</div></div></div>` : ''}
@@ -1794,7 +1806,14 @@ function renderDiagnosis(){
       </div>
       ${r.redFlags.length ? `<div class="alert"><h3>フード変更前に主治医へ確認</h3><ul>${r.redFlags.map(x=>`<li>${x.text}${evidenceToggle(x.key)}</li>`).join('')}</ul></div>`:''}
       ${r.watch.length ? `<div class="note"><h3>健診メモ</h3><ul>${r.watch.map(x=>`<li>${x.text}${evidenceToggle(x.key)}</li>`).join('')}</ul></div>`:''}
-      <div class="share-panel res-share-main"><p class="eyebrow">このカルテを残しておこう</p><button class="primary save-share" type="button">結果画像を保存</button><button class="secondary native-share" type="button">LINE/Xで共有</button><canvas id="shareCanvas" width="1200" height="630" aria-label="診断結果シェア画像"></canvas><p class="helper">画像にはタイプ名と性格の特徴のみを表示します。医療情報や健診数値は含まれません。</p></div>
+      <div class="karte-section res-share-step">
+        <p class="eyebrow res-step-label">STEP 2 ・ 結果を残す</p>
+        <h3>診断結果をシェアする</h3>
+        <p class="helper">タイプ名と性格の特徴だけを、LINEやXで送ったり画像で保存したりできます。</p>
+        <button type="button" class="secondary share-reveal-btn" aria-expanded="false">結果をシェア・保存する ▾</button>
+        <div class="share-panel res-share-main is-collapsed"><button class="primary save-share" type="button">結果画像を保存</button><button class="secondary native-share" type="button">LINE/Xで共有</button><canvas id="shareCanvas" width="1200" height="630" aria-label="診断結果シェア画像"></canvas><p class="helper">画像にはタイプ名と性格の特徴のみを表示します。医療情報や健診数値は含まれません。</p></div>
+      </div>
+      <p class="eyebrow res-step-label res-step-label-pdf">STEP 3 ・ もっと詳しく整理する</p>
       <div class="pdf-cta pdf-cta-main">
         <div class="pdf-cta-top">
           <img class="pdf-cta-illust" src="/assets/korote/pdf-cta-korote.png" alt="" loading="lazy">
@@ -1803,6 +1822,16 @@ function renderDiagnosis(){
         <div class="pdf-mini-grid"><span>健診値の整理</span><span>フード相談メモ</span><span>おやつ量チェック</span></div>
         <p class="helper"><strong>こんな時に便利です：</strong>健診結果がある／今のフードを続けるか迷う／病院で短時間に相談したい時。<br><strong>先に受診：</strong>緊急症状がある場合は、PDFより先に動物病院へ相談してください。</p>
         <div class="pdf-cta-action"><a class="primary pdf-interest" data-price="980" href="/pdf-karute/">980円で相談用カルテを作る</a><small>健診結果がなくても作成できます。お支払い後、自動でPDFを作成し完成次第メールでお届けします。</small></div>
+      </div>
+      <div class="karte-section res-step4">
+        <p class="eyebrow res-step-label">STEP 4 ・ 毎日の管理へ</p>
+        <h3>これからも、${name}の記録を続けよう</h3>
+        <div class="res-step4-grid">
+          <a class="res-step4-card" href="#mypage"><img src="/assets/icons/heart.png" alt=""><strong>マイページ</strong><span>記録をまとめて見る</span></a>
+          <a class="res-step4-card" href="#tracker"><img src="/assets/icons/scale.png" alt=""><strong>体重記録</strong><span>日々の変化を記録する</span></a>
+          <a class="res-step4-card" href="/products/compare/"><img src="/assets/icons/food.png" alt=""><strong>フード比較</strong><span>条件に合うフードを比べる</span></a>
+          <a class="res-step4-card" href="#articles"><img src="/assets/icons/leaf.png" alt=""><strong>おすすめ記事</strong><span>気になる悩みを深掘り</span></a>
+        </div>
       </div>
       <details class="res-detail-toggle"><summary>もっとくわしく見る</summary>
       <div class="res-detail-inner">
@@ -1826,7 +1855,7 @@ function renderDiagnosis(){
       <div class="karte-section"><h3>この結果から深掘りする記事</h3><p class="helper">${name}の回答で気になったポイントごとに、関連する記事をまとめました。</p>${r.relatedGroups.map(g=>`<div class="related-group"><h4>${g.topic}</h4><div class="article-cards mini">${g.articles.map(a=>`<a class="article-card" href="/articles/${a.slug}/"><span>関連記事</span><strong>${a.title}</strong><small>${a.lead}</small></a>`).join('')}</div></div>`).join('')}</div>
       <div class="karte-section next-steps"><h3>今日からできる3つのこと</h3><ol>${r.nextSteps.map(x=>`<li>${x}</li>`).join('')}</ol></div>
       <div class="karte-section recheck-note"><h3><img class="korote-inline" src="/assets/korote/korote_relax.png" alt="" loading="lazy">3か月後に見直したい項目</h3><p class="helper">同じ診断にもう一度答えると、今回との変化を自動で比較して表示します。継続して使うことで、単発の診断より変化が見えやすくなります。</p><ul>${r.recheckItems.map(x=>`<li>${x}</li>`).join('')}</ul></div>
-      ${r.ownerCompat ? `<div class="karte-section owner-compat"><h3>飼い主様（${r.ownerCompat.mbti}${r.ownerCompat.nickname ? '：'+r.ownerCompat.nickname+'タイプ' : ''}）との相性</h3><p>${r.ownerCompat.text}</p><p class="helper">PDFカルテでは、活動量・慎重さも含めた4項目でさらに詳しく、具体的な付き合い方のヒントまで深掘りします。</p></div>` : ''}
+      ${r.ownerCompat ? `<div class="karte-section owner-compat"><p class="eyebrow">飼い主さん向け・おまけ診断</p><h3>飼い主様（${r.ownerCompat.mbti}${r.ownerCompat.nickname ? '：'+r.ownerCompat.nickname+'タイプ' : ''}）との相性</h3><p>${r.ownerCompat.text}</p><p class="helper">PDFカルテでは、活動量・慎重さも含めた4項目でさらに詳しく、具体的な付き合い方のヒントまで深掘りします。</p></div>` : ''}
       </div></details>
       <button class="secondary reset">もう一度診断</button></div>`
   }
@@ -1905,7 +1934,7 @@ function renderMyPage(){
   if(!all.length){
     return `<p class="eyebrow">うちの子ホーム</p><h2>マイページ</h2>
       ${mascotBubble('empty', 'まだ記録がないみたい。まずは無料診断から始めてみよう。', 64)}
-      <a class="primary js-diagnosis-start js-mypage-start" href="#diagnosis" data-location="mypage_empty">うちの子タイプ診断をする</a>`
+      <a class="primary js-diagnosis-start js-mypage-start" href="#diagnosis" data-location="mypage_empty">無料診断をはじめる</a>`
   }
   const dogNames = listDogNames(all)
   // 選択中の子が履歴から消えていたら（=削除等）直近の子に戻す
@@ -2017,26 +2046,57 @@ function updateNextButtonState(){
   btn.disabled = !canProceed(QUESTIONS[step])
   if(!btn.disabled) document.querySelector('.dq-inline-error')?.remove()
 }
-function drawShareCard(){
+function roundRectPath(ctx, x, y, w, h, radius){
+  ctx.beginPath()
+  ctx.moveTo(x+radius, y)
+  ctx.arcTo(x+w, y, x+w, y+h, radius)
+  ctx.arcTo(x+w, y+h, x, y+h, radius)
+  ctx.arcTo(x, y+h, x, y, radius)
+  ctx.arcTo(x, y, x+w, y, radius)
+  ctx.closePath()
+}
+function shareAvatarSrc(){
+  const appearance = loadCharacterAppearance(answers.dogName)
+  const breed = (appearance && appearance.breed) || (BREEDGROUP_CHAR_PREVIEW[answers.breedGroup] && BREEDGROUP_CHAR_PREVIEW[answers.breedGroup][0]) || 'toy_poodle'
+  return `/character-parts/breed/${breed}.png`
+}
+// シェアカードの主役は「キャラクター・名前・タイプ名」。16タイプの数字バッジは
+// 小さな補足バッジに留め、ブランドトーンから浮かないようにする。
+function drawShareCard(onReady){
   const canvas = document.querySelector('#shareCanvas')
   if(!canvas) return null
   const r = calcResult(answers)
   const name = answers.dogName ? `${answers.dogName}ちゃん` : 'うちの子'
   const ctx = canvas.getContext('2d')
-  ctx.fillStyle = '#faf7ef'; ctx.fillRect(0,0,1200,630)
-  ctx.fillStyle = '#f1eadb'; ctx.beginPath(); ctx.arc(1010,120,210,0,Math.PI*2); ctx.fill()
-  ctx.fillStyle = '#EE8D78'; ctx.fillRect(0,0,1200,18)
-  ctx.fillStyle = '#263028'; ctx.font = 'bold 42px sans-serif'; ctx.fillText('わんにゃんごはんカルテ', 76, 92)
-  ctx.fillStyle = '#6f8a55'; ctx.font = 'bold 28px sans-serif'; ctx.fillText('C-BARQ参考セルフチェック', 76, 138)
-  ctx.fillStyle = '#17211a'; ctx.font = 'bold 62px sans-serif'; ctx.fillText(`${name}は`, 76, 242)
-  ctx.fillStyle = '#4A3A34'; ctx.font = 'bold 74px sans-serif'
-  const typeEndY = wrapCanvasText(ctx, `「${r.type}」`, 76, 336, 860, 100)
-  ctx.fillStyle = '#3f463d'; ctx.font = '30px sans-serif'
-  const axisEndY = wrapCanvasText(ctx, r.profile.axes.map(x=>AXIS_COPY[x]).join('、'), 76, typeEndY + 70, 780, 44)
-  ctx.fillStyle = '#b8834b'; ctx.font = 'bold 28px sans-serif'
-  ctx.fillText('wannyan-gohan.com', 76, Math.max(axisEndY + 46, 566))
-  ctx.fillStyle = '#EE8D78'; ctx.font = 'bold 120px sans-serif'; ctx.fillText('16', 930, 370)
-  ctx.font = 'bold 30px sans-serif'; ctx.fillText('TYPE', 950, 418)
+  function paint(avatarImg){
+    ctx.clearRect(0,0,1200,630)
+    ctx.fillStyle = '#faf7ef'; ctx.fillRect(0,0,1200,630)
+    ctx.fillStyle = '#f1eadb'; ctx.beginPath(); ctx.arc(1010,470,240,0,Math.PI*2); ctx.fill()
+    ctx.fillStyle = '#EE8D78'; ctx.fillRect(0,0,1200,18)
+    ctx.fillStyle = '#263028'; ctx.font = 'bold 38px sans-serif'; ctx.fillText('わんにゃんごはんカルテ', 76, 84)
+    ctx.fillStyle = '#6f8a55'; ctx.font = 'bold 24px sans-serif'; ctx.fillText('C-BARQ参考セルフチェック', 76, 120)
+    ctx.fillStyle = '#17211a'; ctx.font = 'bold 56px sans-serif'; ctx.fillText(`${name}は`, 76, 212)
+    ctx.fillStyle = '#4A3A34'; ctx.font = 'bold 66px sans-serif'
+    const typeEndY = wrapCanvasText(ctx, `「${r.type}」`, 76, 300, 800, 88)
+    ctx.fillStyle = '#3f463d'; ctx.font = '28px sans-serif'
+    const axisEndY = wrapCanvasText(ctx, r.profile.axes.map(x=>AXIS_COPY[x]).join('、'), 76, typeEndY + 56, 760, 40)
+    ctx.fillStyle = '#b8834b'; ctx.font = 'bold 26px sans-serif'
+    ctx.fillText('wannyan-gohan.com', 76, Math.max(axisEndY + 50, 566))
+    // 「16 / TYPE」の巨大バッジはやめ、小さな補足バッジにする
+    ctx.fillStyle = '#ffffff'
+    roundRectPath(ctx, 924, 44, 208, 48, 24); ctx.fill()
+    ctx.fillStyle = '#EE8D78'; ctx.font = 'bold 21px sans-serif'; ctx.fillText('16タイプのうち1つ', 946, 75)
+    if(avatarImg){
+      const size = 280
+      ctx.drawImage(avatarImg, 1200 - size - 56, 630 - size - 16, size, size)
+    }
+  }
+  paint(null)
+  const avatarSrc = shareAvatarSrc()
+  const img = new Image()
+  img.onload = ()=>{ paint(img); if(onReady) onReady() }
+  img.onerror = ()=>{ if(onReady) onReady() }
+  img.src = avatarSrc
   return canvas
 }
 function wrapCanvasText(ctx, text, x, y, maxWidth, lineHeight){
@@ -2093,8 +2153,10 @@ function showSaveImageOverlay(dataUrl){
   document.body.appendChild(overlay)
 }
 function saveShareImage(){
-  const canvas = drawShareCard()
+  const canvas = document.querySelector('#shareCanvas')
   if(!canvas) return
+  // キャラクター画像の読み込み完了を待ってから書き出す（先に描いた文字だけの状態を保存しないため）
+  drawShareCard(()=>{
   const dataUrl = canvas.toDataURL('image/png')
   // iOS Safari ignores the a[download] attribute for data URIs, so a.click() silently does
   // nothing there. Show the image inline instead so the user can long-press it to save it
@@ -2109,6 +2171,7 @@ function saveShareImage(){
     a.click()
   }
   trackEvent('result_share_image_save')
+  })
 }
 
 function bindEvents(){
@@ -2129,6 +2192,14 @@ function bindEvents(){
   }))
   document.querySelectorAll('.save-share').forEach(el=>el.addEventListener('click', saveShareImage))
   document.querySelectorAll('.native-share').forEach(el=>el.addEventListener('click', shareResult))
+  document.querySelector('.share-reveal-btn')?.addEventListener('click', e=>{
+    const btn = e.currentTarget
+    const panel = btn.parentElement.querySelector('.res-share-main')
+    const open = panel.classList.toggle('is-collapsed') === false
+    btn.setAttribute('aria-expanded', String(open))
+    btn.textContent = open ? '結果のシェアを閉じる ▴' : '結果をシェア・保存する ▾'
+    if(open) trackEvent('share_panel_open')
+  })
   drawShareCard()
   document.querySelectorAll('input[type=radio]').forEach(el=>el.addEventListener('change', e=>{answers[e.target.name]=e.target.value; showValidationError=false; updateNextButtonState(); saveDiagnosisDraft()}))
   document.querySelectorAll('input[type=checkbox]').forEach(el=>el.addEventListener('change', e=>{const k=e.target.name; answers[k]=answers[k]||[]; answers[k]=e.target.checked?[...new Set([...answers[k],e.target.value])]:answers[k].filter(x=>x!==e.target.value); showValidationError=false; updateNextButtonState(); saveDiagnosisDraft()}))
