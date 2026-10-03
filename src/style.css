@@ -162,7 +162,7 @@ body{background:linear-gradient(180deg,#fbfaf6 0%,#f4efe5 100%)}
 .hero-v2-shadow{position:absolute;width:280px;height:56px;left:50%;bottom:36px;transform:translateX(-50%);background:radial-gradient(ellipse at center,rgba(74,58,52,.16) 0%,rgba(74,58,52,0) 72%);z-index:1;pointer-events:none}
 .hero-v2-korote{position:absolute;width:96px;bottom:-16px;right:0;z-index:3}
 .hero-v2-korote-solo{position:relative;width:440px;max-width:88%;bottom:auto;right:auto;z-index:2;image-rendering:auto}
-.hero-v2-visual .decor{position:absolute;pointer-events:none}
+.hero-v2-visual .decor{position:absolute;pointer-events:none;height:auto}
 .hero-v2-blob{position:absolute;width:380px;height:380px;top:50%;left:50%;transform:translate(-50%,-50%);z-index:0;border-radius:44% 56% 58% 42%/54% 42% 58% 46%;background:radial-gradient(circle at 40% 35%,var(--b-pinkbeige) 0%,#f7e8de 65%,rgba(247,232,222,0) 100%)}
 .hero-v2-visual .decor-paw1{width:38px;top:8%;left:2%;z-index:1;opacity:.85;transform:rotate(-12deg)}
 .hero-v2-visual .decor-paw2{width:30px;bottom:14%;right:4%;z-index:1;opacity:.8;transform:rotate(18deg)}

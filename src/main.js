@@ -1661,6 +1661,10 @@ function calcResult(a){
 }
 
 function render(){
+  // 診断済み（=履歴がある）ユーザーには「診断だけじゃない」導線を強く見せ、
+  // 初めて来たユーザーには無料診断を主導線のままにする。結果画面自体のSTEP4と
+  // 内容が重複しないよう、結果表示中（step>=QUESTIONS.length）はここでは出さない。
+  const hasDiagnosisHistory = loadHistory().length > 0
   document.querySelector('#app').innerHTML = `
     <header class="site-header"><div class="brand">わんにゃんごはんカルテ</div><nav class="nav-links"><a href="#mypage">うちの子ホーム</a><a href="/products/">商品一覧</a><a href="/products/compare/">比較</a><a href="#articles">記事</a><a href="/type-guides/">タイプ別ガイド</a><a href="#tracker">体重記録</a><a href="/pdf-karute/">詳細ごはんカルテPDF</a></nav><a href="#diagnosis" class="mini-cta js-diagnosis-start" data-location="header">無料診断をはじめる</a></header>
     <main>
@@ -1679,8 +1683,8 @@ function render(){
         <div class="hero-v2-visual">
           <div class="hero-v2-blob" aria-hidden="true"></div>
           <div class="hero-v2-shadow" aria-hidden="true"></div>
-          <img class="decor decor-paw1" src="/assets/decor/paw-01.png" alt="" aria-hidden="true">
-          <img class="decor decor-paw2" src="/assets/decor/paw-02.png" alt="" aria-hidden="true">
+          <svg class="decor decor-paw1" viewBox="0 0 120 120" aria-hidden="true" focusable="false"><ellipse cx="60" cy="78" rx="32" ry="26" fill="#EE8D78"/><ellipse cx="22" cy="46" rx="14" ry="18" transform="rotate(-20 22 46)" fill="#EE8D78"/><ellipse cx="46" cy="26" rx="13" ry="17" fill="#EE8D78"/><ellipse cx="74" cy="26" rx="13" ry="17" fill="#EE8D78"/><ellipse cx="98" cy="46" rx="14" ry="18" transform="rotate(20 98 46)" fill="#EE8D78"/></svg>
+          <svg class="decor decor-paw2" viewBox="0 0 120 120" aria-hidden="true" focusable="false"><ellipse cx="60" cy="78" rx="32" ry="26" fill="#EE8D78"/><ellipse cx="22" cy="46" rx="14" ry="18" transform="rotate(-20 22 46)" fill="#EE8D78"/><ellipse cx="46" cy="26" rx="13" ry="17" fill="#EE8D78"/><ellipse cx="74" cy="26" rx="13" ry="17" fill="#EE8D78"/><ellipse cx="98" cy="46" rx="14" ry="18" transform="rotate(20 98 46)" fill="#EE8D78"/></svg>
           <img class="hero-v2-korote hero-v2-korote-solo" src="/assets/korote/cheer.png" alt="わんにゃんごはんカルテのキャラクター、ころて">
         </div>
       </section>
@@ -1699,7 +1703,7 @@ function render(){
         </div>
       </section>
       <section class="diagnosis" id="diagnosis">${renderDiagnosis()}</section>
-      ${step < QUESTIONS.length ? `<section class="discover-v2">
+      ${(hasDiagnosisHistory && step < QUESTIONS.length) ? `<section class="discover-v2">
         <p class="eyebrow-v2 discover-v2-eyebrow">診断だけじゃない</p>
         <h2 class="discover-v2-title">毎日の健康管理にも使えます</h2>
         <div class="discover-v2-grid">
@@ -1796,7 +1800,6 @@ function renderDiagnosis(){
         <p class="res-type-name">「${r.type}」</p>
         <div class="trait-list res-trait-list">${shownTags.map(x=>`<span>${x}</span>`).join('')}</div>
         ${r.hasWeight ? `<div class="res-metrics res-metrics-3"><div class="res-metric"><strong>${Math.round(r.kcal)}<small>kcal</small></strong><span>1日の必要カロリー目安</span></div>${refGrams ? `<div class="res-metric res-metric-gram"><strong>${refGrams}<small>g</small></strong><span>この候補フードの場合・約${refGrams}g/日</span></div>` : ''}<div class="res-metric res-metric-snack"><strong>${Math.round(r.snack)}<small>kcalまで</small></strong><span>おやつの上限</span></div></div>${refGrams ? `<p class="helper res-gram-note">※ごはん量は候補フード「${refFood.name}」のカロリー密度で計算した目安です。実際に使うフードの表示に合わせて調整してください。</p>` : ''}${evidenceToggle('energy')}${r.isPuppy ? `<p class="helper">子犬期は成長段階によって必要カロリーが大きく変わるため、上の数字はあくまで簡易的な目安です。フードのパッケージ記載の給与量や、かかりつけの獣医師の指示を優先してください。</p>` : ''}` : `<div class="note"><h3>カロリー計算</h3><p>体重を入力すると、目安カロリーとおやつ上限を表示できます。今回はタイプ判定と注意点のみ表示します。</p></div>`}
-        <button type="button" class="text-link res-save-mini save-share">📷 結果画像を保存</button>
       </div>
       ${answers.body ? `<div class="karte-section res-block"><h3>いまの体型</h3><div class="res-bcs-row"><img class="res-bcs-avatar" src="${avatarSrc}" alt="" loading="lazy"><div class="res-bcs-info">${r.bcs ? `<span class="res-bcs-badge">${r.bcs}</span>` : ''}<div class="res-bcs-scale">${['emaciated','thin','normal','chubby','obese'].map(k=>`<span class="res-bcs-step${answers.body===k?' is-active':''}">${BODY_LABEL_SHORT[k]}</span>`).join('')}</div>${r.hasWeight ? `<p class="res-bcs-weight">現在の体重　<strong>${answers.weight}kg</strong></p>` : ''}</div></div></div>` : ''}
       </div>
