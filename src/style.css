@@ -308,7 +308,7 @@ body{background:linear-gradient(180deg,#fbfaf6 0%,#f4efe5 100%)}
 @media(min-width:821px){
   .diagnosis{position:relative;max-width:1040px}
   .diagnosis:before{content:'';position:absolute;left:-64px;top:40px;width:34px;height:34px;background:url(/assets/decor/leaf-01.png) center/contain no-repeat;opacity:.8}
-  .diagnosis:after{content:'';position:absolute;right:-60px;bottom:60px;width:30px;height:30px;background:url(/assets/decor/paw-01.png) center/contain no-repeat;opacity:.8}
+  .diagnosis:after{content:'';position:absolute;right:-60px;bottom:60px;width:30px;height:30px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cellipse cx='60' cy='78' rx='32' ry='26' fill='%23EE8D78'/%3E%3Cellipse cx='22' cy='46' rx='14' ry='18' transform='rotate(-20 22 46)' fill='%23EE8D78'/%3E%3Cellipse cx='46' cy='26' rx='13' ry='17' fill='%23EE8D78'/%3E%3Cellipse cx='74' cy='26' rx='13' ry='17' fill='%23EE8D78'/%3E%3Cellipse cx='98' cy='46' rx='14' ry='18' transform='rotate(20 98 46)' fill='%23EE8D78'/%3E%3C/svg%3E") center/contain no-repeat;opacity:.8}
   .dq-layout{display:flex;gap:36px;align-items:flex-start;justify-content:center}
   .dq-sidebar{display:block;width:196px;flex-shrink:0;position:sticky;top:100px;padding-top:6px}
   .dq-sidebar-item{display:flex;align-items:center;gap:10px;padding:10px 4px;color:var(--b-subtext);font-weight:700;font-size:13.5px}
