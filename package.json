@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run check:products && vite build",
+    "build": "npm run check:products && npm run check:ui && vite build",
     "preview": "vite preview",
-    "check:products": "node scripts/check-product-consistency.js"
+    "check:products": "node scripts/check-product-consistency.js",
+    "check:ui": "node scripts/check-ui-invariants.js"
   },
   "devDependencies": {
     "vite": "^8.3.0"
