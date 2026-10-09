@@ -270,7 +270,7 @@ function priceDisplay(f){
   return { text:`約${f.priceKg.toLocaleString()}円/kg${basisLabel}`, note: noteParts.join('・') }
 }
 
-function productDetailUrl(name){ return PRODUCT_SLUGS[name] ? `/products/${PRODUCT_SLUGS[name]}/` : '#' }
+function productDetailUrl(name){ return PRODUCT_SLUGS[name] ? `/products/${PRODUCT_SLUGS[name]}` : '#' }
 function productDetailHref(name, answers, r){
   const base = productDetailUrl(name)
   if(base === '#') return base
@@ -1666,7 +1666,7 @@ function render(){
   // 内容が重複しないよう、結果表示中（step>=QUESTIONS.length）はここでは出さない。
   const hasDiagnosisHistory = loadHistory().length > 0
   document.querySelector('#app').innerHTML = `
-    <header class="site-header"><div class="brand">わんにゃんごはんカルテ</div><nav class="nav-links"><a href="#mypage">うちの子ホーム</a><a href="/products/">商品一覧</a><a href="/products/compare/">比較</a><a href="#articles">記事</a><a href="/type-guides/">タイプ別ガイド</a><a href="#tracker">体重記録</a><a href="/pdf-karute/">詳細ごはんカルテPDF</a></nav><a href="#diagnosis" class="mini-cta js-diagnosis-start" data-location="header">無料診断をはじめる</a></header>
+    <header class="site-header"><div class="brand">わんにゃんごはんカルテ</div><nav class="nav-links"><a href="#mypage">うちの子ホーム</a><a href="/products">商品一覧</a><a href="/products/compare">比較</a><a href="#articles">記事</a><a href="/type-guides">タイプ別ガイド</a><a href="#tracker">体重記録</a><a href="/pdf-karute">詳細ごはんカルテPDF</a></nav><a href="#diagnosis" class="mini-cta js-diagnosis-start" data-location="header">無料診断をはじめる</a></header>
     <main>
       <section class="hero-v2">
         <div class="hero-v2-copy">
@@ -1675,7 +1675,7 @@ function render(){
           <p class="hero-v2-lead">性格や体型、健診結果から、うちの子にぴったりのごはん量・おやつ・フード選びをわかりやすく整理します。</p>
           <div class="hero-v2-actions">
             <a href="#diagnosis" class="cta-coral js-diagnosis-start" data-location="hero">無料でうちの子診断をはじめる →</a>
-            <a href="/pdf-karute/" class="text-link hero-sub-link">くわしいPDFカルテもある →</a>
+            <a href="/pdf-karute" class="text-link hero-sub-link">くわしいPDFカルテもある →</a>
           </div>
           <div class="trust-v2"><span>約3分でできる</span><span>無料で診断</span><span>登録不要</span></div>
           <p class="dog-cat-note">🐶 現在は犬版を公開中です（猫版は準備中）</p>
@@ -1709,16 +1709,16 @@ function render(){
         <div class="discover-v2-grid">
           <a class="discover-v2-card" href="#mypage"><img src="/assets/icons/heart.png" alt=""><strong>マイページ</strong><span>これまでの記録をまとめて見る</span></a>
           <a class="discover-v2-card" href="#tracker"><img src="/assets/icons/scale.png" alt=""><strong>体重記録</strong><span>日々の体重の変化を記録する</span></a>
-          <a class="discover-v2-card" href="/products/compare/"><img src="/assets/icons/food.png" alt=""><strong>フード比較</strong><span>条件に合うフードを比べる</span></a>
+          <a class="discover-v2-card" href="/products/compare"><img src="/assets/icons/food.png" alt=""><strong>フード比較</strong><span>条件に合うフードを比べる</span></a>
           <a class="discover-v2-card" href="#articles"><img src="/assets/icons/leaf.png" alt=""><strong>ごはん記事</strong><span>気になる悩みを記事で深掘り</span></a>
         </div>
       </section>` : ''}
       <section class="mypage" id="mypage">${renderMyPage()}</section>
       <section class="tracker" id="tracker">${renderTracker()}</section>
-      <section class="article-list" id="articles"><h2>うちの子のごはん記事</h2><p class="helper">診察室でよく出る悩みを、できるだけ普通の言葉でまとめました。記事末に参考文献も載せています。</p><div class="article-cards">${ARTICLES.slice(0,6).map(a=>`<a class="article-card js-article-click" data-article="${a.slug}" href="/articles/${a.slug}/"><span>記事</span><strong>${a.title}</strong><small>${a.lead}</small></a>`).join('')}</div><p><a class="secondary" href="/articles/">すべての記事を見る（${ARTICLES.length}件）</a> <a class="secondary" href="/type-guides/">タイプ別ごはんガイドを見る</a></p></section>
-      <section class="article-list" id="compare"><h2>条件から見るフード比較</h2><p class="helper">年齢・体型・活動量・食べ方・健診メモによって、見るべき成分やコストは変わります。まずは診断結果で重視条件を整理し、比較ページではkcal・脂質・粒サイズ・価格・1日コストを見比べます。</p><div class="article-cards"><a class="article-card" href="/products/compare/senior-dog-low-fat/"><span>比較</span><strong>低脂肪ドッグフード比較</strong><small>脂質や体重管理が気になる子向け。</small></a><a class="article-card" href="/products/compare/senior-dog-small-kibble/"><span>比較</span><strong>小粒ドッグフード比較</strong><small>口・歯・食べやすさが気になる小型犬向け。</small></a><a class="article-card" href="/products/compare/senior-dog-weight-control/"><span>比較</span><strong>体重管理ドッグフード比較</strong><small>太りやすくなった子の食事整理に。</small></a></div></section>
+      <section class="article-list" id="articles"><h2>うちの子のごはん記事</h2><p class="helper">診察室でよく出る悩みを、できるだけ普通の言葉でまとめました。記事末に参考文献も載せています。</p><div class="article-cards">${ARTICLES.slice(0,6).map(a=>`<a class="article-card js-article-click" data-article="${a.slug}" href="/articles/${a.slug}"><span>記事</span><strong>${a.title}</strong><small>${a.lead}</small></a>`).join('')}</div><p><a class="secondary" href="/articles">すべての記事を見る（${ARTICLES.length}件）</a> <a class="secondary" href="/type-guides">タイプ別ごはんガイドを見る</a></p></section>
+      <section class="article-list" id="compare"><h2>条件から見るフード比較</h2><p class="helper">年齢・体型・活動量・食べ方・健診メモによって、見るべき成分やコストは変わります。まずは診断結果で重視条件を整理し、比較ページではkcal・脂質・粒サイズ・価格・1日コストを見比べます。</p><div class="article-cards"><a class="article-card" href="/products/compare/senior-dog-low-fat"><span>比較</span><strong>低脂肪ドッグフード比較</strong><small>脂質や体重管理が気になる子向け。</small></a><a class="article-card" href="/products/compare/senior-dog-small-kibble"><span>比較</span><strong>小粒ドッグフード比較</strong><small>口・歯・食べやすさが気になる小型犬向け。</small></a><a class="article-card" href="/products/compare/senior-dog-weight-control"><span>比較</span><strong>体重管理ドッグフード比較</strong><small>太りやすくなった子の食事整理に。</small></a></div></section>
     </main>
-    <footer><p>本サイトはペットフード選びの参考情報を提供するもので、診断・治療・療法食の指示ではありません。持病、症状、療法食利用中の場合は獣医師に相談してください。PR｜本サイトはアフィリエイト広告を利用しています。<br><a href="/legal/tokushoho/">特定商取引法に基づく表記</a>　<a href="/legal/privacy/">プライバシーポリシー</a></p></footer>`
+    <footer><p>本サイトはペットフード選びの参考情報を提供するもので、診断・治療・療法食の指示ではありません。持病、症状、療法食利用中の場合は獣医師に相談してください。PR｜本サイトはアフィリエイト広告を利用しています。<br><a href="/legal/tokushoho">特定商取引法に基づく表記</a>　<a href="/legal/privacy">プライバシーポリシー</a></p></footer>`
   bindEvents()
 }
 
@@ -1824,7 +1824,7 @@ function renderDiagnosis(){
         </div>
         <div class="pdf-mini-grid"><span>健診値の整理</span><span>フード相談メモ</span><span>おやつ量チェック</span></div>
         <p class="helper"><strong>こんな時に便利です：</strong>健診結果がある／今のフードを続けるか迷う／病院で短時間に相談したい時。<br><strong>先に受診：</strong>緊急症状がある場合は、PDFより先に動物病院へ相談してください。</p>
-        <div class="pdf-cta-action"><a class="primary pdf-interest" data-price="980" href="/pdf-karute/">980円で相談用カルテを作る</a><small>健診結果がなくても作成できます。お支払い後、自動でPDFを作成し完成次第メールでお届けします。</small></div>
+        <div class="pdf-cta-action"><a class="primary pdf-interest" data-price="980" href="/pdf-karute">980円で相談用カルテを作る</a><small>健診結果がなくても作成できます。お支払い後、自動でPDFを作成し完成次第メールでお届けします。</small></div>
       </div>
       <div class="karte-section res-step4">
         <p class="eyebrow res-step-label">STEP 4 ・ 毎日の管理へ</p>
@@ -1832,7 +1832,7 @@ function renderDiagnosis(){
         <div class="res-step4-grid">
           <a class="res-step4-card" href="#mypage"><img src="/assets/icons/heart.png" alt=""><strong>マイページ</strong><span>記録をまとめて見る</span></a>
           <a class="res-step4-card" href="#tracker"><img src="/assets/icons/scale.png" alt=""><strong>体重記録</strong><span>日々の変化を記録する</span></a>
-          <a class="res-step4-card" href="/products/compare/"><img src="/assets/icons/food.png" alt=""><strong>フード比較</strong><span>条件に合うフードを比べる</span></a>
+          <a class="res-step4-card" href="/products/compare"><img src="/assets/icons/food.png" alt=""><strong>フード比較</strong><span>条件に合うフードを比べる</span></a>
           <a class="res-step4-card" href="#articles"><img src="/assets/icons/leaf.png" alt=""><strong>おすすめ記事</strong><span>気になる悩みを深掘り</span></a>
         </div>
       </div>
@@ -1843,7 +1843,7 @@ function renderDiagnosis(){
       ${renderHealthTimeline(matchedHistory)}
       <div class="karte-section"><h3>解釈カード（くわしく）</h3>${evidenceToggle('behavior')}<div class="insight-grid">${r.insights.map(x=>`<article class="insight-card"><h4>${x.title}</h4><p>${x.body}</p><strong>実生活では：</strong><p>${x.action}</p></article>`).join('')}</div></div>
       <div class="karte-section"><h3><img class="korote-inline" src="/assets/korote/korote_grooming.png" alt="" loading="lazy">接し方のコツ</h3><ul>${r.profile.care.map(x=>`<li>${x}</li>`).join('')}</ul></div>
-      <div class="note"><h3>この診断について</h3><p>C-BARQ（Canine Behavioral Assessment & Research Questionnaire）の考え方を参考に、家庭で答えやすい場面へ置き換えたセルフチェックです。C-BARQ公式尺度そのものではなく、医学的診断・行動診断でもありません。</p><a class="text-link" href="/about-diagnosis/">参考にしている考え方を見る</a>
+      <div class="note"><h3>この診断について</h3><p>C-BARQ（Canine Behavioral Assessment & Research Questionnaire）の考え方を参考に、家庭で答えやすい場面へ置き換えたセルフチェックです。C-BARQ公式尺度そのものではなく、医学的診断・行動診断でもありません。</p><a class="text-link" href="/about-diagnosis">参考にしている考え方を見る</a>
         <details style="margin-top:12px"><summary style="cursor:pointer;font-weight:800;color:var(--b-text)">この評価の根拠を見る</summary><p class="helper" style="margin-top:8px">目安カロリー・おやつ上限は、RER/DER計算など獣医栄養学で一般的に使われる考え方をもとに、以下の情報源を参考にしています。個別の栄養設計の根拠として使うものではなく、一般的な目安です。</p><ul class="helper" style="padding-left:20px;margin:6px 0"><li><a class="source-link" href="https://vetapps.vet.upenn.edu/cbarq/about.cfm" target="_blank" rel="noopener">C-BARQ（Canine Behavioral Assessment & Research Questionnaire）</a> — ペンシルベニア大学獣医学部が公式に運営する行動評価アンケート。本診断はC-BARQ公式尺度そのものではなく、考え方を参考にした簡易セルフチェックです。</li><li><a class="source-link" href="https://wsava.org/wp-content/uploads/2020/01/WSAVA-Nutrition-Assessment-Guidelines-2011-JSAP.pdf" target="_blank" rel="noopener">WSAVA Nutritional Assessment Guidelines</a>（2011年、Freeman他、Journal of Small Animal Practice誌）</li><li><a class="source-link" href="https://www.aaha.org/resources/2021-aaha-nutrition-and-weight-management-guidelines/home/" target="_blank" rel="noopener">2021 AAHA Nutrition and Weight Management Guidelines for Dogs and Cats</a>（2021年）</li><li><a class="source-link" href="https://www.nationalacademies.org/publications/10668" target="_blank" rel="noopener">NRC Nutrient Requirements of Dogs and Cats</a>（2006年、National Academies Press）</li><li><a class="source-link" href="https://europeanpetfood.org/wp-content/uploads/2024/09/FEDIAF-Nutritional-Guidelines_2024.pdf" target="_blank" rel="noopener">FEDIAF Nutritional Guidelines for Complete and Complementary Pet Food for Cats and Dogs</a>（2024年9月改定版）</li><li>AAFCO（米国飼料検査官協会）の栄養基準　※特定の発行年・無償の公式URLを確認できなかったため、団体名の記載にとどめています</li></ul></details>
       </div>
       ${r.therapyFoods.length ? `<div class="alert therapy"><h3>療法食を相談するなら</h3><p>血液検査・尿検査・服薬状況がある場合に、PDFカルテ側で整理して主治医に確認しやすくする候補です。無料診断では購入推奨ではなく「相談候補」として表示します。</p><div class="foods therapy-foods">${r.therapyFoods.map(f=>`<article class="food"><h4>${f.name}</h4><p>${f.maker}</p><ul><li>${f.note}</li></ul></article>`).join('')}</div></div>`:''}
@@ -1855,7 +1855,7 @@ function renderDiagnosis(){
         return `<article class="food"><h4>${f.name}</h4><p>${f.maker} / ${f.kcal}kcal / 脂質${f.fat}% / ${price.text}${f.mainProtein ? ` / 主原料:${f.mainProtein}` : ''}</p>${checkedNote}${f.note ? `<p class="personalize-note"><strong>${name}の場合：</strong>${f.note}</p>` : ''}<ul>${(f.reasons.length?f.reasons:['条件に比較的合いやすい']).map(x=>`<li>${x}</li>`).join('')}<li>目安給与量：約${r.hasWeight ? Math.round(r.kcal / f.kcal * 100) : '—'}g/日・1日コスト${dailyCostText}</li></ul><div class="food-actions">${f.url !== '#' ? `<a class="primary buy-link" data-product="${f.name}" data-maker="${f.maker}" href="${f.url}" target="_blank" rel="noopener sponsored">通販サイトで見る</a>` : ''}${productDetailUrl(f.name) !== '#' ? `<a class="text-link product-link" data-product="${f.name}" data-maker="${f.maker}" href="${productDetailHref(f.name, answers, r)}">くわしく見る</a>` : ''}</div>${f.url !== '#' ? `<small class="pr-mini">PRを含みます</small>` : ''}</article>`
       }).join('')}</div>` : (r.foodShortage ? `<div class="note"><h3>候補フードについて</h3><p>現在登録されている商品の中では、この子の年齢・体格に合う候補が不足しています。</p><p>大型犬パピー向けの商品は、成長段階や体格に合わせて主治医・販売店等で確認してください。</p></div>` : `<div class="note"><h3>候補フードについて</h3><p>現在のフード候補は、いずれも成犬・シニア犬向けに作られた商品です。子犬期は成長のためにタンパク質・脂質・カルシウムなどの必要量が成犬とは大きく異なるため、このカタログからはおすすめを表示しません。総合栄養食と明記された「子犬用」「オールステージ対応」フードを選ぶか、かかりつけの獣医師にご相談ください。</p></div>`)}
       <div class="karte-section"><h3>動物病院で相談したいこと</h3><ul>${r.vetConsult.map(x=>`<li>${x}</li>`).join('')}</ul></div>
-      <div class="karte-section"><h3>この結果から深掘りする記事</h3><p class="helper">${name}の回答で気になったポイントごとに、関連する記事をまとめました。</p>${r.relatedGroups.map(g=>`<div class="related-group"><h4>${g.topic}</h4><div class="article-cards mini">${g.articles.map(a=>`<a class="article-card" href="/articles/${a.slug}/"><span>関連記事</span><strong>${a.title}</strong><small>${a.lead}</small></a>`).join('')}</div></div>`).join('')}</div>
+      <div class="karte-section"><h3>この結果から深掘りする記事</h3><p class="helper">${name}の回答で気になったポイントごとに、関連する記事をまとめました。</p>${r.relatedGroups.map(g=>`<div class="related-group"><h4>${g.topic}</h4><div class="article-cards mini">${g.articles.map(a=>`<a class="article-card" href="/articles/${a.slug}"><span>関連記事</span><strong>${a.title}</strong><small>${a.lead}</small></a>`).join('')}</div></div>`).join('')}</div>
       <div class="karte-section next-steps"><h3>今日からできる3つのこと</h3><ol>${r.nextSteps.map(x=>`<li>${x}</li>`).join('')}</ol></div>
       <div class="karte-section recheck-note"><h3><img class="korote-inline" src="/assets/korote/korote_relax.png" alt="" loading="lazy">3か月後に見直したい項目</h3><p class="helper">同じ診断にもう一度答えると、今回との変化を自動で比較して表示します。継続して使うことで、単発の診断より変化が見えやすくなります。</p><ul>${r.recheckItems.map(x=>`<li>${x}</li>`).join('')}</ul></div>
       ${r.ownerCompat ? `<div class="karte-section owner-compat"><p class="eyebrow">飼い主さん向け・おまけ診断</p><h3>飼い主様（${r.ownerCompat.mbti}${r.ownerCompat.nickname ? '：'+r.ownerCompat.nickname+'タイプ' : ''}）との相性</h3><p>${r.ownerCompat.text}</p><p class="helper">PDFカルテでは、活動量・慎重さも含めた4項目でさらに詳しく、具体的な付き合い方のヒントまで深掘りします。</p></div>` : ''}
@@ -1973,7 +1973,7 @@ function renderMyPage(){
         </div>
         <div class="mypage-actions">
           <button type="button" class="primary mypage-restart">再診断する</button>
-          <a class="secondary" href="/pdf-karute/">PDFカルテを作る</a>
+          <a class="secondary" href="/pdf-karute">PDFカルテを作る</a>
           <a class="secondary" href="#tracker">体重を記録する</a>
         </div>
       </div>
@@ -2114,7 +2114,7 @@ function wrapCanvasText(ctx, text, x, y, maxWidth, lineHeight){
 function shareUrlFor(r){
   const origin = location.origin || 'https://www.wannyan-gohan.com'
   const slug = shareSlugFor(r.profile.axes)
-  return slug ? `${origin}/share/?type=${encodeURIComponent(slug)}` : `${origin}/share/`
+  return slug ? `${origin}/share?type=${encodeURIComponent(slug)}` : `${origin}/share`
 }
 function shareResult(){
   const r = calcResult(answers)
